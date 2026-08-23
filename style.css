@@ -86,9 +86,9 @@ main { width: 100%; max-width: 720px; display: flex; flex-direction: column; ali
 
 .grid {
   display: grid;
-  gap: 3px;
-  background: var(--border);
-  border: 3px solid var(--border);
+  gap: 0;
+  background: #111318;
+  border: 3px solid #111318;
   border-radius: 6px;
   overflow: hidden;
 }
@@ -107,14 +107,33 @@ main { width: 100%; max-width: 720px; display: flex; flex-direction: column; ali
   font-weight: 700;
 }
 
-.cell.empty-row, .cell.empty-col {
-  background: #17181d;
+.cell.blocked {
   cursor: default;
+  filter: saturate(0.6) brightness(0.85);
 }
 
 .cell.definite { color: var(--accent); }
 .cell.crossed { color: var(--x-color); }
 .cell.highlighted { box-shadow: inset 0 0 0 3px var(--highlight); }
+
+.cell-main { position: relative; z-index: 1; }
+
+.object-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.object-icon.blocked-icon {
+  font-size: 1.6rem;
+  opacity: 0.85;
+}
+.object-icon.badge-icon {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  font-size: 0.85rem;
+  opacity: 0.55;
+  z-index: 0;
+}
 
 .pencil-grid {
   display: grid;
@@ -136,6 +155,13 @@ main { width: 100%; max-width: 720px; display: flex; flex-direction: column; ali
 }
 
 .hint { color: var(--muted); font-size: 0.85rem; text-align: center; }
+
+.autosave-note {
+  align-self: center;
+  color: #7ed08c;
+  font-size: 0.8rem;
+  min-width: 44px;
+}
 
 .clues {
   width: 100%;
