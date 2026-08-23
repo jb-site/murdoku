@@ -337,6 +337,7 @@ const layerCellsEl = document.getElementById("layerCells");
 const layerObjectsEl = document.getElementById("layerObjects");
 const layerLabelsEl = document.getElementById("layerLabels");
 const layerMarksEl = document.getElementById("layerMarks");
+const layerHeadersEl = document.getElementById("layerHeaders");
 const paletteEl = document.getElementById("suspectPalette");
 const hintEl = document.getElementById("hint");
 const statusEl = document.getElementById("status");
@@ -517,6 +518,7 @@ function buildLegend() {
         <strong>hold</strong> to place them definitively (crosses out their row &amp; column),
         or <strong>drag</strong> to paint candidates across cells.
         Pick <strong>✕</strong> or <strong>Erase</strong> and click or drag the same way — holding does nothing extra.
+        Click a row or column number to apply the selected tool to that whole line at once (existing ✕s are left alone).
       </p>
     </details>`;
 }
@@ -530,9 +532,16 @@ function borderStyle(r, c, dr, dc) {
   return sameRoom ? "1px solid var(--border)" : "3px solid #111318";
 }
 
+// Leading track on both axes is a fixed size (var(--hdr-size)) shared identically by
+// every layer via the CSS custom property — NOT `auto`. The four content layers are
+// independent grid containers only visually aligned because they're handed identical
+// templates over the same shared box; an `auto` track would size to each container's
+// own content (real header buttons in one, nothing in the others) and drift every
+// cell out of alignment. A fixed length keeps the remaining `1fr` cell tracks pixel-
+// identical across all layers at any grid size or viewport width.
 function setLayerTemplate(el) {
-  el.style.gridTemplateColumns = `repeat(${PUZZLE.cols}, 1fr)`;
-  el.style.gridTemplateRows = `repeat(${PUZZLE.rows}, 1fr)`;
+  el.style.gridTemplateColumns = `var(--hdr-size) repeat(${PUZZLE.cols}, 1fr)`;
+  el.style.gridTemplateRows = `var(--hdr-size) repeat(${PUZZLE.rows}, 1fr)`;
 }
 
 function computeRoomAnchors() {
@@ -558,13 +567,17 @@ function computeRoomAnchors() {
 // listeners once. Called only when a puzzle is (re)loaded — never on every render,
 // so an in-progress long-press/drag gesture never has its DOM pulled out from under it.
 function renderStatic() {
-  [layerCellsEl, layerObjectsEl, layerLabelsEl, layerMarksEl].forEach(setLayerTemplate);
+  [layerCellsEl, layerObjectsEl, layerLabelsEl, layerMarksEl, layerHeadersEl].forEach(setLayerTemplate);
 
   layerCellsEl.innerHTML = "";
   layerObjectsEl.innerHTML = "";
   layerLabelsEl.innerHTML = "";
   layerMarksEl.innerHTML = "";
+  layerHeadersEl.innerHTML = "";
 
+  // +2 offset (not +1): track 1 on each axis is the fixed header gutter, so model
+  // row/col r/c sit at CSS grid track r+2/c+2. dataset.r/c etc. stay plain model
+  // coordinates throughout — only the grid placement carries the offset.
   for (let r = 0; r < PUZZLE.rows; r++) {
     for (let c = 0; c < PUZZLE.cols; c++) {
       const blocked = isBlocked(r, c);
@@ -572,8 +585,8 @@ function renderStatic() {
       cellEl.className = "cell" + (blocked ? " blocked" : "");
       cellEl.dataset.r = r;
       cellEl.dataset.c = c;
-      cellEl.style.gridRow = r + 1;
-      cellEl.style.gridColumn = c + 1;
+      cellEl.style.gridRow = r + 2;
+      cellEl.style.gridColumn = c + 2;
       cellEl.style.background = ROOM_COLORS[PUZZLE.roomGrid[r][c]] || DEFAULT_ROOM_COLOR;
       cellEl.style.borderTop = borderStyle(r, c, -1, 0);
       cellEl.style.borderBottom = borderStyle(r, c, 1, 0);
@@ -585,8 +598,8 @@ function renderStatic() {
       markEl.className = "mark";
       markEl.dataset.r = r;
       markEl.dataset.c = c;
-      markEl.style.gridRow = r + 1;
-      markEl.style.gridColumn = c + 1;
+      markEl.style.gridRow = r + 2;
+      markEl.style.gridColumn = c + 2;
       layerMarksEl.appendChild(markEl);
     }
   }
@@ -604,8 +617,8 @@ function renderStatic() {
     wrap.dataset.c0 = record.c0;
     wrap.dataset.rowSpan = record.rowSpan;
     wrap.dataset.colSpan = record.colSpan;
-    wrap.style.gridRow = `${record.r0 + 1} / span ${record.rowSpan}`;
-    wrap.style.gridColumn = `${record.c0 + 1} / span ${record.colSpan}`;
+    wrap.style.gridRow = `${record.r0 + 2} / span ${record.rowSpan}`;
+    wrap.style.gridColumn = `${record.c0 + 2} / span ${record.colSpan}`;
     wrap.innerHTML = type.art(record.colSpan, record.rowSpan);
     layerObjectsEl.appendChild(wrap);
   });
@@ -618,10 +631,30 @@ function renderStatic() {
     pill.className = "room-label";
     pill.dataset.room = roomId;
     pill.textContent = room.name;
-    pill.style.gridRow = anchor.r + 1;
-    pill.style.gridColumn = `${anchor.c0 + 1} / span ${anchor.c1 - anchor.c0 + 1}`;
+    pill.style.gridRow = anchor.r + 2;
+    pill.style.gridColumn = `${anchor.c0 + 2} / span ${anchor.c1 - anchor.c0 + 1}`;
     layerLabelsEl.appendChild(pill);
   });
+
+  for (let c = 0; c < PUZZLE.cols; c++) {
+    layerHeadersEl.appendChild(makeHeaderButton("col", c, 1, c + 2));
+  }
+  for (let r = 0; r < PUZZLE.rows; r++) {
+    layerHeadersEl.appendChild(makeHeaderButton("row", r, r + 2, 1));
+  }
+}
+
+function makeHeaderButton(kind, index, gridRow, gridColumn) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = `grid-header ${kind}-header`;
+  btn.dataset.line = kind; // "row" | "col"
+  btn.dataset.index = index; // 0-based model index
+  btn.textContent = index + 1; // 1-based display
+  btn.setAttribute("aria-label", `Apply selected tool to ${kind === "row" ? "row" : "column"} ${index + 1}`);
+  btn.style.gridRow = gridRow;
+  btn.style.gridColumn = gridColumn;
+  return btn;
 }
 
 // Rewrites cell content (definite letter / X / pencil marks) after a mutation.
@@ -713,6 +746,11 @@ function applyHighlights() {
     const inRefs = refsActive && refObjects.has(el.dataset.type) && !isObjectRuledOut(el);
     el.classList.toggle("ref-object", !!inRefs);
   });
+
+  layerHeadersEl.querySelectorAll(".grid-header").forEach((btn) => {
+    const dead = !selection || !lineCells(btn.dataset.line, +btn.dataset.index).some(([r, c]) => canBulkApply(r, c));
+    btn.classList.toggle("no-op", dead);
+  });
 }
 
 // --- Gesture handling (pointer events: short click = pencil, hold = place, drag = paint) --
@@ -723,6 +761,13 @@ function attachGestureListeners() {
   layerCellsEl.addEventListener("pointermove", onPointerMove);
   layerCellsEl.addEventListener("pointerup", endGesture);
   layerCellsEl.addEventListener("pointercancel", endGesture);
+  layerHeadersEl.addEventListener("click", onHeaderClick);
+}
+
+function onHeaderClick(e) {
+  const btn = e.target.closest(".grid-header");
+  if (!btn || !PUZZLE) return;
+  applyToLine(btn.dataset.line, +btn.dataset.index);
 }
 
 function cellFromEvent(e) {
@@ -887,6 +932,51 @@ function canApplySelection(r, c) {
   if (selection === "#erase") return !!cell.definite || cell.x || cell.pencil.size > 0;
   if (isSuspectSelection(selection)) return !cell.definite;
   return false;
+}
+
+// Whether a whole-line (row/column) fill of the current selection would actually change
+// this cell. Stricter than canApplySelection: pencil additionally skips cells already
+// marked X ("respect the X's already in place") — a single-cell pencil click doesn't
+// check that, but a bulk fill silently stashing a pencil mark under an X (invisible
+// until the X is erased) would be surprising. Every case here is "turn on / clear",
+// never a toggle, so a cell that already has the mark is correctly a no-op.
+function canBulkApply(r, c) {
+  if (isBlocked(r, c)) return false;
+  const cell = grid[r][c];
+  if (selection === "#x") return !cell.definite && !cell.x;
+  if (selection === "#erase") return !!cell.definite || cell.x || cell.pencil.size > 0;
+  if (isSuspectSelection(selection)) return !cell.definite && !cell.x && !cell.pencil.has(selection);
+  return false;
+}
+
+function lineCells(kind, index) {
+  const out = [];
+  if (kind === "row") {
+    for (let c = 0; c < PUZZLE.cols; c++) out.push([index, c]);
+  } else {
+    for (let r = 0; r < PUZZLE.rows; r++) out.push([r, index]);
+  }
+  return out;
+}
+
+// Applies the current selection to every eligible cell in a row/column as one atomic
+// action: a single pushHistory() so one Undo reverts the whole line, and no history
+// entry at all if nothing would change (mirrors the no-op guard used for single-cell
+// actions). Reuses applySelectionToCell(r, c, true) — the same "force on" path used by
+// drag-painting — since bulk semantics are always "turn on/clear", never toggle.
+function applyToLine(kind, index) {
+  if (!selection) {
+    setStatus("Pick a suspect, ✕, or Erase first.");
+    return;
+  }
+  const targets = lineCells(kind, index).filter(([r, c]) => canBulkApply(r, c));
+  if (targets.length === 0) return;
+
+  pushHistory();
+  for (const [r, c] of targets) applySelectionToCell(r, c, true);
+  renderMarks();
+  applyHighlights();
+  saveProgress();
 }
 
 // forceApply: null = toggle and report which way it went; true/false = force that state (for drag painting)

@@ -150,6 +150,7 @@ main { width: 100%; max-width: 720px; display: flex; flex-direction: column; ali
 .grid-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px; overflow-x: auto; }
 
 .grid {
+  --hdr-size: 28px;
   position: relative;
   background: #111318;
   border: 3px solid #111318;
@@ -166,10 +167,43 @@ main { width: 100%; max-width: 720px; display: flex; flex-direction: column; ali
   position: relative;
 }
 
-.layer-objects, .layer-labels, .layer-marks {
+.layer-objects, .layer-labels, .layer-marks, .layer-headers {
   position: absolute;
   inset: 0;
   pointer-events: none;
+}
+
+.grid-header {
+  pointer-events: auto;
+  touch-action: manipulation;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  color: var(--muted);
+  font: 600 0.7rem/1 inherit;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.grid-header:hover {
+  background: var(--accent-soft);
+  color: var(--text);
+  border-color: var(--accent);
+}
+.grid-header:active { transform: scale(0.92); }
+.grid-header:focus-visible { outline: 2px solid var(--accent); outline-offset: -1px; }
+.grid-header.no-op {
+  opacity: 0.3;
+  cursor: default;
+}
+.grid-header.no-op:hover {
+  background: transparent;
+  border-color: transparent;
+  color: var(--muted);
 }
 
 .cell {

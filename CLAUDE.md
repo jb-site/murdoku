@@ -43,17 +43,27 @@ URL) because `app.js` fetches puzzle JSON via `fetch()`.
 
 ## Rendering
 
-The grid is four aligned CSS-grid layers stacked in one `#grid` container, sharing the same
-`grid-template-rows/columns` so a cell at `(r,c)` lines up across all of them:
+The grid is five aligned CSS-grid layers stacked in one `#grid` container, sharing the same
+`grid-template-rows/columns` so a cell at `(r,c)` lines up across all of them. Each template has
+a **fixed-size** leading track on both axes (`var(--hdr-size)`, a custom property on `.grid`) for
+the row/column header buttons, followed by `repeat(N, 1fr)` for the puzzle cells — model row/col
+`r`/`c` sit at CSS grid track `r+2`/`c+2`. The leading track must stay a fixed length, not `auto`:
+the five layers are independent grid containers only visually aligned via identical templates over
+the same shared box (four are `position:absolute;inset:0` against `layer-cells`' rendered box) —
+an `auto` track sizes to each container's own content, and only `layer-headers` has real content
+in that track, so it would drift every cell out of alignment in the other four.
 
 1. `layer-cells` — room background tint + borders (thick between different rooms, thin within one).
-   **This is the only interactive layer** — all pointer listeners are delegated here.
+   **This is the only interactive layer for single-cell actions** — all pointer listeners are
+   delegated here.
 2. `layer-objects` — one SVG per object (`OBJECT_TYPES[type].art(colSpan, rowSpan)`), spanning
    multiple grid cells for multi-cell objects.
 3. `layer-labels` — room-name pills, anchored to each room's longest bottom-most horizontal run.
 4. `layer-marks` — the definite letter / ✕ / pencil-mark grid, plus the highlight rings.
+5. `layer-headers` — clickable row/column number buttons (`.grid-header`) in the fixed leading
+   track, delegated `click` listener attached once at boot.
 
-`renderStatic()` rebuilds all four layers and runs once per puzzle load. `renderMarks()` (after
+`renderStatic()` rebuilds all five layers and runs once per puzzle load. `renderMarks()` (after
 every state mutation) and `applyHighlights()` (on every hover change) only rewrite content/classes
 on the existing `layer-marks` elements — never structure or listeners — so an in-progress
 long-press/drag gesture never has its DOM pulled out from under it.
@@ -71,6 +81,12 @@ between the palette and the clickable clue rows). With a suspect selected:
 gesture state machine (`pending → paint → placed`) with pointer capture; see `app.js` for the exact
 timing constants and edge cases. One long-press gesture (pencil + place + auto-cross) is a single
 `pushHistory()` entry, so one Undo reverts it atomically.
+
+Clicking a row/column header button (`layer-headers`) applies the current selection to every
+eligible cell in that line as one atomic action (`applyToLine`/`canBulkApply`). Bulk pencil is
+stricter than a single-cell pencil click: it also skips any cell already marked X, so it never
+plants a hidden pencil mark under an existing X. A line where nothing would change pushes no undo
+entry and the header dims (`.no-op`).
 
 Hovering a grid cell shows what's in it (room + object + player state) in the status line. Hovering
 a clue highlights the rooms/objects it references (`refs` in the puzzle JSON) with a teal dashed
