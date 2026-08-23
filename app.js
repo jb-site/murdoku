@@ -220,6 +220,16 @@ const ROOM_COLORS = {
 };
 const DEFAULT_ROOM_COLOR = "#2f313a";
 
+// --- Layout (side-by-side clues split) --------------------------------------
+
+const CLUES_MIN = 280;
+const CLUES_MAX = 560;
+const CLUES_DEFAULT = 340;
+const HANDLE_W = 10;
+const SPLIT_MAX_WIDTH = 1280;
+const SPLIT_HYSTERESIS = 16;
+const CELL_MAX = 96; // caps how big a cell (and thus the whole square-ish grid) can render at
+
 // --- State ---------------------------------------------------------------
 
 let PUZZLE = null;
@@ -352,6 +362,9 @@ const puzzleSelectEl = document.getElementById("puzzleSelect");
 const puzzleTitleEl = document.getElementById("puzzleTitle");
 const puzzleDifficultyEl = document.getElementById("puzzleDifficulty");
 const legendEl = document.getElementById("legend");
+const mainEl = document.querySelector("main");
+const workspaceEl = document.getElementById("workspace");
+const resizeHandleEl = document.getElementById("resizeHandle");
 
 clearBtn.addEventListener("click", () => {
   if (!confirm("Clear the whole grid?")) return;
@@ -568,6 +581,15 @@ function computeRoomAnchors() {
 // so an in-progress long-press/drag gesture never has its DOM pulled out from under it.
 function renderStatic() {
   [layerCellsEl, layerObjectsEl, layerLabelsEl, layerMarksEl, layerHeadersEl].forEach(setLayerTemplate);
+
+  // Cap how wide (and, via aspect-ratio:1 cells, how tall) the grid can render.
+  // Needed once the split layout can give it a much wider column than main's old
+  // 720px cap ever allowed — without this a small grid in a wide left column would
+  // render oversized, taller than the viewport.
+  const gs = getComputedStyle(gridEl);
+  const hdrPx = parseFloat(gs.getPropertyValue("--hdr-size")) || 28;
+  const borderPx = parseFloat(gs.borderLeftWidth) + parseFloat(gs.borderRightWidth);
+  gridEl.style.maxWidth = `${hdrPx + borderPx + PUZZLE.cols * CELL_MAX}px`;
 
   layerCellsEl.innerHTML = "";
   layerObjectsEl.innerHTML = "";
@@ -1169,6 +1191,129 @@ loadInput.addEventListener("change", () => {
   reader.readAsText(file);
 });
 
+// --- Layout: side-by-side clues split with a draggable, remembered divider ---
+//
+// Split vs. stacked is a JS-computed mode (not a media query) because the grid's own
+// minimum width is puzzle-dependent (6x6 vs 12x12+ have very different floors) and
+// can only be known once a puzzle is loaded. desiredCluesWidth is the user's WISH —
+// only ever written by an explicit drag/keyboard/reset gesture and persisted to
+// localStorage; every render instead applies clampCluesWidth(desiredCluesWidth), so a
+// puzzle switch that forces a visually narrower column never overwrites what the user
+// actually asked for.
+
+let desiredCluesWidth = CLUES_DEFAULT;
+let appliedCluesWidth = CLUES_DEFAULT;
+let splitDrag = null; // {pointerId, x0, w0}
+let resizeRaf = null;
+
+function gridMinWidth() {
+  if (!PUZZLE) return 0;
+  const gs = getComputedStyle(gridEl);
+  const hdr = parseFloat(gs.getPropertyValue("--hdr-size")) || 28;
+  const border = parseFloat(gs.borderLeftWidth) + parseFloat(gs.borderRightWidth);
+  const firstCell = layerCellsEl.firstElementChild;
+  const cellMin = firstCell ? parseFloat(getComputedStyle(firstCell).minWidth) : 52;
+  return Math.ceil(hdr + border + PUZZLE.cols * cellMin);
+}
+
+function availableWidth() {
+  const pad = parseFloat(getComputedStyle(document.body).paddingLeft) + parseFloat(getComputedStyle(document.body).paddingRight);
+  return Math.min(document.documentElement.clientWidth - pad, SPLIT_MAX_WIDTH);
+}
+
+function canSplit() {
+  return !!PUZZLE && availableWidth() >= gridMinWidth() + HANDLE_W + CLUES_MIN + SPLIT_HYSTERESIS;
+}
+
+function clampCluesWidth(w) {
+  const max = Math.min(CLUES_MAX, availableWidth() - HANDLE_W - gridMinWidth());
+  return Math.max(CLUES_MIN, Math.min(w, max));
+}
+
+function applySplit(w) {
+  appliedCluesWidth = w;
+  workspaceEl.style.gridTemplateColumns = `minmax(0, 1fr) ${HANDLE_W}px ${w}px`;
+  resizeHandleEl.setAttribute("aria-valuenow", String(Math.round(w)));
+  resizeHandleEl.setAttribute("aria-valuemin", String(CLUES_MIN));
+  resizeHandleEl.setAttribute("aria-valuemax", String(CLUES_MAX));
+}
+
+function updateLayoutMode() {
+  const split = canSplit();
+  mainEl.classList.toggle("split", split);
+  if (split) applySplit(clampCluesWidth(desiredCluesWidth));
+  else workspaceEl.style.gridTemplateColumns = "";
+}
+
+function attachSplitListeners() {
+  resizeHandleEl.addEventListener("pointerdown", onHandleDown);
+  resizeHandleEl.addEventListener("pointermove", onHandleMove);
+  resizeHandleEl.addEventListener("pointerup", endHandleDrag);
+  resizeHandleEl.addEventListener("pointercancel", endHandleDrag);
+  resizeHandleEl.addEventListener("dblclick", () => {
+    desiredCluesWidth = CLUES_DEFAULT;
+    if (mainEl.classList.contains("split")) applySplit(clampCluesWidth(desiredCluesWidth));
+    saveSplitPref();
+  });
+  resizeHandleEl.addEventListener("keydown", onHandleKey);
+  window.addEventListener("resize", () => {
+    if (resizeRaf) return;
+    resizeRaf = requestAnimationFrame(() => {
+      resizeRaf = null;
+      updateLayoutMode();
+    });
+  });
+}
+
+function onHandleDown(e) {
+  if (e.button !== 0 || !mainEl.classList.contains("split")) return;
+  e.preventDefault();
+  resizeHandleEl.setPointerCapture(e.pointerId);
+  splitDrag = { pointerId: e.pointerId, x0: e.clientX, w0: appliedCluesWidth };
+  document.body.classList.add("resizing");
+}
+
+function onHandleMove(e) {
+  if (!splitDrag || splitDrag.pointerId !== e.pointerId) return;
+  // Dragging left widens the clues column (it sits to the right of the handle).
+  applySplit(clampCluesWidth(splitDrag.w0 - (e.clientX - splitDrag.x0)));
+}
+
+function endHandleDrag(e) {
+  if (!splitDrag || splitDrag.pointerId !== e.pointerId) return;
+  splitDrag = null;
+  document.body.classList.remove("resizing");
+  desiredCluesWidth = appliedCluesWidth;
+  saveSplitPref();
+}
+
+function onHandleKey(e) {
+  if (!mainEl.classList.contains("split")) return;
+  const step = e.shiftKey ? 64 : 24;
+  if (e.key === "ArrowLeft") desiredCluesWidth = clampCluesWidth(appliedCluesWidth + step);
+  else if (e.key === "ArrowRight") desiredCluesWidth = clampCluesWidth(appliedCluesWidth - step);
+  else if (e.key === "Home") desiredCluesWidth = CLUES_DEFAULT;
+  else return;
+  e.preventDefault();
+  applySplit(clampCluesWidth(desiredCluesWidth));
+  saveSplitPref();
+}
+
+function loadSplitPref() {
+  const raw = parseFloat(localStorage.getItem("murdoku:cluesWidth"));
+  desiredCluesWidth = Number.isFinite(raw) && raw > 0
+    ? Math.max(CLUES_MIN, Math.min(raw, CLUES_MAX))
+    : CLUES_DEFAULT;
+}
+
+function saveSplitPref() {
+  try {
+    localStorage.setItem("murdoku:cluesWidth", String(Math.round(desiredCluesWidth)));
+  } catch (err) {
+    console.warn("Couldn't save layout preference:", err);
+  }
+}
+
 // --- Puzzle library ----------------------------------------------------
 
 async function loadManifest() {
@@ -1206,6 +1351,7 @@ function initPuzzle(data) {
   renderStatic();
   renderMarks();
   applyHighlights();
+  updateLayoutMode(); // depends on renderStatic() having produced a measurable .cell
 }
 
 async function selectPuzzle(id, manifest) {
@@ -1218,6 +1364,8 @@ async function selectPuzzle(id, manifest) {
 
 async function boot() {
   attachGestureListeners(); // element is reused across puzzle switches — attach exactly once
+  attachSplitListeners();
+  loadSplitPref();
   buildLegend();
 
   let manifest;

@@ -35,21 +35,26 @@
     <span class="difficulty-badge" id="puzzleDifficulty"></span>
   </section>
 
-  <section class="grid-wrap">
-    <div id="grid" class="grid">
-      <div id="layerCells" class="grid-layer layer-cells"></div>
-      <div id="layerObjects" class="grid-layer layer-objects"></div>
-      <div id="layerLabels" class="grid-layer layer-labels"></div>
-      <div id="layerMarks" class="grid-layer layer-marks"></div>
-      <div id="layerHeaders" class="grid-layer layer-headers"></div>
-    </div>
-    <p id="status" class="status-line"></p>
-  </section>
+  <div class="workspace" id="workspace">
+    <section class="grid-wrap">
+      <div id="grid" class="grid">
+        <div id="layerCells" class="grid-layer layer-cells"></div>
+        <div id="layerObjects" class="grid-layer layer-objects"></div>
+        <div id="layerLabels" class="grid-layer layer-labels"></div>
+        <div id="layerMarks" class="grid-layer layer-marks"></div>
+        <div id="layerHeaders" class="grid-layer layer-headers"></div>
+      </div>
+      <p id="status" class="status-line"></p>
+    </section>
 
-  <section class="clues">
-    <h2>Clues</h2>
-    <ul id="clueList"></ul>
-  </section>
+    <div class="resize-handle" id="resizeHandle" role="separator" aria-orientation="vertical"
+         tabindex="0" aria-label="Resize clues column"></div>
+
+    <section class="clues">
+      <h2>Clues</h2>
+      <ul id="clueList"></ul>
+    </section>
+  </div>
 
   <section class="hint">
     <p id="hint">Pick a suspect, ✕, or Erase below, then click, hold, or drag on the grid.</p>

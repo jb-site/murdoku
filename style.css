@@ -51,6 +51,58 @@ header h1 { margin: 0 0 4px; letter-spacing: 0.02em; }
 
 main { width: 100%; max-width: 720px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
 
+/* Stacked (default): .workspace contributes no box of its own, so .grid-wrap and
+   .clues remain plain flex children of main with the usual gap rhythm. */
+.workspace { display: contents; }
+.resize-handle { display: none; }
+
+/* Split (wide viewports, toggled by JS via updateLayoutMode()): grid-template-columns
+   is set inline by JS (see applySplit() in app.js) — clues gets a fixed px width,
+   the grid gets the flexible remainder. */
+main.split { max-width: var(--split-max, 1280px); }
+main.split .workspace {
+  display: grid;
+  width: 100%;
+  align-items: start;
+}
+main.split .resize-handle { display: block; }
+main.split .clues {
+  position: sticky;
+  top: 12px;
+  max-height: calc(100vh - 24px);
+  overflow-y: auto;
+}
+
+.resize-handle {
+  position: relative;
+  cursor: col-resize;
+  touch-action: none;
+}
+.resize-handle::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 4px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--border);
+  transition: background 0.15s, width 0.15s, left 0.15s;
+}
+.resize-handle:hover::before,
+.resize-handle:focus-visible::before,
+body.resizing .resize-handle::before {
+  background: var(--accent);
+  width: 4px;
+  left: 3px;
+}
+.resize-handle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  border-radius: 6px;
+}
+body.resizing { cursor: col-resize; }
+
 .toolbar {
   width: 100%;
   display: flex;
