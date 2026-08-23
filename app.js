@@ -94,6 +94,110 @@ const OBJECT_TYPES = {
       `, 100, 100);
     },
   },
+  oilslick: {
+    label: "Oil Slick", emoji: "🛢️", occupiable: true,
+    art() {
+      return svgObject("#3a3a42", "#54545e", "#17171b", `
+        <ellipse cx="50" cy="52" rx="38" ry="24" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <ellipse cx="30" cy="38" rx="10" ry="7" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="2"/>
+        <ellipse cx="72" cy="60" rx="7" ry="5" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="2"/>
+      `, 100, 100);
+    },
+  },
+  car: {
+    label: "Car", emoji: "🚗", occupiable: true,
+    art(colSpan, rowSpan) {
+      const w = 100 * colSpan, h = 100 * rowSpan;
+      const horizontal = colSpan >= rowSpan;
+      const bodyW = horizontal ? w * 0.9 : h * 0.42;
+      const bodyH = horizontal ? h * 0.42 : w * 0.9;
+      const x = (w - bodyW) / 2, y = (h - bodyH) / 2;
+      const cabinInset = horizontal ? bodyW * 0.22 : bodyH * 0.22;
+      return svgObject("#9fb4e8", "#2d3140", "#14161e", `
+        <rect x="${x}" y="${y}" width="${bodyW}" height="${bodyH}" rx="${Math.min(bodyW, bodyH) * 0.3}" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        ${horizontal
+          ? `<rect x="${x + cabinInset}" y="${y + bodyH * 0.12}" width="${bodyW - cabinInset * 2}" height="${bodyH * 0.76}" rx="6" fill="var(--obj-fill)"/>`
+          : `<rect x="${x + bodyW * 0.12}" y="${y + cabinInset}" width="${bodyW * 0.76}" height="${bodyH - cabinInset * 2}" rx="6" fill="var(--obj-fill)"/>`}
+      `, w, h);
+    },
+  },
+  tree: {
+    label: "Tree", emoji: "🌲", occupiable: false,
+    art() {
+      return svgObject("#4fae7a", "#3d7a54", "#1f4530", `
+        <ellipse cx="50" cy="90" rx="22" ry="6" fill="#000" opacity="0.15"/>
+        <circle cx="50" cy="42" r="34" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <circle cx="50" cy="66" r="26" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="44" y="82" width="12" height="12" fill="#5b4630"/>
+      `, 100, 100);
+    },
+  },
+  bonsai: {
+    label: "Bonsai", emoji: "🌳", occupiable: false,
+    art() {
+      return svgObject("#6bb06e", "#b98fc9", "#3a5c3c", `
+        <path d="M50 46 C30 46 26 24 38 18 C40 30 44 34 50 40 C56 34 60 30 62 18 C74 24 70 46 50 46Z" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="47" y="42" width="6" height="18" fill="#6b4a2c"/>
+        <path d="M28 60 L72 60 L66 84 L34 84 Z" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+      `, 100, 100);
+    },
+  },
+  cactus: {
+    label: "Cactus", emoji: "🌵", occupiable: false,
+    art() {
+      return svgObject("#7fae5c", "#5c8a42", "#33501f", `
+        <rect x="40" y="20" width="20" height="66" rx="10" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M40 40 Q18 40 18 58 Q18 68 30 68 L40 68" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M60 32 Q82 32 82 48 Q82 58 70 58 L60 58" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+      `, 100, 100);
+    },
+  },
+  lilypad: {
+    label: "Lily Pad", emoji: "🍃", occupiable: false,
+    art() {
+      return svgObject("#4c9a5c", "#2f6b3c", "#1a3f22", `
+        <path d="M50 50 L88 40 A38 38 0 1 1 50 12 Z" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M50 50 L50 20" stroke="var(--obj-stroke2, var(--obj-stroke))" stroke-width="2" fill="none"/>
+      `, 100, 100);
+    },
+  },
+  flower: {
+    label: "Flower", emoji: "💐", occupiable: false,
+    art() {
+      const petals = [0, 60, 120, 180, 240, 300].map((a) => {
+        const rad = (a * Math.PI) / 180;
+        const cx = 50 + Math.cos(rad) * 18, cy = 50 + Math.sin(rad) * 18;
+        return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="14" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="2"/>`;
+      }).join("");
+      return svgObject("#9b7fc9", "#f0c94d", "#3d2f5c", `
+        ${petals}
+        <circle cx="50" cy="50" r="12" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
+        <path d="M46 78 Q50 66 54 78" stroke="#4a8a4f" stroke-width="4" fill="none"/>
+      `, 100, 100);
+    },
+  },
+  shrub: {
+    label: "Shrub", emoji: "🌿", occupiable: false,
+    art() {
+      return svgObject("#5cae5f", "#417d44", "#254a27", `
+        <circle cx="34" cy="52" r="20" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <circle cx="62" cy="46" r="24" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <circle cx="50" cy="66" r="20" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+      `, 100, 100);
+    },
+  },
+  path: {
+    label: "Path", emoji: "🧱", occupiable: true,
+    art() {
+      return svgObject("#d9cba8", "#c2b18a", "#8a7a54", `
+        <rect x="8" y="8" width="84" height="84" rx="4" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="2"/>
+        <line x1="8" y1="50" x2="92" y2="50" stroke="var(--obj-stroke)" stroke-width="2"/>
+        <line x1="50" y1="8" x2="50" y2="50" stroke="var(--obj-stroke)" stroke-width="2"/>
+        <line x1="30" y1="50" x2="30" y2="92" stroke="var(--obj-stroke)" stroke-width="2"/>
+        <line x1="70" y1="50" x2="70" y2="92" stroke="var(--obj-stroke)" stroke-width="2"/>
+      `, 100, 100);
+    },
+  },
 };
 
 const ROOM_COLORS = {
@@ -101,7 +205,20 @@ const ROOM_COLORS = {
   bathroom: "#33403d",
   kitchen: "#463b2e",
   livingroom: "#243a48",
+  reception: "#2f3a4a",
+  storage: "#463b52",
+  waitingarea: "#2c4a4a",
+  garage: "#3a3a3f",
+  bonsai: "#2f4436",
+  gazebo: "#453a52",
+  flowergarden: "#4a3a52",
+  desert: "#4a4130",
+  infodesk: "#453a52",
+  arboretum: "#2c4536",
+  pond: "#234548",
+  restingarea: "#2c4a40",
 };
+const DEFAULT_ROOM_COLOR = "#2f313a";
 
 // --- State ---------------------------------------------------------------
 
@@ -231,6 +348,8 @@ const loadInput = document.getElementById("loadInput");
 const autosaveNote = document.getElementById("autosaveNote");
 const clueListEl = document.getElementById("clueList");
 const puzzleSelectEl = document.getElementById("puzzleSelect");
+const puzzleTitleEl = document.getElementById("puzzleTitle");
+const puzzleDifficultyEl = document.getElementById("puzzleDifficulty");
 const legendEl = document.getElementById("legend");
 
 clearBtn.addEventListener("click", () => {
@@ -455,7 +574,7 @@ function renderStatic() {
       cellEl.dataset.c = c;
       cellEl.style.gridRow = r + 1;
       cellEl.style.gridColumn = c + 1;
-      cellEl.style.background = ROOM_COLORS[PUZZLE.roomGrid[r][c]] || "";
+      cellEl.style.background = ROOM_COLORS[PUZZLE.roomGrid[r][c]] || DEFAULT_ROOM_COLOR;
       cellEl.style.borderTop = borderStyle(r, c, -1, 0);
       cellEl.style.borderBottom = borderStyle(r, c, 1, 0);
       cellEl.style.borderLeft = borderStyle(r, c, 0, -1);
@@ -970,6 +1089,10 @@ function initPuzzle(data) {
   hoveredSuspect = null;
   hoverRefs = null;
   gesture = null;
+
+  puzzleTitleEl.textContent = PUZZLE.title;
+  puzzleDifficultyEl.textContent = PUZZLE.difficulty ? `difficulty: ${PUZZLE.difficulty}` : "";
+  puzzleDifficultyEl.className = "difficulty-badge" + (PUZZLE.difficulty ? ` difficulty-${PUZZLE.difficulty}` : "");
 
   buildPalette();
   buildClueList();

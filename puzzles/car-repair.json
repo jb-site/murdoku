@@ -1,0 +1,57 @@
+{
+  "id": "car-repair",
+  "title": "Car Repair",
+  "difficulty": "easy",
+  "sourceFile": "source/car-repair-color.pdf",
+  "rows": 6,
+  "cols": 6,
+  "suspects": ["A", "B", "C", "D", "E", "V"],
+  "names": {
+    "A": "Anthony",
+    "B": "Brock",
+    "C": "Crystal",
+    "D": "Diane",
+    "E": "Emilio",
+    "V": "Vaughn (victim)"
+  },
+  "clues": [
+    { "suspect": "A", "text": "Anthony (A) was in a car.", "refs": { "objects": ["car"] } },
+    { "suspect": "B", "text": "Brock (B) was on an oil slick.", "refs": { "objects": ["oilslick"] } },
+    { "suspect": "C", "text": "Crystal (C) was sitting in a chair.", "refs": { "objects": ["chair"] } },
+    { "suspect": "D", "text": "Diane (D) was alone in the Waiting Area.", "refs": { "rooms": ["waitingarea"] } },
+    { "suspect": "E", "text": "Emilio (E) was beside a shelf.", "refs": { "objects": ["shelf"] } },
+    { "suspect": "V", "text": "Vaughn (V), the victim, was alone with the murderer — the killer was in the same area (room) as him.", "refs": {} }
+  ],
+  "rooms": {
+    "reception": { "name": "Reception" },
+    "storage": { "name": "Storage" },
+    "waitingarea": { "name": "Waiting Area" },
+    "garage": { "name": "Garage" }
+  },
+  "roomGrid": [
+    ["reception", "reception", "reception", "waitingarea", "storage", "storage"],
+    ["reception", "reception", "reception", "waitingarea", "waitingarea", "storage"],
+    ["reception", "reception", "reception", "waitingarea", "waitingarea", "waitingarea"],
+    ["garage", "garage", "garage", "garage", "garage", "garage"],
+    ["garage", "garage", "garage", "garage", "garage", "garage"],
+    ["garage", "garage", "garage", "garage", "garage", "garage"]
+  ],
+  "objects": [
+    { "type": "table", "cells": [[0, 0]] },
+    { "type": "chair", "cells": [[0, 1]] },
+    { "type": "table", "cells": [[0, 2], [1, 2]] },
+    { "type": "table", "cells": [[1, 1]] },
+    { "type": "tv", "cells": [[0, 3]] },
+    { "type": "shelf", "cells": [[0, 5]] },
+    { "type": "plant", "cells": [[1, 4]] },
+    { "type": "shelf", "cells": [[2, 2]] },
+    { "type": "chair", "cells": [[2, 3]] },
+    { "type": "chair", "cells": [[2, 4]] },
+    { "type": "shelf", "cells": [[3, 3]] },
+    { "type": "shelf", "cells": [[3, 4]] },
+    { "type": "car", "cells": [[4, 1], [4, 2]] },
+    { "type": "oilslick", "cells": [[4, 3]] },
+    { "type": "oilslick", "cells": [[5, 1]] },
+    { "type": "car", "cells": [[5, 3], [5, 4]] }
+  ]
+}

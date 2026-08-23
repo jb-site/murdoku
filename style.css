@@ -121,6 +121,30 @@ main { width: 100%; max-width: 720px; display: flex; flex-direction: column; ali
   flex-shrink: 0;
 }
 
+.puzzle-meta {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.puzzle-meta h2 { margin: 0; font-size: 1.1rem; }
+.difficulty-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #2f3239;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.difficulty-badge.difficulty-easy { color: #7ed08c; border-color: #3a5c40; }
+.difficulty-badge.difficulty-medium { color: #ffd166; border-color: #6b5a2e; }
+.difficulty-badge.difficulty-hard { color: #ff6b6b; border-color: #6b3a3a; }
+
 /* --- Grid: layered (cells / objects / labels / marks) --- */
 
 .grid-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px; overflow-x: auto; }

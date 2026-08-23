@@ -16,7 +16,12 @@ locally by an assistant that can already read images/PDFs directly.
 > **1. Look closely.** If it's a PDF, render it to a high-resolution PNG
 > (e.g. `pdftoppm -png -r 300 input.pdf output`) and crop/zoom into the grid
 > region — furniture icons and thin grid lines are easy to misread at low
-> resolution. Read each quadrant of the grid separately if it's large.
+> resolution. Read each quadrant of the grid separately if it's large. For a
+> large grid (8+ per side), it's worth detecting the exact pixel row/column
+> boundaries programmatically (look for the dark grid-line bands) and
+> overlaying row/col labels on a copy of the image before reading cells —
+> far less error-prone than eyeballing coordinates. Also note the `title`
+> and `difficulty` shown near the puzzle's logo (e.g. "difficulty: easy").
 >
 > **2. Extract the grid structure:**
 > - `rows` / `cols` — count the grid cells.
@@ -36,11 +41,18 @@ locally by an assistant that can already read images/PDFs directly.
 >   furniture drawn across cells with no dividing line through it. Each
 >   object's `cells` must form a filled rectangle (1×1, 1×N, N×1 or N×M).
 >
-> **3. Object types.** Use these existing keys if the icon matches:
-> `bed`, `chair` (occupiable — a person can stand/sit there), `tv`, `shelf`,
-> `table`, `plant` (blocking — a person can never be placed there). If you
-> see an object that doesn't match any of these, say so explicitly rather
-> than guessing — a new key needs a matching `art(colSpan, rowSpan)` SVG
+> **3. Object types.** Use these existing keys if the icon matches — occupiable
+> (a person can be there): `bed`, `chair`, `car`, `oilslick`, `path`;
+> blocking (a person can never be placed there): `tv`, `shelf`, `table`,
+> `plant`, `tree`, `bonsai`, `cactus`, `lilypad`, `flower`, `shrub`. Check
+> the legend on the puzzle image itself ("Can be occupied" / "Cannot be
+> occupied") — occupiability is a puzzle-design choice, not something to
+> guess from the icon alone. Note `path` is a real object type (a distinct
+> paved-tile floor), not the same as a plain unmarked floor cell (`null`) —
+> only mark a cell `path` if the artwork shows a distinct tile/brick texture
+> the legend calls out, not just "any walkable floor". If you see an object
+> that doesn't match any of these, say so explicitly rather than
+> guessing — a new key needs a matching `art(colSpan, rowSpan)` SVG
 > renderer plus `label` and `occupiable` added to `OBJECT_TYPES` in
 > `murdoku/app.js` before the puzzle will render correctly.
 >
@@ -71,6 +83,7 @@ locally by an assistant that can already read images/PDFs directly.
 > {
 >   "id": "kebab-case-slug-of-the-title",
 >   "title": "Puzzle Title",
+>   "difficulty": "easy",
 >   "sourceFile": "source/original-filename.pdf",
 >   "rows": 6,
 >   "cols": 6,

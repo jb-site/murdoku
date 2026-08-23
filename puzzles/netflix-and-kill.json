@@ -1,6 +1,7 @@
 {
   "id": "netflix-and-kill",
   "title": "Netflix and Kill",
+  "difficulty": "easy",
   "sourceFile": "source/netflix-and-kill-color.pdf",
   "rows": 6,
   "cols": 6,
