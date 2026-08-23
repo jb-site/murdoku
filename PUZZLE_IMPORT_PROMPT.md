@@ -41,6 +41,20 @@ locally by an assistant that can already read images/PDFs directly.
 >   furniture drawn across cells with no dividing line through it. Each
 >   object's `cells` must form a filled rectangle (1×1, 1×N, N×1 or N×M).
 >
+> **Tall art bleeds into the cell above — anchor on the base, not the whole
+> shape.** Some object art (trees especially) is taller than one cell and
+> visually overlaps into the cell above it, even though it's a single 1×1
+> object. A grid-line overlay tells you *which cell a pixel is in*, but it
+> doesn't tell you whether that pixel is the object's true cell or bleed
+> from the object below it — that's a separate judgment call. Resolve it by
+> finding a small anchor feature that doesn't bleed (a trunk, a base, a
+> shadow — something roughly the same size as the object's footprint) and
+> checking which cell *that* falls in, rather than treating "this cell has
+> some of the object's art in it" as proof the object is there. When two
+> same-type objects are stacked vertically with overlapping canopies, expect
+> to find only as many distinct anchors as there are real objects — don't
+> assume every cell showing canopy has its own trunk.
+>
 > **3. Object types.** Use these existing keys if the icon matches — occupiable
 > (a person can be there): `bed`, `chair`, `car`, `oilslick`, `path`;
 > blocking (a person can never be placed there): `tv`, `shelf`, `table`,
