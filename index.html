@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Murdoku</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Murdoku</h1>
+  <p class="subtitle">Place every suspect on the grid — one per row, one per column.</p>
+</header>
+
+<main>
+  <section class="toolbar">
+    <div class="tool-group" id="toolGroup">
+      <button class="tool-btn active" data-tool="pencil" title="Pencil in a suspect as a candidate">✏️ Pencil</button>
+      <button class="tool-btn" data-tool="place" title="Place a suspect definitively">📍 Place</button>
+      <button class="tool-btn" data-tool="x" title="Mark a cell as impossible">✕ Cross out</button>
+      <button class="tool-btn" data-tool="erase" title="Erase everything in a cell">🧽 Erase</button>
+      <button class="tool-btn" id="undoBtn" title="Undo last action">↶ Undo</button>
+      <button class="tool-btn" id="clearBtn" title="Clear the whole grid">🗑 Clear</button>
+    </div>
+
+    <div class="suspect-palette" id="suspectPalette"></div>
+  </section>
+
+  <section class="grid-wrap">
+    <div id="grid" class="grid"></div>
+  </section>
+
+  <section class="clues">
+    <h2>Clues</h2>
+    <ul id="clueList"></ul>
+  </section>
+
+  <section class="hint">
+    <p id="hint">Select a suspect, then click or drag across cells to pencil them in. Switch tools with the buttons above.</p>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
