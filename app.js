@@ -294,6 +294,7 @@ function selectItem(id) {
   selection = selection === id ? null : id;
   updateSelectionUI();
   updateHint();
+  applyHighlights();
 }
 
 function updateSelectionUI() {
@@ -301,6 +302,23 @@ function updateSelectionUI() {
     el.classList.toggle("selected", el.dataset.item === selection);
   });
 }
+
+// Keyboard shortcuts: a suspect's letter selects them, "x" selects the cross-out tool.
+document.addEventListener("keydown", (e) => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const tag = document.activeElement?.tagName;
+  if (tag === "SELECT" || tag === "INPUT" || tag === "TEXTAREA") return;
+  if (!PUZZLE) return;
+
+  if (e.key.toLowerCase() === "x") {
+    selectItem("#x");
+    return;
+  }
+  const letter = e.key.toUpperCase();
+  if (PUZZLE.suspects.includes(letter)) {
+    selectItem(letter);
+  }
+});
 
 // --- Clue list ---------------------------------------------------------
 
@@ -463,6 +481,10 @@ function renderStatic() {
     const wrap = document.createElement("div");
     wrap.className = "object-cell " + (record.occupiable ? "occupiable" : "blocking");
     wrap.dataset.type = record.type;
+    wrap.dataset.r0 = record.r0;
+    wrap.dataset.c0 = record.c0;
+    wrap.dataset.rowSpan = record.rowSpan;
+    wrap.dataset.colSpan = record.colSpan;
     wrap.style.gridRow = `${record.r0 + 1} / span ${record.rowSpan}`;
     wrap.style.gridColumn = `${record.c0 + 1} / span ${record.colSpan}`;
     wrap.innerHTML = type.art(record.colSpan, record.rowSpan);
@@ -519,8 +541,25 @@ function renderMarks() {
   }
 }
 
+function findClueForSuspect(letter) {
+  return PUZZLE.clues.find((c) => c.suspect === letter) || null;
+}
+
+// An object counts as "ruled out" (and shouldn't highlight as a clue reference) once every
+// cell it occupies has been marked X — the player has already determined nobody's there.
+function isObjectRuledOut(el) {
+  const r0 = +el.dataset.r0, c0 = +el.dataset.c0;
+  const rowSpan = +el.dataset.rowSpan, colSpan = +el.dataset.colSpan;
+  for (let r = r0; r < r0 + rowSpan; r++) {
+    for (let c = c0; c < c0 + colSpan; c++) {
+      if (!grid[r][c].x) return false;
+    }
+  }
+  return true;
+}
+
 // Toggles highlight classes only — suspect-candidate ring (yellow) and clue refs (teal).
-// Called after every render and on every hover change.
+// Called after every render and on every hover/selection change.
 function applyHighlights() {
   const highlightLetter = hoveredSuspect || (isSuspectSelection(selection) ? selection : null);
 
@@ -536,17 +575,22 @@ function applyHighlights() {
     }
   }
 
-  const refsActive = !!hoverRefs && (hoverRefs.rooms.size || hoverRefs.objects.size || hoverRefs.suspects.size);
-  gridEl.classList.toggle("refs-active", !!refsActive);
+  // Refs come from whichever clue is currently hovered, PLUS — persistently, regardless of
+  // hover — the selected suspect's own clue, so their refs stay visible while they're selected.
+  const stickyClue = isSuspectSelection(selection) ? findClueForSuspect(selection) : null;
+  const refRooms = new Set([...(hoverRefs?.rooms || []), ...(stickyClue?.refs.rooms || [])]);
+  const refObjects = new Set([...(hoverRefs?.objects || []), ...(stickyClue?.refs.objects || [])]);
+  const refsActive = refRooms.size > 0 || refObjects.size > 0;
+  gridEl.classList.toggle("refs-active", refsActive);
 
   layerCellsEl.querySelectorAll(".cell").forEach((cellEl) => {
     const r = +cellEl.dataset.r, c = +cellEl.dataset.c;
-    const inRoom = refsActive && hoverRefs.rooms.has(PUZZLE.roomGrid[r][c]);
+    const inRoom = refsActive && refRooms.has(PUZZLE.roomGrid[r][c]);
     cellEl.classList.toggle("ref-room", !!inRoom);
   });
 
   layerObjectsEl.querySelectorAll(".object-cell").forEach((el) => {
-    const inRefs = refsActive && hoverRefs.objects.has(el.dataset.type);
+    const inRefs = refsActive && refObjects.has(el.dataset.type) && !isObjectRuledOut(el);
     el.classList.toggle("ref-object", !!inRefs);
   });
 }
