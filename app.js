@@ -1,14 +1,19 @@
 // Puzzle data model
 // ------------------
-// rows/cols       - grid size
-// suspects        - [{letter, name, victim?}]
-// clues           - freeform display text
-// roomGrid[r][c]  - room id string, defines room boundaries (thick borders drawn between differing rooms)
-// rooms           - {roomId: {name}}
-// objectGrid[r][c]- object type key (see OBJECT_TYPES) or null
+// id/title         - puzzle identity (id used as localStorage key + save-file tag)
+// rows/cols        - grid size
+// suspects         - [letter, ...], one of which is always "V" (the victim)
+// names            - {letter: display name}
+// clues            - freeform display text
+// rooms            - {roomId: {name}}
+// roomGrid[r][c]   - room id string, defines room boundaries (thick borders drawn between differing rooms)
+// objectGrid[r][c] - object type key (see OBJECT_TYPES) or null
 //
 // A cell is "blocked" (nobody can ever go there) when it holds a non-occupiable object
 // (see OBJECT_TYPES[...].occupiable). Blocked cells are not interactive.
+//
+// Puzzles live as JSON files under puzzles/, listed in puzzles/index.json. See
+// PUZZLE_IMPORT_PROMPT.md for how to turn a photo/PDF of a new puzzle into one of these files.
 
 const OBJECT_TYPES = {
   bed: { emoji: "🛏️", occupiable: true },
@@ -26,57 +31,21 @@ const ROOM_COLORS = {
   livingroom: "#243a48",
 };
 
-// Puzzle sourced from puzzles/netflix-and-kill-color.pdf ("Netflix and Kill", easy).
-// Room/object layout hand-traced cell-by-cell from the puzzle image.
-const PUZZLE = (() => {
-  const B = "bedroom", H = "bathroom", K = "kitchen", L = "livingroom";
-  const roomGrid = [
-    [B, B, B, B, H, H],
-    [B, B, B, B, H, H],
-    [B, B, L, L, L, H],
-    [K, K, L, L, L, L],
-    [K, K, L, L, L, L],
-    [K, K, L, L, L, L],
-  ];
-  const roomGridLen = roomGrid.map(r => r.length);
-  // objectGrid: null = empty floor, otherwise a key into OBJECT_TYPES
-  const objectGrid = [
-    ["bed", null, null, null, "plant", "chair"],
-    [null, null, null, "chair", null, null],
-    ["shelf", "plant", "chair", "chair", null, null],
-    [null, null, null, null, null, null],
-    ["shelf", null, "chair", null, "chair", "tv"],
-    ["table", "table", "shelf", null, null, "plant"],
-  ];
-  return {
-    id: "netflix-and-kill",
-    title: "Netflix and Kill",
-    rows: 6,
-    cols: 6,
-    suspects: ["A", "B", "C", "D", "E", "V"], // V is always the victim
-    names: { A: "Austin", B: "Barbara", C: "Charlotte", D: "Dean", E: "Enid", V: "Vaughn (victim)" },
-    clues: [
-      "Austin (A) was beside a shelf.",
-      "Barbara (B) was on the bed.",
-      "Charlotte (C) was the only person sitting in a chair.",
-      "Dean (D) was in the Kitchen.",
-      "Enid (E) was beside the TV.",
-      "Vaughn (V), the victim, was alone with the murderer — the killer was in the same area (room) as him.",
-    ],
-    rooms: {
-      bedroom: { name: "Bedroom" },
-      bathroom: { name: "Bathroom" },
-      kitchen: { name: "Kitchen" },
-      livingroom: { name: "Living Room" },
-    },
-    roomGrid,
-    objectGrid,
-  };
-})();
-
 // --- State ---------------------------------------------------------------
 
-// cell = { pencil: Set<letter>, definite: letter|null, x: boolean }
+let PUZZLE = null;
+let grid = [];
+
+let currentTool = "pencil"; // 'pencil' | 'place' | 'x' | 'erase'
+let selectedSuspect = null;
+let hoveredSuspect = null;
+
+let dragging = false;
+let dragApply = null; // true = "turn on", false = "turn off" — decided by the first cell touched
+
+const HISTORY_LIMIT = 200;
+let history = [];
+
 function isBlocked(r, c) {
   const type = PUZZLE.objectGrid[r][c];
   return !!type && !OBJECT_TYPES[type].occupiable;
@@ -94,15 +63,6 @@ function freshGrid() {
   return g;
 }
 
-let grid = freshGrid();
-
-let currentTool = "pencil"; // 'pencil' | 'place' | 'x' | 'erase'
-let selectedSuspect = null;
-let hoveredSuspect = null;
-
-let dragging = false;
-let dragApply = null; // true = "turn on", false = "turn off" — decided by the first cell touched
-
 // --- DOM setup -------------------------------------------------------------
 
 const gridEl = document.getElementById("grid");
@@ -115,39 +75,8 @@ const saveBtn = document.getElementById("saveBtn");
 const loadBtn = document.getElementById("loadBtn");
 const loadInput = document.getElementById("loadInput");
 const autosaveNote = document.getElementById("autosaveNote");
-
-gridEl.style.gridTemplateColumns = `repeat(${PUZZLE.cols}, 1fr)`;
-gridEl.style.gridTemplateRows = `repeat(${PUZZLE.rows}, 1fr)`;
-
-// Build suspect palette
-PUZZLE.suspects.forEach((letter) => {
-  const btn = document.createElement("button");
-  btn.className = "suspect-chip" + (letter === "V" ? " victim" : "");
-  btn.textContent = letter;
-  btn.title = PUZZLE.names[letter] || letter;
-  btn.dataset.letter = letter;
-  btn.addEventListener("click", () => {
-    selectedSuspect = selectedSuspect === letter ? null : letter;
-    updatePaletteSelection();
-    updateHint();
-    renderGrid();
-  });
-  btn.addEventListener("mouseenter", () => {
-    hoveredSuspect = letter;
-    renderGrid();
-  });
-  btn.addEventListener("mouseleave", () => {
-    hoveredSuspect = null;
-    renderGrid();
-  });
-  paletteEl.appendChild(btn);
-});
-
-function updatePaletteSelection() {
-  [...paletteEl.children].forEach((btn) => {
-    btn.classList.toggle("selected", btn.dataset.letter === selectedSuspect);
-  });
-}
+const clueListEl = document.getElementById("clueList");
+const puzzleSelectEl = document.getElementById("puzzleSelect");
 
 // Tool buttons
 toolGroupEl.querySelectorAll(".tool-btn[data-tool]").forEach((btn) => {
@@ -182,6 +111,47 @@ function updateHint() {
   } else if (currentTool === "erase") {
     hintEl.textContent = "Erase mode: click or drag across cells to clear everything in them.";
   }
+}
+
+function updatePaletteSelection() {
+  [...paletteEl.children].forEach((btn) => {
+    btn.classList.toggle("selected", btn.dataset.letter === selectedSuspect);
+  });
+}
+
+function buildPalette() {
+  paletteEl.innerHTML = "";
+  PUZZLE.suspects.forEach((letter) => {
+    const btn = document.createElement("button");
+    btn.className = "suspect-chip" + (letter === "V" ? " victim" : "");
+    btn.textContent = letter;
+    btn.title = PUZZLE.names[letter] || letter;
+    btn.dataset.letter = letter;
+    btn.addEventListener("click", () => {
+      selectedSuspect = selectedSuspect === letter ? null : letter;
+      updatePaletteSelection();
+      updateHint();
+      renderGrid();
+    });
+    btn.addEventListener("mouseenter", () => {
+      hoveredSuspect = letter;
+      renderGrid();
+    });
+    btn.addEventListener("mouseleave", () => {
+      hoveredSuspect = null;
+      renderGrid();
+    });
+    paletteEl.appendChild(btn);
+  });
+}
+
+function buildClueList() {
+  clueListEl.innerHTML = "";
+  PUZZLE.clues.forEach((text) => {
+    const li = document.createElement("li");
+    li.textContent = text;
+    clueListEl.appendChild(li);
+  });
 }
 
 // --- Grid rendering ----------------------------------------------------
@@ -385,9 +355,6 @@ function applyToolToCell(r, c, forceApply) {
 
 // --- Undo history --------------------------------------------------------
 
-const HISTORY_LIMIT = 200;
-const history = [];
-
 function snapshotGrid() {
   return grid.map((row) => row.map((cell) => ({
     pencil: [...cell.pencil],
@@ -427,11 +394,14 @@ function updateUndoButton() {
 // browser just works. Save/Load-to-file gives an explicit, portable snapshot
 // that works across browsers and devices.
 
-const STORAGE_KEY = `murdoku:progress:${PUZZLE.id}`;
+function storageKey() {
+  return `murdoku:progress:${PUZZLE.id}`;
+}
 
 function saveProgress() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ puzzleId: PUZZLE.id, savedAt: Date.now(), grid: snapshotGrid() }));
+    localStorage.setItem(storageKey(), JSON.stringify({ puzzleId: PUZZLE.id, savedAt: Date.now(), grid: snapshotGrid() }));
+    localStorage.setItem("murdoku:lastPuzzle", PUZZLE.id);
     flashAutosaveNote();
   } catch (err) {
     console.warn("Autosave failed:", err);
@@ -447,7 +417,7 @@ function flashAutosaveNote() {
 
 function loadProgressFromLocalStorage() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(storageKey());
     if (!raw) return false;
     const data = JSON.parse(raw);
     if (data.puzzleId !== PUZZLE.id || !Array.isArray(data.grid)) return false;
@@ -496,16 +466,75 @@ loadInput.addEventListener("change", () => {
   reader.readAsText(file);
 });
 
-// Clue list
-const clueListEl = document.getElementById("clueList");
-PUZZLE.clues.forEach((text) => {
-  const li = document.createElement("li");
-  li.textContent = text;
-  clueListEl.appendChild(li);
-});
+// --- Puzzle library ----------------------------------------------------
 
-updatePaletteSelection();
-updateHint();
-updateUndoButton();
-loadProgressFromLocalStorage();
-renderGrid();
+async function loadManifest() {
+  const res = await fetch("puzzles/index.json");
+  if (!res.ok) throw new Error(`Failed to load puzzle list (${res.status})`);
+  return res.json();
+}
+
+async function loadPuzzleData(file) {
+  const res = await fetch(`puzzles/${file}`);
+  if (!res.ok) throw new Error(`Failed to load puzzle "${file}" (${res.status})`);
+  return res.json();
+}
+
+function initPuzzle(data) {
+  PUZZLE = data;
+  grid = freshGrid();
+  history = [];
+  selectedSuspect = null;
+  hoveredSuspect = null;
+  currentTool = "pencil";
+  toolGroupEl.querySelectorAll(".tool-btn[data-tool]").forEach((b) => b.classList.toggle("active", b.dataset.tool === "pencil"));
+
+  gridEl.style.gridTemplateColumns = `repeat(${PUZZLE.cols}, 1fr)`;
+  gridEl.style.gridTemplateRows = `repeat(${PUZZLE.rows}, 1fr)`;
+
+  buildPalette();
+  buildClueList();
+  updatePaletteSelection();
+  updateHint();
+  updateUndoButton();
+  loadProgressFromLocalStorage();
+  renderGrid();
+}
+
+async function selectPuzzle(id, manifest) {
+  const entry = manifest.find((p) => p.id === id);
+  if (!entry) return;
+  const data = await loadPuzzleData(entry.file);
+  initPuzzle(data);
+  localStorage.setItem("murdoku:lastPuzzle", id);
+}
+
+async function boot() {
+  let manifest;
+  try {
+    manifest = await loadManifest();
+  } catch (err) {
+    hintEl.textContent = "Couldn't load the puzzle list: " + err.message;
+    return;
+  }
+
+  puzzleSelectEl.innerHTML = "";
+  manifest.forEach((entry) => {
+    const opt = document.createElement("option");
+    opt.value = entry.id;
+    opt.textContent = entry.title;
+    puzzleSelectEl.appendChild(opt);
+  });
+  puzzleSelectEl.addEventListener("change", () => selectPuzzle(puzzleSelectEl.value, manifest));
+
+  const lastId = localStorage.getItem("murdoku:lastPuzzle");
+  const startId = manifest.some((p) => p.id === lastId) ? lastId : manifest[0]?.id;
+  if (!startId) {
+    hintEl.textContent = "No puzzles found in puzzles/index.json.";
+    return;
+  }
+  puzzleSelectEl.value = startId;
+  await selectPuzzle(startId, manifest);
+}
+
+boot();

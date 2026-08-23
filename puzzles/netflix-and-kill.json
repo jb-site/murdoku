@@ -1,0 +1,46 @@
+{
+  "id": "netflix-and-kill",
+  "title": "Netflix and Kill",
+  "sourceFile": "source/netflix-and-kill-color.pdf",
+  "rows": 6,
+  "cols": 6,
+  "suspects": ["A", "B", "C", "D", "E", "V"],
+  "names": {
+    "A": "Austin",
+    "B": "Barbara",
+    "C": "Charlotte",
+    "D": "Dean",
+    "E": "Enid",
+    "V": "Vaughn (victim)"
+  },
+  "clues": [
+    "Austin (A) was beside a shelf.",
+    "Barbara (B) was on the bed.",
+    "Charlotte (C) was the only person sitting in a chair.",
+    "Dean (D) was in the Kitchen.",
+    "Enid (E) was beside the TV.",
+    "Vaughn (V), the victim, was alone with the murderer — the killer was in the same area (room) as him."
+  ],
+  "rooms": {
+    "bedroom": { "name": "Bedroom" },
+    "bathroom": { "name": "Bathroom" },
+    "kitchen": { "name": "Kitchen" },
+    "livingroom": { "name": "Living Room" }
+  },
+  "roomGrid": [
+    ["bedroom", "bedroom", "bedroom", "bedroom", "bathroom", "bathroom"],
+    ["bedroom", "bedroom", "bedroom", "bedroom", "bathroom", "bathroom"],
+    ["bedroom", "bedroom", "livingroom", "livingroom", "livingroom", "bathroom"],
+    ["kitchen", "kitchen", "livingroom", "livingroom", "livingroom", "livingroom"],
+    ["kitchen", "kitchen", "livingroom", "livingroom", "livingroom", "livingroom"],
+    ["kitchen", "kitchen", "livingroom", "livingroom", "livingroom", "livingroom"]
+  ],
+  "objectGrid": [
+    ["bed", null, null, null, "plant", "chair"],
+    [null, null, null, "chair", null, null],
+    ["shelf", "plant", "chair", "chair", null, null],
+    [null, null, null, null, null, null],
+    ["shelf", null, "chair", null, "chair", "tv"],
+    ["table", "table", "shelf", null, null, "plant"]
+  ]
+}
