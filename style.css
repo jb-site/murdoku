@@ -247,7 +247,10 @@ main { width: 100%; max-width: 720px; display: flex; flex-direction: column; ali
   padding: 2px 8px;
   border-radius: 999px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  opacity: 0.4;
+  transition: opacity 0.15s;
 }
+.room-label.active { opacity: 1; }
 
 /* --- Marks layer (definite letter / X / pencil marks) --- */
 

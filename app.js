@@ -616,6 +616,7 @@ function renderStatic() {
     if (!anchor) return;
     const pill = document.createElement("div");
     pill.className = "room-label";
+    pill.dataset.room = roomId;
     pill.textContent = room.name;
     pill.style.gridRow = anchor.r + 1;
     pill.style.gridColumn = `${anchor.c0 + 1} / span ${anchor.c1 - anchor.c0 + 1}`;
@@ -859,11 +860,23 @@ function describeCell(r, c) {
   return `${roomName} · ${what}${stateNote}`;
 }
 
+function setHoveredRoom(roomId) {
+  layerLabelsEl.querySelectorAll(".room-label").forEach((el) => {
+    el.classList.toggle("active", !!roomId && el.dataset.room === roomId);
+  });
+}
+
 layerCellsEl?.addEventListener?.("pointerover", (e) => {
   const hit = cellFromEvent(e);
-  if (hit) setStatus(describeCell(hit.r, hit.c));
+  if (hit) {
+    setStatus(describeCell(hit.r, hit.c));
+    setHoveredRoom(PUZZLE.roomGrid[hit.r][hit.c]);
+  }
 });
-gridEl.addEventListener("pointerleave", () => setStatus(""));
+gridEl.addEventListener("pointerleave", () => {
+  setStatus("");
+  setHoveredRoom(null);
+});
 
 // --- Tool logic ----------------------------------------------------------
 
