@@ -8,6 +8,8 @@
   --accent-soft: rgba(91, 140, 255, 0.25);
   --x-color: #ff6b6b;
   --highlight: #ffd166;
+  --ref: #4dd6c1;
+  --press: rgba(91, 140, 255, 0.55);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
@@ -73,12 +75,17 @@ main { width: 100%; max-width: 720px; display: flex; flex-direction: column; ali
   transition: background 0.15s, border-color 0.15s;
 }
 .tool-btn:hover { background: #383b44; }
-.tool-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-#undoBtn { margin-left: auto; }
 #undoBtn:disabled { opacity: 0.4; cursor: default; }
 #undoBtn:disabled:hover { background: #2f3239; }
 
-.suspect-palette { display: flex; gap: 8px; flex-wrap: wrap; }
+.suspect-palette { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.palette-sep {
+  width: 1px;
+  height: 28px;
+  background: var(--border);
+  margin: 0 2px;
+}
 
 .suspect-chip {
   width: 40px;
@@ -100,15 +107,45 @@ main { width: 100%; max-width: 720px; display: flex; flex-direction: column; ali
 .suspect-chip.victim { border-color: #b34747; }
 .suspect-chip.victim.selected { background: rgba(179, 71, 71, 0.3); }
 
-.grid-wrap { width: 100%; display: flex; justify-content: center; overflow-x: auto; }
+.suspect-chip.special-chip {
+  border-radius: 10px;
+  background: #2f3239;
+}
+.suspect-chip.special-chip.selected { border-color: var(--accent); background: var(--accent-soft); }
+
+.suspect-chip.chip-inline {
+  width: 26px;
+  height: 26px;
+  font-size: 0.8rem;
+  cursor: inherit;
+  flex-shrink: 0;
+}
+
+/* --- Grid: layered (cells / objects / labels / marks) --- */
+
+.grid-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px; overflow-x: auto; }
 
 .grid {
-  display: grid;
-  gap: 0;
+  position: relative;
   background: #111318;
   border: 3px solid #111318;
   border-radius: 6px;
   overflow: hidden;
+}
+
+.grid-layer {
+  display: grid;
+  gap: 0;
+}
+
+.layer-cells {
+  position: relative;
+}
+
+.layer-objects, .layer-labels, .layer-marks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
 .cell {
@@ -116,13 +153,10 @@ main { width: 100%; max-width: 720px; display: flex; flex-direction: column; ali
   aspect-ratio: 1;
   min-width: 52px;
   min-height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: relative;
   cursor: pointer;
-  font-size: 1.4rem;
-  font-weight: 700;
+  touch-action: none;
+  -webkit-touch-callout: none;
 }
 
 .cell.blocked {
@@ -130,28 +164,82 @@ main { width: 100%; max-width: 720px; display: flex; flex-direction: column; ali
   filter: saturate(0.6) brightness(0.85);
 }
 
-.cell.definite { color: var(--accent); }
-.cell.crossed { color: var(--x-color); }
-.cell.highlighted { box-shadow: inset 0 0 0 3px var(--highlight); }
+.cell.ref-room {
+  outline: 2px dashed var(--ref);
+  outline-offset: -3px;
+}
+
+.cell.pressing {
+  overflow: hidden;
+}
+.cell.pressing::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, var(--press) 0%, transparent 70%);
+  animation: pressRamp var(--press-ms, 450ms) linear forwards;
+}
+@keyframes pressRamp {
+  from { opacity: 0; transform: scale(0.3); }
+  to { opacity: 1; transform: scale(1.4); }
+}
+.cell.press-fired {
+  animation: pressFlash 0.2s ease-out;
+}
+@keyframes pressFlash {
+  from { box-shadow: inset 0 0 0 4px var(--accent); }
+  to { box-shadow: inset 0 0 0 0 transparent; }
+}
+
+/* --- Object art layer --- */
+
+.object-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+.object-art { width: 100%; height: 100%; display: block; }
+.object-cell.occupiable .object-art { opacity: 0.45; }
+.object-cell.blocking .object-art { opacity: 0.9; }
+.object-cell.ref-object .object-art {
+  opacity: 1;
+  filter: drop-shadow(0 0 6px var(--ref));
+}
+
+/* --- Room labels --- */
+
+.room-label {
+  align-self: end;
+  justify-self: center;
+  margin-bottom: 4px;
+  background: #f4f2ec;
+  color: #1a1a1a;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 2px 8px;
+  border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* --- Marks layer (definite letter / X / pencil marks) --- */
+
+.mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  position: relative;
+}
+.mark.definite { color: var(--accent); }
+.mark.crossed { color: var(--x-color); }
+.mark.highlighted { box-shadow: inset 0 0 0 3px var(--highlight); }
 
 .cell-main { position: relative; z-index: 1; }
-
-.object-icon {
-  font-size: 1.5rem;
-  line-height: 1;
-}
-.object-icon.blocked-icon {
-  font-size: 1.6rem;
-  opacity: 0.85;
-}
-.object-icon.badge-icon {
-  position: absolute;
-  top: 3px;
-  left: 4px;
-  font-size: 0.85rem;
-  opacity: 0.55;
-  z-index: 0;
-}
 
 .pencil-grid {
   display: grid;
@@ -172,6 +260,18 @@ main { width: 100%; max-width: 720px; display: flex; flex-direction: column; ali
   color: var(--highlight);
 }
 
+/* Dim everything not referenced by the hovered clue */
+.grid.refs-active .layer-cells .cell:not(.ref-room) { opacity: 0.55; }
+.grid.refs-active .layer-objects .object-cell:not(.ref-object) { opacity: 0.35; }
+
+.status-line {
+  min-height: 1.1em;
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-align: center;
+  margin: 0;
+}
+
 .hint { color: var(--muted); font-size: 0.85rem; text-align: center; }
 
 .autosave-note {
@@ -189,5 +289,54 @@ main { width: 100%; max-width: 720px; display: flex; flex-direction: column; ali
   padding: 14px 18px;
 }
 .clues h2 { margin: 0 0 8px; font-size: 1rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
-.clues ul { margin: 0; padding-left: 20px; }
-.clues li { margin-bottom: 6px; line-height: 1.4; }
+.clues ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+
+.clue-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  line-height: 1.4;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.clue-row:hover { background: #2f3239; }
+.clue-row.selected { border-color: var(--accent); background: var(--accent-soft); }
+.clue-row.no-suspect { cursor: default; padding-left: 44px; }
+.clue-row.no-suspect:hover { background: transparent; }
+
+/* --- Legend --- */
+
+.legend {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px 18px 14px;
+}
+.legend summary {
+  cursor: pointer;
+  padding: 8px 0;
+  font-size: 1rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.legend-groups { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 6px; }
+.legend-group h3 { margin: 0 0 8px; font-size: 0.85rem; color: var(--text); }
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+}
+.legend-icon { width: 28px; height: 28px; display: inline-flex; }
+.legend-icon .object-art { opacity: 1; }
+.legend-howto {
+  margin: 14px 0 4px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+}

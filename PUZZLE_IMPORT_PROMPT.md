@@ -26,18 +26,23 @@ locally by an assistant that can already read images/PDFs directly.
 >   the actual boundary lines cell-by-cell — rooms are often irregular
 >   shapes, not clean rectangles. Look for a thicker/darker border between
 >   cells in different rooms vs. a thin line between cells in the same room.
-> - `objectGrid` — a `rows` × `cols` array where each cell is either `null`
->   (empty floor) or one of the known object type keys (see below). Match
->   furniture icons carefully — a chair and a sofa/bed can look similar at
->   low resolution.
+> - `objects` — a list of every physical object and every cell it covers:
+>   `{ "type": "bed", "cells": [[0,0],[0,1]] }`. Look extremely carefully at
+>   whether a piece of furniture spans more than one grid cell (a wide bed or
+>   dining table often does) — that's ONE object with multiple `cells`
+>   entries. **Never infer a span from two same-type icons sitting next to
+>   each other** (e.g. two side-by-side chairs are TWO separate 1×1 objects,
+>   not one 1×2 object) — a span exists only when it's genuinely one piece of
+>   furniture drawn across cells with no dividing line through it. Each
+>   object's `cells` must form a filled rectangle (1×1, 1×N, N×1 or N×M).
 >
 > **3. Object types.** Use these existing keys if the icon matches:
 > `bed`, `chair` (occupiable — a person can stand/sit there), `tv`, `shelf`,
 > `table`, `plant` (blocking — a person can never be placed there). If you
 > see an object that doesn't match any of these, say so explicitly rather
-> than guessing — a new key needs a matching entry added to `OBJECT_TYPES`
-> in `murdoku/app.js` (with an emoji and an `occupiable` flag) before the
-> puzzle will render correctly.
+> than guessing — a new key needs a matching `art(colSpan, rowSpan)` SVG
+> renderer plus `label` and `occupiable` added to `OBJECT_TYPES` in
+> `murdoku/app.js` before the puzzle will render correctly.
 >
 > **4. Extract suspects and clues:**
 > - List every named person, in the order they appear.
@@ -46,10 +51,19 @@ locally by an assistant that can already read images/PDFs directly.
 >   fall alphabetically.
 > - `names` maps each letter to the full display name (append "(victim)" to
 >   V's name).
-> - `clues` — transcribe each suspect's clue text as faithfully as possible.
->   Keep them short and in the format `"Name (Letter) <clue text>."` for
->   readability, but don't paraphrase away meaningful detail (adjacency,
->   room references, counts like "the only person...").
+> - Each clue is an object: `{ "suspect": "A", "text": "...", "refs": {...} }`.
+>   `text` should faithfully transcribe the clue (format
+>   `"Name (Letter) <clue text>."` reads well, but don't paraphrase away
+>   meaningful detail — adjacency, room references, counts like "the only
+>   person..."). Use `suspect: null` for a general/rule clue that isn't tied
+>   to one person (e.g. a fact about the victim's murder).
+> - `refs` — the room ids and/or object type keys that clue actually talks
+>   about, used to highlight the board on hover: e.g. a clue about "beside a
+>   shelf" gets `"refs": {"objects": ["shelf"]}`; a clue about "in the
+>   Kitchen" gets `"refs": {"rooms": ["kitchen"]}`. Leave both arrays empty
+>   (or omit `refs` entirely) for a clue that references neither. Don't guess
+>   refs from vague language — only add one when the clue clearly names that
+>   room or object type.
 >
 > **5. Output.** Produce one JSON file matching this exact shape:
 >
@@ -62,10 +76,15 @@ locally by an assistant that can already read images/PDFs directly.
 >   "cols": 6,
 >   "suspects": ["A", "B", "C", "V"],
 >   "names": { "A": "Full Name", "V": "Full Name (victim)" },
->   "clues": ["..."],
+>   "clues": [
+>     { "suspect": "A", "text": "...", "refs": { "objects": ["shelf"] } }
+>   ],
 >   "rooms": { "roomid": { "name": "Display Name" } },
 >   "roomGrid": [["roomid", "..."], ["...", "..."]],
->   "objectGrid": [["bed", null], [null, "chair"]]
+>   "objects": [
+>     { "type": "bed", "cells": [[0,0],[0,1]] },
+>     { "type": "chair", "cells": [[2,3]] }
+>   ]
 > }
 > ```
 >
@@ -77,12 +96,18 @@ locally by an assistant that can already read images/PDFs directly.
 >   picker.
 >
 > **7. Double-check before finishing:**
-> - Every row in `roomGrid` and `objectGrid` has exactly `cols` entries, and
->   there are exactly `rows` rows in each.
-> - Every suspect letter is unique, and `V` appears exactly once.
+> - Every row in `roomGrid` has exactly `cols` entries, and there are exactly
+>   `rows` rows.
+> - Every `objects[].cells` entry is in-bounds, no cell is claimed by more
+>   than one object, and each object's cells form a filled rectangle.
+> - Every `refs.rooms` id exists in `rooms`, and every `refs.objects` type
+>   exists in `OBJECT_TYPES`.
+> - Every suspect letter is unique, `V` appears exactly once, and every
+>   `clues[].suspect` (when not `null`) is one of `suspects`.
 > - `puzzles/index.json` stays valid JSON (comma-separated array entries).
 > - Spot-check a handful of cells against the source image one more time —
->   room/object misreads are the most common mistake.
+>   room/object misreads (and missed multi-cell spans) are the most common
+>   mistakes.
 
 ---
 

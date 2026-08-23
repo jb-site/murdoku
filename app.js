@@ -4,24 +4,96 @@
 // rows/cols        - grid size
 // suspects         - [letter, ...], one of which is always "V" (the victim)
 // names            - {letter: display name}
-// clues            - freeform display text
+// clues            - [{suspect: letter|null, text, refs: {rooms?, objects?, suspects?}}]
 // rooms            - {roomId: {name}}
 // roomGrid[r][c]   - room id string, defines room boundaries (thick borders drawn between differing rooms)
-// objectGrid[r][c] - object type key (see OBJECT_TYPES) or null
+// objects          - [{type, cells: [[r,c], ...]}] — a physical object and every cell it covers.
+//                    Cells of one object must form a filled rectangle. Two same-type objects sitting
+//                    side by side (e.g. two chairs) are two separate entries, NOT one spanning object —
+//                    a span is only ever inferred from what's authored here, never from adjacency.
 //
-// A cell is "blocked" (nobody can ever go there) when it holds a non-occupiable object
-// (see OBJECT_TYPES[...].occupiable). Blocked cells are not interactive.
+// A cell is "blocked" (nobody can ever go there) when it's covered by a non-occupiable object
+// (see OBJECT_TYPES[...].occupiable). Blocked cells are not interactive for placing/pencilling.
 //
 // Puzzles live as JSON files under puzzles/, listed in puzzles/index.json. See
 // PUZZLE_IMPORT_PROMPT.md for how to turn a photo/PDF of a new puzzle into one of these files.
 
+function svgObject(fill, fill2, stroke, inner, viewW, viewH) {
+  return `<svg class="object-art" viewBox="0 0 ${viewW} ${viewH}" preserveAspectRatio="xMidYMid meet"
+    style="--obj-fill:${fill};--obj-fill2:${fill2};--obj-stroke:${stroke}">${inner}</svg>`;
+}
+
 const OBJECT_TYPES = {
-  bed: { emoji: "🛏️", occupiable: true },
-  chair: { emoji: "🪑", occupiable: true },
-  tv: { emoji: "📺", occupiable: false },
-  shelf: { emoji: "📚", occupiable: false },
-  table: { emoji: "🍽️", occupiable: false },
-  plant: { emoji: "🪴", occupiable: false },
+  bed: {
+    label: "Bed", emoji: "🛏️", occupiable: true,
+    art(colSpan, rowSpan) {
+      const w = 100 * colSpan, h = 100 * rowSpan;
+      const horizontal = colSpan >= rowSpan;
+      const pillowW = horizontal ? w * 0.28 : w * 0.86;
+      const pillowH = horizontal ? h * 0.86 : h * 0.28;
+      const px = horizontal ? w * 0.07 : w * 0.07;
+      const py = horizontal ? h * 0.07 : h * 0.07;
+      return svgObject("#d8d3c8", "#8fae74", "#4a4636", `
+        <rect x="${w * 0.04}" y="${h * 0.04}" width="${w * 0.92}" height="${h * 0.92}" rx="10" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="${px}" y="${py}" width="${pillowW}" height="${pillowH}" rx="8" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+      `, w, h);
+    },
+  },
+  chair: {
+    label: "Chair", emoji: "🪑", occupiable: true,
+    art() {
+      return svgObject("#d9cdb0", "#a8895f", "#4a3d29", `
+        <rect x="18" y="34" width="64" height="46" rx="10" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="14" y="10" width="72" height="34" rx="16" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+      `, 100, 100);
+    },
+  },
+  tv: {
+    label: "TV", emoji: "📺", occupiable: false,
+    art() {
+      return svgObject("#7fd8ee", "#3a3f4a", "#1c1f26", `
+        <rect x="10" y="18" width="80" height="52" rx="6" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="18" y="26" width="64" height="36" rx="2" fill="var(--obj-fill)"/>
+        <rect x="34" y="72" width="32" height="8" rx="2" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
+      `, 100, 100);
+    },
+  },
+  shelf: {
+    label: "Shelf", emoji: "📚", occupiable: false,
+    art() {
+      return svgObject("#c9b98e", "#8a7248", "#4a3c24", `
+        <rect x="12" y="8" width="76" height="84" rx="4" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <line x1="12" y1="34" x2="88" y2="34" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <line x1="12" y1="60" x2="88" y2="60" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="18" y="14" width="12" height="16" fill="var(--obj-fill)"/>
+        <rect x="34" y="14" width="10" height="16" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
+        <rect x="18" y="40" width="30" height="16" fill="var(--obj-fill)"/>
+        <rect x="18" y="66" width="14" height="16" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
+        <rect x="36" y="66" width="14" height="16" fill="var(--obj-fill)"/>
+      `, 100, 100);
+    },
+  },
+  table: {
+    label: "Table", emoji: "🍽️", occupiable: false,
+    art(colSpan, rowSpan) {
+      const w = 100 * colSpan, h = 100 * rowSpan;
+      const legW = 8, legH = h * 0.28;
+      return svgObject("#d9b878", "#8a5a2e", "#4a3319", `
+        <rect x="${w * 0.03}" y="${h * 0.08}" width="${w * 0.94}" height="${h * 0.52}" rx="8" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="${w * 0.08}" y="${h * 0.58}" width="${legW}" height="${legH}" fill="var(--obj-fill2)"/>
+        <rect x="${w * 0.92 - legW}" y="${h * 0.58}" width="${legW}" height="${legH}" fill="var(--obj-fill2)"/>
+      `, w, h);
+    },
+  },
+  plant: {
+    label: "Plant", emoji: "🪴", occupiable: false,
+    art() {
+      return svgObject("#7fae5c", "#3f8f6f", "#1f4d38", `
+        <path d="M50 55 C20 55 15 20 30 8 C35 25 40 30 50 40 C60 30 65 25 70 8 C85 20 80 55 50 55Z" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M32 55 C40 82 60 82 68 55 L64 88 C58 94 42 94 36 88 Z" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+      `, 100, 100);
+    },
+  },
 };
 
 const ROOM_COLORS = {
@@ -34,21 +106,28 @@ const ROOM_COLORS = {
 // --- State ---------------------------------------------------------------
 
 let PUZZLE = null;
+let objectAt = []; // [r][c] -> object record or null
 let grid = [];
 
-let currentTool = "pencil"; // 'pencil' | 'place' | 'x' | 'erase'
-let selectedSuspect = null;
+// selection: a suspect letter, or the sentinel strings "#x" / "#erase"
+let selection = null;
 let hoveredSuspect = null;
-
-let dragging = false;
-let dragApply = null; // true = "turn on", false = "turn off" — decided by the first cell touched
+let hoverRefs = null; // {rooms:Set, objects:Set, suspects:Set} while hovering a clue
 
 const HISTORY_LIMIT = 200;
 let history = [];
 
+const LONG_PRESS_MS = 450;
+const MOVE_TOLERANCE_PX = 8;
+let gesture = null; // {pointerId, r, c, x0, y0, timer, mode, dragApply}
+
+function isSuspectSelection(sel) {
+  return sel && sel !== "#x" && sel !== "#erase";
+}
+
 function isBlocked(r, c) {
-  const type = PUZZLE.objectGrid[r][c];
-  return !!type && !OBJECT_TYPES[type].occupiable;
+  const o = objectAt[r][c];
+  return !!o && !OBJECT_TYPES[o.type].occupiable;
 }
 
 function freshGrid() {
@@ -63,12 +142,87 @@ function freshGrid() {
   return g;
 }
 
+// --- Puzzle normalization --------------------------------------------------
+
+function normalizePuzzle(data) {
+  const rows = data.rows, cols = data.cols;
+
+  // Back-compat: synthesise 1x1 objects from a legacy objectGrid.
+  let objects = data.objects;
+  if (!objects && data.objectGrid) {
+    objects = [];
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const type = data.objectGrid[r][c];
+        if (type) objects.push({ type, cells: [[r, c]] });
+      }
+    }
+  }
+  data.objects = objects || [];
+
+  data.clues = (data.clues || []).map((clue) => {
+    if (typeof clue === "string") return { suspect: null, text: clue, refs: {} };
+    return {
+      suspect: clue.suspect ?? null,
+      text: clue.text,
+      refs: {
+        rooms: clue.refs?.rooms || [],
+        objects: clue.refs?.objects || [],
+        suspects: clue.refs?.suspects || [],
+      },
+    };
+  });
+
+  return data;
+}
+
+function buildObjectIndex(data) {
+  const rows = data.rows, cols = data.cols;
+  const at = Array.from({ length: rows }, () => Array(cols).fill(null));
+
+  data.objects.forEach((obj) => {
+    if (!OBJECT_TYPES[obj.type]) {
+      console.error(`Unknown object type "${obj.type}" — skipping.`);
+      return;
+    }
+    const rs = obj.cells.map((cell) => cell[0]);
+    const cs = obj.cells.map((cell) => cell[1]);
+    const r0 = Math.min(...rs), r1 = Math.max(...rs);
+    const c0 = Math.min(...cs), c1 = Math.max(...cs);
+    const rowSpan = r1 - r0 + 1, colSpan = c1 - c0 + 1;
+
+    if (obj.cells.length !== rowSpan * colSpan) {
+      console.error(`Object "${obj.type}" at [${r0},${c0}] doesn't form a filled rectangle — skipping.`);
+      return;
+    }
+    if (r0 < 0 || c0 < 0 || r1 >= rows || c1 >= cols) {
+      console.error(`Object "${obj.type}" at [${r0},${c0}] is out of bounds — skipping.`);
+      return;
+    }
+
+    const record = { type: obj.type, cells: obj.cells, r0, c0, r1, c1, rowSpan, colSpan, occupiable: OBJECT_TYPES[obj.type].occupiable };
+    for (const [r, c] of obj.cells) {
+      if (at[r][c]) {
+        console.error(`Cell [${r},${c}] claimed by more than one object — skipping "${obj.type}".`);
+        return;
+      }
+    }
+    for (const [r, c] of obj.cells) at[r][c] = record;
+  });
+
+  return at;
+}
+
 // --- DOM setup -------------------------------------------------------------
 
 const gridEl = document.getElementById("grid");
+const layerCellsEl = document.getElementById("layerCells");
+const layerObjectsEl = document.getElementById("layerObjects");
+const layerLabelsEl = document.getElementById("layerLabels");
+const layerMarksEl = document.getElementById("layerMarks");
 const paletteEl = document.getElementById("suspectPalette");
 const hintEl = document.getElementById("hint");
-const toolGroupEl = document.getElementById("toolGroup");
+const statusEl = document.getElementById("status");
 const clearBtn = document.getElementById("clearBtn");
 const undoBtn = document.getElementById("undoBtn");
 const saveBtn = document.getElementById("saveBtn");
@@ -77,81 +231,157 @@ const loadInput = document.getElementById("loadInput");
 const autosaveNote = document.getElementById("autosaveNote");
 const clueListEl = document.getElementById("clueList");
 const puzzleSelectEl = document.getElementById("puzzleSelect");
-
-// Tool buttons
-toolGroupEl.querySelectorAll(".tool-btn[data-tool]").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    currentTool = btn.dataset.tool;
-    toolGroupEl.querySelectorAll(".tool-btn[data-tool]").forEach((b) => b.classList.toggle("active", b === btn));
-    updateHint();
-  });
-});
+const legendEl = document.getElementById("legend");
 
 clearBtn.addEventListener("click", () => {
   if (!confirm("Clear the whole grid?")) return;
   pushHistory();
   grid = freshGrid();
-  renderGrid();
+  renderMarks();
+  applyHighlights();
   saveProgress();
 });
 
 undoBtn.addEventListener("click", undo);
 
 function updateHint() {
-  if (currentTool === "pencil") {
-    hintEl.textContent = selectedSuspect
-      ? `Pencil mode: click or drag to toggle ${selectedSuspect} as a candidate in cells.`
-      : "Pencil mode: select a suspect first, then click or drag across cells.";
-  } else if (currentTool === "place") {
-    hintEl.textContent = selectedSuspect
-      ? `Place mode: click a cell to definitively place ${selectedSuspect} there (crosses out the rest of the row & column).`
-      : "Place mode: select a suspect first, then click a cell to place them.";
-  } else if (currentTool === "x") {
-    hintEl.textContent = "Cross-out mode: click or drag across cells to mark them impossible.";
-  } else if (currentTool === "erase") {
-    hintEl.textContent = "Erase mode: click or drag across cells to clear everything in them.";
+  if (!selection) {
+    hintEl.textContent = "Pick a suspect, ✕, or Erase below, then click, hold, or drag on the grid.";
+  } else if (selection === "#x") {
+    hintEl.textContent = "✕ selected: click or drag across cells to mark them impossible.";
+  } else if (selection === "#erase") {
+    hintEl.textContent = "Erase selected: click or drag across cells to clear everything in them.";
+  } else {
+    hintEl.textContent = `${selection} selected: click to pencil in, hold to place definitively, drag to paint candidates.`;
   }
 }
 
-function updatePaletteSelection() {
-  [...paletteEl.children].forEach((btn) => {
-    btn.classList.toggle("selected", btn.dataset.letter === selectedSuspect);
-  });
+function setStatus(text) {
+  statusEl.textContent = text || "";
 }
+
+// --- Palette (suspects + X + Erase, unified) -------------------------------
 
 function buildPalette() {
   paletteEl.innerHTML = "";
-  PUZZLE.suspects.forEach((letter) => {
-    const btn = document.createElement("button");
-    btn.className = "suspect-chip" + (letter === "V" ? " victim" : "");
-    btn.textContent = letter;
-    btn.title = PUZZLE.names[letter] || letter;
-    btn.dataset.letter = letter;
-    btn.addEventListener("click", () => {
-      selectedSuspect = selectedSuspect === letter ? null : letter;
-      updatePaletteSelection();
-      updateHint();
-      renderGrid();
-    });
-    btn.addEventListener("mouseenter", () => {
-      hoveredSuspect = letter;
-      renderGrid();
-    });
-    btn.addEventListener("mouseleave", () => {
-      hoveredSuspect = null;
-      renderGrid();
-    });
-    paletteEl.appendChild(btn);
+  PUZZLE.suspects.forEach((letter) => addPaletteChip(letter, letter, letter === "V"));
+  const sep = document.createElement("span");
+  sep.className = "palette-sep";
+  paletteEl.appendChild(sep);
+  addPaletteChip("#x", "✕", false, true);
+  addPaletteChip("#erase", "🧽", false, true);
+}
+
+function addPaletteChip(id, label, victim, special) {
+  const btn = document.createElement("button");
+  btn.className = "suspect-chip" + (victim ? " victim" : "") + (special ? " special-chip" : "");
+  btn.textContent = label;
+  btn.title = special ? (id === "#x" ? "Cross out" : "Erase") : (PUZZLE.names[id] || id);
+  btn.dataset.item = id;
+  btn.addEventListener("click", () => selectItem(id));
+  if (isSuspectSelectionId(id)) {
+    btn.addEventListener("mouseenter", () => { hoveredSuspect = id; applyHighlights(); });
+    btn.addEventListener("mouseleave", () => { hoveredSuspect = null; applyHighlights(); });
+  }
+  paletteEl.appendChild(btn);
+}
+
+function isSuspectSelectionId(id) {
+  return id !== "#x" && id !== "#erase";
+}
+
+function selectItem(id) {
+  selection = selection === id ? null : id;
+  updateSelectionUI();
+  updateHint();
+}
+
+function updateSelectionUI() {
+  document.querySelectorAll("[data-item]").forEach((el) => {
+    el.classList.toggle("selected", el.dataset.item === selection);
   });
 }
 
+// --- Clue list ---------------------------------------------------------
+
 function buildClueList() {
   clueListEl.innerHTML = "";
-  PUZZLE.clues.forEach((text) => {
+  PUZZLE.clues.forEach((clue) => {
     const li = document.createElement("li");
-    li.textContent = text;
+    li.className = "clue-row" + (clue.suspect ? "" : " no-suspect");
+    if (clue.suspect) {
+      li.dataset.item = clue.suspect;
+      li.tabIndex = 0;
+      li.setAttribute("role", "button");
+    }
+
+    if (clue.suspect) {
+      const chip = document.createElement("span");
+      chip.className = "suspect-chip chip-inline" + (clue.suspect === "V" ? " victim" : "");
+      chip.textContent = clue.suspect;
+      li.appendChild(chip);
+    }
+    const text = document.createElement("span");
+    text.className = "clue-text";
+    text.textContent = clue.text;
+    li.appendChild(text);
+
+    const activate = () => { if (clue.suspect) selectItem(clue.suspect); };
+    li.addEventListener("click", activate);
+    li.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(); }
+    });
+    li.addEventListener("mouseenter", () => {
+      if (clue.suspect) hoveredSuspect = clue.suspect;
+      hoverRefs = {
+        rooms: new Set(clue.refs.rooms),
+        objects: new Set(clue.refs.objects),
+        suspects: new Set(clue.refs.suspects),
+      };
+      applyHighlights();
+    });
+    li.addEventListener("mouseleave", () => {
+      hoveredSuspect = null;
+      hoverRefs = null;
+      applyHighlights();
+    });
+
     clueListEl.appendChild(li);
   });
+}
+
+// --- Legend --------------------------------------------------------------
+
+function buildLegend() {
+  const occupiable = Object.entries(OBJECT_TYPES).filter(([, t]) => t.occupiable);
+  const blocking = Object.entries(OBJECT_TYPES).filter(([, t]) => !t.occupiable);
+
+  const tile = ([key, type]) => `
+    <div class="legend-item">
+      <span class="legend-icon">${type.art(1, 1)}</span>
+      <span>${type.label}</span>
+    </div>`;
+
+  legendEl.innerHTML = `
+    <details open>
+      <summary>Legend &amp; how to play</summary>
+      <div class="legend-groups">
+        <div class="legend-group">
+          <h3>Can be occupied</h3>
+          ${occupiable.map(tile).join("")}
+        </div>
+        <div class="legend-group">
+          <h3>Cannot be occupied</h3>
+          ${blocking.map(tile).join("")}
+        </div>
+      </div>
+      <p class="legend-howto">
+        Pick a suspect, then <strong>click</strong> to pencil in a candidate,
+        <strong>hold</strong> to place them definitively (crosses out their row &amp; column),
+        or <strong>drag</strong> to paint candidates across cells.
+        Pick <strong>✕</strong> or <strong>Erase</strong> and click or drag the same way — holding does nothing extra.
+      </p>
+    </details>`;
 }
 
 // --- Grid rendering ----------------------------------------------------
@@ -163,147 +393,332 @@ function borderStyle(r, c, dr, dc) {
   return sameRoom ? "1px solid var(--border)" : "3px solid #111318";
 }
 
-function renderGrid() {
-  gridEl.innerHTML = "";
-  const highlightLetter = hoveredSuspect || selectedSuspect;
+function setLayerTemplate(el) {
+  el.style.gridTemplateColumns = `repeat(${PUZZLE.cols}, 1fr)`;
+  el.style.gridTemplateRows = `repeat(${PUZZLE.rows}, 1fr)`;
+}
+
+function computeRoomAnchors() {
+  const anchors = {}; // roomId -> {r, c0, c1, score}
+  for (let r = 0; r < PUZZLE.rows; r++) {
+    let c = 0;
+    while (c < PUZZLE.cols) {
+      const roomId = PUZZLE.roomGrid[r][c];
+      let c1 = c;
+      while (c1 + 1 < PUZZLE.cols && PUZZLE.roomGrid[r][c1 + 1] === roomId) c1++;
+      const runLength = c1 - c + 1;
+      const score = runLength * 10 + r;
+      if (!anchors[roomId] || score > anchors[roomId].score) {
+        anchors[roomId] = { r, c0: c, c1, score };
+      }
+      c = c1 + 1;
+    }
+  }
+  return anchors;
+}
+
+// Builds the three static layers (cells, objects, labels) and attaches interaction
+// listeners once. Called only when a puzzle is (re)loaded — never on every render,
+// so an in-progress long-press/drag gesture never has its DOM pulled out from under it.
+function renderStatic() {
+  [layerCellsEl, layerObjectsEl, layerLabelsEl, layerMarksEl].forEach(setLayerTemplate);
+
+  layerCellsEl.innerHTML = "";
+  layerObjectsEl.innerHTML = "";
+  layerLabelsEl.innerHTML = "";
+  layerMarksEl.innerHTML = "";
 
   for (let r = 0; r < PUZZLE.rows; r++) {
     for (let c = 0; c < PUZZLE.cols; c++) {
-      const cell = grid[r][c];
-      const objectType = PUZZLE.objectGrid[r][c];
       const blocked = isBlocked(r, c);
-
       const cellEl = document.createElement("div");
       cellEl.className = "cell" + (blocked ? " blocked" : "");
       cellEl.dataset.r = r;
       cellEl.dataset.c = c;
+      cellEl.style.gridRow = r + 1;
+      cellEl.style.gridColumn = c + 1;
       cellEl.style.background = ROOM_COLORS[PUZZLE.roomGrid[r][c]] || "";
       cellEl.style.borderTop = borderStyle(r, c, -1, 0);
       cellEl.style.borderBottom = borderStyle(r, c, 1, 0);
       cellEl.style.borderLeft = borderStyle(r, c, 0, -1);
       cellEl.style.borderRight = borderStyle(r, c, 0, 1);
+      layerCellsEl.appendChild(cellEl);
 
-      if (blocked) {
-        const obj = document.createElement("span");
-        obj.className = "object-icon blocked-icon";
-        obj.textContent = OBJECT_TYPES[objectType].emoji;
-        obj.title = objectType;
-        cellEl.appendChild(obj);
-        gridEl.appendChild(cellEl);
-        continue; // no interaction, no further content
-      }
+      const markEl = document.createElement("div");
+      markEl.className = "mark";
+      markEl.dataset.r = r;
+      markEl.dataset.c = c;
+      markEl.style.gridRow = r + 1;
+      markEl.style.gridColumn = c + 1;
+      layerMarksEl.appendChild(markEl);
+    }
+  }
 
-      if (objectType) {
-        const badge = document.createElement("span");
-        badge.className = "object-icon badge-icon";
-        badge.textContent = OBJECT_TYPES[objectType].emoji;
-        badge.title = objectType;
-        cellEl.appendChild(badge);
-      }
+  const seen = new Set();
+  PUZZLE.objects.forEach((obj) => {
+    const record = objectAt[obj.cells[0][0]][obj.cells[0][1]];
+    if (!record || seen.has(record)) return;
+    seen.add(record);
+    const type = OBJECT_TYPES[record.type];
+    const wrap = document.createElement("div");
+    wrap.className = "object-cell " + (record.occupiable ? "occupiable" : "blocking");
+    wrap.dataset.type = record.type;
+    wrap.style.gridRow = `${record.r0 + 1} / span ${record.rowSpan}`;
+    wrap.style.gridColumn = `${record.c0 + 1} / span ${record.colSpan}`;
+    wrap.innerHTML = type.art(record.colSpan, record.rowSpan);
+    layerObjectsEl.appendChild(wrap);
+  });
+
+  const anchors = computeRoomAnchors();
+  Object.entries(PUZZLE.rooms).forEach(([roomId, room]) => {
+    const anchor = anchors[roomId];
+    if (!anchor) return;
+    const pill = document.createElement("div");
+    pill.className = "room-label";
+    pill.textContent = room.name;
+    pill.style.gridRow = anchor.r + 1;
+    pill.style.gridColumn = `${anchor.c0 + 1} / span ${anchor.c1 - anchor.c0 + 1}`;
+    layerLabelsEl.appendChild(pill);
+  });
+}
+
+// Rewrites cell content (definite letter / X / pencil marks) after a mutation.
+// Does not touch DOM structure or listeners.
+function renderMarks() {
+  for (let r = 0; r < PUZZLE.rows; r++) {
+    for (let c = 0; c < PUZZLE.cols; c++) {
+      const cell = grid[r][c];
+      const markEl = layerMarksEl.children[r * PUZZLE.cols + c];
+      markEl.innerHTML = "";
+      markEl.classList.remove("definite", "crossed");
 
       if (cell.definite) {
-        cellEl.classList.add("definite");
+        markEl.classList.add("definite");
         const label = document.createElement("span");
         label.className = "cell-main";
         label.textContent = cell.definite;
-        cellEl.appendChild(label);
-        if (highlightLetter && cell.definite === highlightLetter) {
-          cellEl.classList.add("highlighted");
-        }
+        markEl.appendChild(label);
       } else if (cell.x) {
-        cellEl.classList.add("crossed");
+        markEl.classList.add("crossed");
         const label = document.createElement("span");
         label.className = "cell-main";
         label.textContent = "✕";
-        cellEl.appendChild(label);
+        markEl.appendChild(label);
       } else if (cell.pencil.size > 0) {
         const pencilGrid = document.createElement("div");
         pencilGrid.className = "pencil-grid";
         PUZZLE.suspects.forEach((letter) => {
           const span = document.createElement("span");
-          if (cell.pencil.has(letter)) {
-            span.textContent = letter;
-            if (highlightLetter && letter === highlightLetter) {
-              span.classList.add("pencil-highlighted");
-            }
-          }
+          span.dataset.letter = letter;
+          if (cell.pencil.has(letter)) span.textContent = letter;
           pencilGrid.appendChild(span);
         });
-        cellEl.appendChild(pencilGrid);
-        if (highlightLetter && cell.pencil.has(highlightLetter)) {
-          cellEl.classList.add("highlighted");
-        }
+        markEl.appendChild(pencilGrid);
       }
-
-      cellEl.addEventListener("mousedown", (e) => {
-        e.preventDefault();
-        if (!canApplyTool(r, c)) return;
-        pushHistory();
-        const applied = applyToolToCell(r, c, null);
-        // Place is a single-shot action — never drag-paint the same person into more cells.
-        if (currentTool !== "place") {
-          dragging = true;
-          dragApply = applied;
-        }
-        renderGrid();
-        saveProgress();
-      });
-      cellEl.addEventListener("mouseenter", (e) => {
-        // Require the primary button to still be physically held — a missed mouseup
-        // (e.g. released outside the window) must not leave drag-painting stuck on.
-        if (dragging && currentTool !== "place" && e.buttons === 1) {
-          applyToolToCell(r, c, dragApply);
-          renderGrid();
-          saveProgress();
-        } else if (dragging && e.buttons !== 1) {
-          dragging = false;
-          dragApply = null;
-        }
-      });
-
-      gridEl.appendChild(cellEl);
     }
   }
 }
 
-document.addEventListener("mouseup", () => {
-  dragging = false;
-  dragApply = null;
-});
+// Toggles highlight classes only — suspect-candidate ring (yellow) and clue refs (teal).
+// Called after every render and on every hover change.
+function applyHighlights() {
+  const highlightLetter = hoveredSuspect || (isSuspectSelection(selection) ? selection : null);
+
+  for (let r = 0; r < PUZZLE.rows; r++) {
+    for (let c = 0; c < PUZZLE.cols; c++) {
+      const cell = grid[r][c];
+      const markEl = layerMarksEl.children[r * PUZZLE.cols + c];
+      const has = highlightLetter && (cell.definite === highlightLetter || cell.pencil.has(highlightLetter));
+      markEl.classList.toggle("highlighted", !!has);
+      const pencilSpan = markEl.querySelector(`.pencil-grid span[data-letter="${highlightLetter}"]`);
+      markEl.querySelectorAll(".pencil-grid span").forEach((s) => s.classList.remove("pencil-highlighted"));
+      if (highlightLetter && pencilSpan) pencilSpan.classList.add("pencil-highlighted");
+    }
+  }
+
+  const refsActive = !!hoverRefs && (hoverRefs.rooms.size || hoverRefs.objects.size || hoverRefs.suspects.size);
+  gridEl.classList.toggle("refs-active", !!refsActive);
+
+  layerCellsEl.querySelectorAll(".cell").forEach((cellEl) => {
+    const r = +cellEl.dataset.r, c = +cellEl.dataset.c;
+    const inRoom = refsActive && hoverRefs.rooms.has(PUZZLE.roomGrid[r][c]);
+    cellEl.classList.toggle("ref-room", !!inRoom);
+  });
+
+  layerObjectsEl.querySelectorAll(".object-cell").forEach((el) => {
+    const inRefs = refsActive && hoverRefs.objects.has(el.dataset.type);
+    el.classList.toggle("ref-object", !!inRefs);
+  });
+}
+
+// --- Gesture handling (pointer events: short click = pencil, hold = place, drag = paint) --
+
+function attachGestureListeners() {
+  layerCellsEl.addEventListener("contextmenu", (e) => e.preventDefault());
+  layerCellsEl.addEventListener("pointerdown", onPointerDown);
+  layerCellsEl.addEventListener("pointermove", onPointerMove);
+  layerCellsEl.addEventListener("pointerup", endGesture);
+  layerCellsEl.addEventListener("pointercancel", endGesture);
+}
+
+function cellFromEvent(e) {
+  const el = document.elementFromPoint(e.clientX, e.clientY)?.closest(".cell");
+  if (!el) return null;
+  return { el, r: +el.dataset.r, c: +el.dataset.c };
+}
+
+function onPointerDown(e) {
+  if (e.button !== 0) return;
+  const hit = cellFromEvent(e);
+  if (!hit) return;
+  const { r, c } = hit;
+
+  if (!selection) {
+    setStatus("Pick a suspect, ✕, or Erase first.");
+    return;
+  }
+  if (isBlocked(r, c)) return;
+
+  e.preventDefault();
+  layerCellsEl.setPointerCapture(e.pointerId);
+
+  if (selection === "#x" || selection === "#erase") {
+    if (!canApplySelection(r, c)) return;
+    pushHistory();
+    const applied = applySelectionToCell(r, c, null);
+    renderMarks();
+    applyHighlights();
+    saveProgress();
+    gesture = { pointerId: e.pointerId, r, c, x0: e.clientX, y0: e.clientY, mode: "paint", dragApply: applied, timer: null };
+    return;
+  }
+
+  // Suspect selected: pencil immediately, arm a long-press timer to promote to a placement.
+  if (!canApplySelection(r, c)) return;
+  pushHistory();
+  const applied = applySelectionToCell(r, c, null);
+  renderMarks();
+  applyHighlights();
+  saveProgress();
+
+  const cellEl = hit.el;
+  cellEl.classList.add("pressing");
+  cellEl.style.setProperty("--press-ms", `${LONG_PRESS_MS}ms`);
+
+  gesture = { pointerId: e.pointerId, r, c, x0: e.clientX, y0: e.clientY, mode: "pending", dragApply: applied, timer: null };
+  gesture.timer = setTimeout(() => promoteToPlace(r, c, cellEl), LONG_PRESS_MS);
+}
+
+function onPointerMove(e) {
+  if (!gesture || gesture.pointerId !== e.pointerId) return;
+
+  if (gesture.mode === "pending") {
+    const moved = Math.hypot(e.clientX - gesture.x0, e.clientY - gesture.y0) > MOVE_TOLERANCE_PX;
+    const hit = cellFromEvent(e);
+    const cellChanged = hit && (hit.r !== gesture.r || hit.c !== gesture.c);
+    if (moved || cellChanged) {
+      clearTimeout(gesture.timer);
+      clearPressingClass();
+      gesture.mode = "paint";
+    } else {
+      return;
+    }
+  }
+
+  if (gesture.mode === "paint") {
+    const hit = cellFromEvent(e);
+    if (!hit) return;
+    if (hit.r === gesture.r && hit.c === gesture.c) return;
+    gesture.r = hit.r;
+    gesture.c = hit.c;
+    if (isBlocked(hit.r, hit.c)) return;
+    applySelectionToCell(hit.r, hit.c, gesture.dragApply);
+    renderMarks();
+    applyHighlights();
+    saveProgress();
+  }
+}
+
+function promoteToPlace(r, c, cellEl) {
+  if (!gesture || gesture.mode !== "pending") return;
+  const cell = grid[r][c];
+  if (cell.definite === selection) {
+    cell.definite = null; // toggle off
+  } else if (!cell.definite) {
+    placeDefinitely(r, c, selection);
+  }
+  gesture.mode = "placed";
+  cellEl.classList.remove("pressing");
+  cellEl.classList.add("press-fired");
+  setTimeout(() => cellEl.classList.remove("press-fired"), 200);
+  renderMarks();
+  applyHighlights();
+  saveProgress();
+}
+
+function clearPressingClass() {
+  layerCellsEl.querySelectorAll(".pressing").forEach((el) => el.classList.remove("pressing"));
+}
+
+function endGesture(e) {
+  if (!gesture || gesture.pointerId !== e.pointerId) return;
+  clearTimeout(gesture.timer);
+  clearPressingClass();
+  gesture = null;
+}
+
 window.addEventListener("blur", () => {
-  dragging = false;
-  dragApply = null;
+  if (gesture) {
+    clearTimeout(gesture.timer);
+    clearPressingClass();
+    gesture = null;
+  }
 });
+
+// --- Cell hover status line ------------------------------------------------
+
+function describeCell(r, c) {
+  const roomName = PUZZLE.rooms[PUZZLE.roomGrid[r][c]]?.name || "";
+  const obj = objectAt[r][c];
+  let what;
+  if (obj) {
+    const type = OBJECT_TYPES[obj.type];
+    const spanNote = obj.cells.length > 1 ? ` · ${obj.cells.length} cells` : "";
+    what = `${type.label} (${type.occupiable ? "can be occupied" : "cannot be occupied"}${spanNote})`;
+  } else {
+    what = "Empty floor";
+  }
+  const cell = grid[r][c];
+  let stateNote = "";
+  if (cell.definite) stateNote = ` · ${cell.definite} placed`;
+  else if (cell.x) stateNote = " · ruled out";
+  else if (cell.pencil.size > 0) stateNote = ` · candidates ${[...cell.pencil].join(", ")}`;
+  return `${roomName} · ${what}${stateNote}`;
+}
+
+layerCellsEl?.addEventListener?.("pointerover", (e) => {
+  const hit = cellFromEvent(e);
+  if (hit) setStatus(describeCell(hit.r, hit.c));
+});
+gridEl.addEventListener("pointerleave", () => setStatus(""));
 
 // --- Tool logic ----------------------------------------------------------
 
-// Whether mousedown on this cell would actually change anything, given the current tool/selection.
-function canApplyTool(r, c) {
+function canApplySelection(r, c) {
   if (isBlocked(r, c)) return false;
   const cell = grid[r][c];
-  if (currentTool === "pencil") return !!selectedSuspect && !cell.definite;
-  if (currentTool === "x") return !cell.definite;
-  if (currentTool === "place") return !!selectedSuspect && (!cell.definite || cell.definite === selectedSuspect);
-  if (currentTool === "erase") return !!cell.definite || cell.x || cell.pencil.size > 0;
+  if (selection === "#x") return !cell.definite;
+  if (selection === "#erase") return !!cell.definite || cell.x || cell.pencil.size > 0;
+  if (isSuspectSelection(selection)) return !cell.definite;
   return false;
 }
 
 // forceApply: null = toggle and report which way it went; true/false = force that state (for drag painting)
-// Returns the resulting "applied" boolean (true = turned on / added, false = turned off / removed) or null if no-op.
-function applyToolToCell(r, c, forceApply) {
+function applySelectionToCell(r, c, forceApply) {
   if (isBlocked(r, c)) return null;
   const cell = grid[r][c];
 
-  if (currentTool === "pencil") {
-    if (!selectedSuspect || cell.definite) return null;
-    const has = cell.pencil.has(selectedSuspect);
-    const shouldHave = forceApply === null ? !has : forceApply;
-    if (shouldHave) cell.pencil.add(selectedSuspect);
-    else cell.pencil.delete(selectedSuspect);
-    return shouldHave;
-  }
-
-  if (currentTool === "x") {
+  if (selection === "#x") {
     if (cell.definite) return null;
     const shouldHave = forceApply === null ? !cell.x : forceApply;
     cell.x = shouldHave;
@@ -311,38 +726,7 @@ function applyToolToCell(r, c, forceApply) {
     return shouldHave;
   }
 
-  if (currentTool === "place") {
-    if (!selectedSuspect) return null;
-    if (cell.definite === selectedSuspect) {
-      // toggle off
-      cell.definite = null;
-      return false;
-    }
-    if (cell.definite) return null; // occupied by someone else — no-op
-    cell.definite = selectedSuspect;
-    cell.pencil.clear();
-    cell.x = false;
-    // cross out the rest of the row and column (skipping cells that are blocked or already occupied)
-    for (let cc = 0; cc < PUZZLE.cols; cc++) {
-      if (cc === c || isBlocked(r, cc)) continue;
-      const other = grid[r][cc];
-      if (!other.definite) {
-        other.x = true;
-        other.pencil.clear();
-      }
-    }
-    for (let rr = 0; rr < PUZZLE.rows; rr++) {
-      if (rr === r || isBlocked(rr, c)) continue;
-      const other = grid[rr][c];
-      if (!other.definite) {
-        other.x = true;
-        other.pencil.clear();
-      }
-    }
-    return true;
-  }
-
-  if (currentTool === "erase") {
+  if (selection === "#erase") {
     if (!cell.definite && !cell.x && cell.pencil.size === 0) return null;
     cell.definite = null;
     cell.x = false;
@@ -350,7 +734,39 @@ function applyToolToCell(r, c, forceApply) {
     return true;
   }
 
+  if (isSuspectSelection(selection)) {
+    if (cell.definite) return null;
+    const has = cell.pencil.has(selection);
+    const shouldHave = forceApply === null ? !has : forceApply;
+    if (shouldHave) cell.pencil.add(selection);
+    else cell.pencil.delete(selection);
+    return shouldHave;
+  }
+
   return null;
+}
+
+function placeDefinitely(r, c, letter) {
+  const cell = grid[r][c];
+  cell.definite = letter;
+  cell.pencil.clear();
+  cell.x = false;
+  for (let cc = 0; cc < PUZZLE.cols; cc++) {
+    if (cc === c || isBlocked(r, cc)) continue;
+    const other = grid[r][cc];
+    if (!other.definite) {
+      other.x = true;
+      other.pencil.clear();
+    }
+  }
+  for (let rr = 0; rr < PUZZLE.rows; rr++) {
+    if (rr === r || isBlocked(rr, c)) continue;
+    const other = grid[rr][c];
+    if (!other.definite) {
+      other.x = true;
+      other.pencil.clear();
+    }
+  }
 }
 
 // --- Undo history --------------------------------------------------------
@@ -371,6 +787,18 @@ function restoreSnapshot(snapshot) {
   })));
 }
 
+// Clears state on any cell that is now blocked — guards against puzzle data corrections
+// (or a save from an older schema) leaving a placement/pencil mark on an un-occupiable cell.
+function sanitizeRestoredGrid() {
+  for (let r = 0; r < PUZZLE.rows; r++) {
+    for (let c = 0; c < PUZZLE.cols; c++) {
+      if (isBlocked(r, c)) {
+        grid[r][c] = { pencil: new Set(), definite: null, x: false };
+      }
+    }
+  }
+}
+
 function pushHistory() {
   history.push(snapshotGrid());
   if (history.length > HISTORY_LIMIT) history.shift();
@@ -381,7 +809,8 @@ function undo() {
   if (history.length === 0) return;
   restoreSnapshot(history.pop());
   updateUndoButton();
-  renderGrid();
+  renderMarks();
+  applyHighlights();
   saveProgress();
 }
 
@@ -396,6 +825,10 @@ function updateUndoButton() {
 
 function storageKey() {
   return `murdoku:progress:${PUZZLE.id}`;
+}
+
+function gridMatchesDimensions(g) {
+  return Array.isArray(g) && g.length === PUZZLE.rows && g.every((row) => Array.isArray(row) && row.length === PUZZLE.cols);
 }
 
 function saveProgress() {
@@ -420,8 +853,9 @@ function loadProgressFromLocalStorage() {
     const raw = localStorage.getItem(storageKey());
     if (!raw) return false;
     const data = JSON.parse(raw);
-    if (data.puzzleId !== PUZZLE.id || !Array.isArray(data.grid)) return false;
+    if (data.puzzleId !== PUZZLE.id || !gridMatchesDimensions(data.grid)) return false;
     restoreSnapshot(data.grid);
+    sanitizeRestoredGrid();
     return true;
   } catch (err) {
     console.warn("Failed to load saved progress:", err);
@@ -453,9 +887,12 @@ loadInput.addEventListener("change", () => {
       if (data.puzzleId && data.puzzleId !== PUZZLE.id) {
         if (!confirm(`This save is for a different puzzle ("${data.puzzleId}"). Load it anyway?`)) return;
       }
+      if (!gridMatchesDimensions(data.grid)) throw new Error("Save file doesn't match this puzzle's grid size.");
       pushHistory();
       restoreSnapshot(data.grid);
-      renderGrid();
+      sanitizeRestoredGrid();
+      renderMarks();
+      applyHighlights();
       saveProgress();
     } catch (err) {
       alert("Couldn't load that file: " + err.message);
@@ -481,24 +918,24 @@ async function loadPuzzleData(file) {
 }
 
 function initPuzzle(data) {
-  PUZZLE = data;
+  PUZZLE = normalizePuzzle(data);
+  objectAt = buildObjectIndex(PUZZLE);
   grid = freshGrid();
   history = [];
-  selectedSuspect = null;
+  selection = null;
   hoveredSuspect = null;
-  currentTool = "pencil";
-  toolGroupEl.querySelectorAll(".tool-btn[data-tool]").forEach((b) => b.classList.toggle("active", b.dataset.tool === "pencil"));
-
-  gridEl.style.gridTemplateColumns = `repeat(${PUZZLE.cols}, 1fr)`;
-  gridEl.style.gridTemplateRows = `repeat(${PUZZLE.rows}, 1fr)`;
+  hoverRefs = null;
+  gesture = null;
 
   buildPalette();
   buildClueList();
-  updatePaletteSelection();
+  updateSelectionUI();
   updateHint();
   updateUndoButton();
   loadProgressFromLocalStorage();
-  renderGrid();
+  renderStatic();
+  renderMarks();
+  applyHighlights();
 }
 
 async function selectPuzzle(id, manifest) {
@@ -510,6 +947,9 @@ async function selectPuzzle(id, manifest) {
 }
 
 async function boot() {
+  attachGestureListeners(); // element is reused across puzzle switches — attach exactly once
+  buildLegend();
+
   let manifest;
   try {
     manifest = await loadManifest();

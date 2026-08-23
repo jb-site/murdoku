@@ -11,8 +11,9 @@ clues and rules, the solver must place every person onto a grid such that:
 - Each person occupies exactly one cell.
 - At most one person per row, and at most one person per column.
 - Grids are divided into named **rooms** with irregular (non-rectangular) boundaries.
-- Cells may hold **furniture objects** — some occupiable (bed, chair), some blocking (TV, shelf,
-  table, plant) — a person can never be placed on a blocking object's cell.
+- Cells may hold **furniture objects**, some spanning multiple cells (a wide bed, a dining table) —
+  some occupiable (bed, chair), some blocking (TV, shelf, table, plant) — a person can never be
+  placed on a blocking object's cell.
 
 This is a static, client-side web app (vanilla HTML/CSS/JS, no build step, no backend) hosted free
 on GitHub Pages at `https://jonbaker99.github.io/adhoc-projects/murdoku/`.
@@ -31,13 +32,50 @@ URL) because `app.js` fetches puzzle JSON via `fetch()`.
 - `index.html` / `style.css` / `app.js` — the whole app. No dependencies, no build step.
 - `puzzles/index.json` — manifest listing available puzzles (id, title, filename). The app's
   puzzle picker reads this on load.
-- `puzzles/<id>.json` — one puzzle's full data: grid size, suspects, clues, room layout
-  (`roomGrid`), and furniture layout (`objectGrid`). See the top of `app.js` for the exact schema
-  and `OBJECT_TYPES` for the known furniture types.
+- `puzzles/<id>.json` — one puzzle's full data: grid size, suspects, structured clues (with `refs`
+  for hover highlighting), room layout (`roomGrid`), and furniture layout (`objects`, a list of
+  `{type, cells}` — cells can span multiple cells, e.g. a 2-cell bed). See the top of `app.js` for
+  the exact schema and `OBJECT_TYPES` for the known furniture types and their SVG art.
 - `puzzles/source/` — original photos/PDFs a puzzle was transcribed from, kept for reference.
 - `PUZZLE_IMPORT_PROMPT.md` — the process (and literal prompt text) for turning a new puzzle
   photo/PDF into a `puzzles/<id>.json` file + manifest entry. Run this locally (Claude Code can
   read the image/PDF directly) rather than calling an external AI API — keeps the app 100% static.
+
+## Rendering
+
+The grid is four aligned CSS-grid layers stacked in one `#grid` container, sharing the same
+`grid-template-rows/columns` so a cell at `(r,c)` lines up across all of them:
+
+1. `layer-cells` — room background tint + borders (thick between different rooms, thin within one).
+   **This is the only interactive layer** — all pointer listeners are delegated here.
+2. `layer-objects` — one SVG per object (`OBJECT_TYPES[type].art(colSpan, rowSpan)`), spanning
+   multiple grid cells for multi-cell objects.
+3. `layer-labels` — room-name pills, anchored to each room's longest bottom-most horizontal run.
+4. `layer-marks` — the definite letter / ✕ / pencil-mark grid, plus the highlight rings.
+
+`renderStatic()` rebuilds all four layers and runs once per puzzle load. `renderMarks()` (after
+every state mutation) and `applyHighlights()` (on every hover change) only rewrite content/classes
+on the existing `layer-marks` elements — never structure or listeners — so an in-progress
+long-press/drag gesture never has its DOM pulled out from under it.
+
+## Interaction
+
+One unified palette: suspect letters plus `✕` and `Erase`, exactly one selected at a time (synced
+between the palette and the clickable clue rows). With a suspect selected:
+
+- **Short click** → pencil in that suspect as a candidate.
+- **Hold** (~450ms) → place them definitively (auto-crosses the rest of their row & column).
+- **Drag** → paint pencil candidates across cells (never places).
+
+`✕`/`Erase` ignore hold — click or drag both just apply immediately. Implemented as a pointer-event
+gesture state machine (`pending → paint → placed`) with pointer capture; see `app.js` for the exact
+timing constants and edge cases. One long-press gesture (pencil + place + auto-cross) is a single
+`pushHistory()` entry, so one Undo reverts it atomically.
+
+Hovering a grid cell shows what's in it (room + object + player state) in the status line. Hovering
+a clue highlights the rooms/objects it references (`refs` in the puzzle JSON) with a teal dashed
+outline, distinct from the yellow ring used for suspect-candidate highlighting — both can be active
+on the same cell at once.
 
 ## Persistence
 
@@ -47,12 +85,16 @@ URL) because `app.js` fetches puzzle JSON via `fetch()`.
 - Puzzle *data* (the grid/rooms/objects/clues) and puzzle *progress* (what the player has filled
   in) are separate concerns — progress files are tagged with a `puzzleId` and never touch
   `puzzles/*.json`.
+- `sanitizeRestoredGrid()` runs after every restore (localStorage or file load) and clears state on
+  any cell that's now blocked — guards against a puzzle data correction (or an older save) leaving
+  a placement/pencil mark somewhere no longer legal.
 
 ## Status / Next up
 
-Core solving interactions (pencil marks, definitive placement, cross-out, erase, drag-painting,
-undo) and the multi-puzzle library are working. Not yet built: a "report the crime" fun/finishing
-feature once solving mechanics feel complete.
+Core solving interactions (pencil marks, definitive placement via click/hold/drag, cross-out,
+erase, undo), room/object rendering with SVG art and multi-cell spans, room labels, a legend,
+hover status, clue-ref highlighting, and the multi-puzzle library are all working. Not yet built:
+a "report the crime" fun/finishing feature once solving mechanics feel complete.
 
 ## Conventions
 

@@ -14,12 +14,12 @@
     "V": "Vaughn (victim)"
   },
   "clues": [
-    "Austin (A) was beside a shelf.",
-    "Barbara (B) was on the bed.",
-    "Charlotte (C) was the only person sitting in a chair.",
-    "Dean (D) was in the Kitchen.",
-    "Enid (E) was beside the TV.",
-    "Vaughn (V), the victim, was alone with the murderer — the killer was in the same area (room) as him."
+    { "suspect": "A", "text": "Austin (A) was beside a shelf.", "refs": { "objects": ["shelf"] } },
+    { "suspect": "B", "text": "Barbara (B) was on the bed.", "refs": { "objects": ["bed"] } },
+    { "suspect": "C", "text": "Charlotte (C) was the only person sitting in a chair.", "refs": { "objects": ["chair"] } },
+    { "suspect": "D", "text": "Dean (D) was in the Kitchen.", "refs": { "rooms": ["kitchen"] } },
+    { "suspect": "E", "text": "Enid (E) was beside the TV.", "refs": { "objects": ["tv"] } },
+    { "suspect": "V", "text": "Vaughn (V), the victim, was alone with the murderer — the killer was in the same area (room) as him.", "refs": {} }
   ],
   "rooms": {
     "bedroom": { "name": "Bedroom" },
@@ -35,12 +35,25 @@
     ["kitchen", "kitchen", "livingroom", "livingroom", "livingroom", "livingroom"],
     ["kitchen", "kitchen", "livingroom", "livingroom", "livingroom", "livingroom"]
   ],
-  "objectGrid": [
-    ["bed", null, null, null, "plant", "chair"],
-    [null, null, null, "chair", null, null],
-    ["shelf", "plant", "chair", "chair", null, null],
-    [null, null, null, null, null, null],
-    ["shelf", null, "chair", null, "chair", "tv"],
-    ["table", "table", "shelf", null, null, "plant"]
+  "objects": [
+    { "type": "bed", "cells": [[0, 0], [0, 1]] },
+    { "type": "plant", "cells": [[0, 4]] },
+    { "type": "chair", "cells": [[0, 5]] },
+
+    { "type": "chair", "cells": [[1, 3]] },
+
+    { "type": "shelf", "cells": [[2, 0]] },
+    { "type": "plant", "cells": [[2, 1]] },
+    { "type": "chair", "cells": [[2, 3]] },
+    { "type": "chair", "cells": [[2, 4]] },
+
+    { "type": "shelf", "cells": [[4, 0]] },
+    { "type": "chair", "cells": [[4, 2]] },
+    { "type": "chair", "cells": [[4, 4]] },
+    { "type": "tv", "cells": [[4, 5]] },
+
+    { "type": "table", "cells": [[5, 0], [5, 1]] },
+    { "type": "shelf", "cells": [[5, 2]] },
+    { "type": "plant", "cells": [[5, 5]] }
   ]
 }
