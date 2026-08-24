@@ -1,0 +1,95 @@
+{
+  "id": "the-courtroom",
+  "title": "The Courtroom",
+  "difficulty": "easy",
+  "sourceFile": "source/the-courtroom-color.pdf",
+  "rows": 9,
+  "cols": 9,
+  "suspects": ["A", "B", "C", "D", "E", "F", "G", "H", "V"],
+  "names": {
+    "A": "Arthur",
+    "B": "Benjamin",
+    "C": "Camila",
+    "D": "Daisy",
+    "E": "Eliza",
+    "F": "Fritz",
+    "G": "Graham",
+    "H": "Howard",
+    "V": "Vanessa (victim)"
+  },
+  "clues": [
+    { "suspect": "A", "text": "Arthur (A) was at the Judge's Bench.", "refs": { "rooms": ["judgesbench"] } },
+    { "suspect": "B", "text": "Benjamin (B) was with the only person sitting in a chair.", "refs": { "objects": ["chair"] } },
+    { "suspect": "C", "text": "Camila (C) was in the Gallery.", "refs": { "rooms": ["gallery"] } },
+    { "suspect": "D", "text": "Daisy (D) was on a carpet.", "refs": {} },
+    { "suspect": "E", "text": "Eliza (E) was at the Witness Stand.", "refs": { "rooms": ["witnessstand"] } },
+    { "suspect": "F", "text": "Fritz (F) was beside a table.", "refs": { "objects": ["table"] } },
+    { "suspect": "G", "text": "Graham (G) was in the Security area.", "refs": { "rooms": ["security"] } },
+    { "suspect": "H", "text": "Howard (H) was beside a plant.", "refs": { "objects": ["plant"] } },
+    { "suspect": "V", "text": "Vanessa (V), the victim, was alone with the murderer — the killer was in the same area (room) as him.", "refs": {} }
+  ],
+  "rooms": {
+    "judgesoffice": { "name": "Judge's Office" },
+    "security": { "name": "Security" },
+    "judgesbench": { "name": "Judge's Bench" },
+    "clerksdesk": { "name": "Clerk's Desk" },
+    "witnessstand": { "name": "Witness Stand" },
+    "defense": { "name": "Defense" },
+    "prosecution": { "name": "Prosecution" },
+    "gallery": { "name": "Gallery" },
+    "jurybox": { "name": "Jury Box" }
+  },
+  "roomGrid": [
+    ["judgesoffice", "judgesoffice", "judgesoffice", "judgesoffice", "judgesoffice", "security", "security", "security", "security"],
+    ["judgesoffice", "judgesoffice", "judgesoffice", "judgesbench", "judgesbench", "judgesbench", "security", "security", "security"],
+    ["prosecution", "prosecution", "prosecution", "judgesbench", "judgesbench", "judgesbench", "defense", "defense", "defense"],
+    ["prosecution", "prosecution", "prosecution", "clerksdesk", "clerksdesk", "clerksdesk", "defense", "defense", "defense"],
+    ["prosecution", "prosecution", "prosecution", "clerksdesk", "clerksdesk", "clerksdesk", "defense", "defense", "defense"],
+    ["prosecution", "prosecution", "prosecution", "witnessstand", "witnessstand", "witnessstand", "defense", "defense", "defense"],
+    ["gallery", "prosecution", "prosecution", "witnessstand", "witnessstand", "witnessstand", "defense", "jurybox", "jurybox"],
+    ["gallery", "gallery", "gallery", "gallery", "gallery", "gallery", "gallery", "jurybox", "jurybox"],
+    ["gallery", "gallery", "gallery", "gallery", "gallery", "gallery", "gallery", "jurybox", "jurybox"]
+  ],
+  "objects": [
+    { "type": "shelf", "cells": [[0, 0]] },
+    { "type": "chair", "cells": [[0, 1]] },
+    { "type": "shelf", "cells": [[0, 2]] },
+    { "type": "plant", "cells": [[0, 3]] },
+    { "type": "tv", "cells": [[0, 6]] },
+    { "type": "table", "cells": [[0, 7]] },
+    { "type": "tv", "cells": [[0, 8]] },
+
+    { "type": "table", "cells": [[1, 0], [1, 1]] },
+    { "type": "chair", "cells": [[1, 4]] },
+
+    { "type": "plant", "cells": [[2, 0]] },
+    { "type": "table", "cells": [[2, 3], [2, 4], [2, 5]] },
+
+    { "type": "chair", "cells": [[3, 1]] },
+    { "type": "table", "cells": [[3, 2], [4, 2], [5, 2], [6, 2]] },
+    { "type": "chair", "cells": [[3, 3]] },
+    { "type": "table", "cells": [[3, 6], [4, 6], [5, 6], [6, 6]] },
+    { "type": "chair", "cells": [[3, 7]] },
+
+    { "type": "chair", "cells": [[4, 1]] },
+    { "type": "table", "cells": [[4, 3], [4, 4]] },
+
+    { "type": "table", "cells": [[5, 4]] },
+    { "type": "chair", "cells": [[5, 7]] },
+
+    { "type": "table", "cells": [[6, 0], [7, 0]] },
+    { "type": "table", "cells": [[6, 7], [6, 8]] },
+
+    { "type": "chair", "cells": [[7, 1]] },
+    { "type": "chair", "cells": [[7, 3]] },
+    { "type": "chair", "cells": [[7, 5]] },
+    { "type": "table", "cells": [[7, 7], [8, 7]] },
+    { "type": "chair", "cells": [[7, 8]] },
+
+    { "type": "chair", "cells": [[8, 2]] },
+    { "type": "chair", "cells": [[8, 3]] },
+    { "type": "chair", "cells": [[8, 5]] },
+    { "type": "table", "cells": [[8, 6]] },
+    { "type": "chair", "cells": [[8, 8]] }
+  ]
+}

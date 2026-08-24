@@ -250,6 +250,60 @@ const ROOM_COLORS = {
 };
 const DEFAULT_ROOM_COLOR = "#2f313a";
 
+// --- Per-suspect colour coding -----------------------------------------
+// Indexed by letter (A=0, B=1, ...), not array position, so a given letter always
+// gets the same colour across puzzles. 13 entries covers the max non-victim cast
+// (14 players = A-M + V) without wrapping. No saturated red — that's reserved for
+// the ✕ glyph, which shares the same marks layer.
+const SUSPECT_COLORS = [
+  "#7cb7ff", // A azure
+  "#ffc04d", // B amber
+  "#5fd3a6", // C mint
+  "#ff9ec4", // D pink
+  "#c79bff", // E violet
+  "#a6d95a", // F lime
+  "#57d6ea", // G cyan
+  "#ff9d5c", // H orange
+  "#8f8fe8", // I indigo
+  "#d7c86a", // J olive
+  "#4fbf87", // K forest
+  "#e2a0f0", // L orchid
+  "#b0b8c4", // M slate
+];
+const VICTIM_COLOR = "#efe4d0"; // V is not a suspect — kept out of the rotation
+
+function suspectColor(letter) {
+  if (letter === "V") return VICTIM_COLOR;
+  return SUSPECT_COLORS[(letter.charCodeAt(0) - 65) % SUSPECT_COLORS.length];
+}
+
+function hexToRgbTriplet(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`;
+}
+
+let suspectColorStyleEl = null;
+
+// Generates one <style> block mapping each suspect letter to CSS custom properties
+// (--sc/--sc-rgb keyed off data-item/data-letter, --hl-rgb keyed off data-hl), so
+// every colour-coded surface is plain CSS reading a shared var — no per-element
+// inline style writes on every renderMarks()/applyHighlights() pass.
+function applySuspectColors() {
+  if (!suspectColorStyleEl) {
+    suspectColorStyleEl = document.createElement("style");
+    suspectColorStyleEl.id = "suspectColors";
+    document.head.appendChild(suspectColorStyleEl);
+  }
+  const lines = [];
+  PUZZLE.suspects.forEach((letter) => {
+    const hex = suspectColor(letter);
+    const rgb = hexToRgbTriplet(hex);
+    lines.push(`[data-item="${letter}"], [data-letter="${letter}"] { --sc: ${hex}; --sc-rgb: ${rgb}; }`);
+    lines.push(`[data-hl="${letter}"] { --hl-rgb: ${rgb}; }`);
+  });
+  suspectColorStyleEl.textContent = lines.join("\n");
+}
+
 // --- Layout (side-by-side clues split) --------------------------------------
 
 const CLUES_MIN = 280;
@@ -425,6 +479,9 @@ const legendEl = document.getElementById("legend");
 const mainEl = document.querySelector("main");
 const workspaceEl = document.getElementById("workspace");
 const resizeHandleEl = document.getElementById("resizeHandle");
+const prefColorPencilsEl = document.getElementById("prefColorPencils");
+const prefPlayerNotesEl = document.getElementById("prefPlayerNotes");
+const playerPanelEl = document.getElementById("playerPanel");
 
 clearBtn.addEventListener("click", () => {
   if (!confirm("Clear the whole grid?")) return;
@@ -529,6 +586,7 @@ function buildClueList() {
     if (clue.suspect) {
       const chip = document.createElement("span");
       chip.className = "suspect-chip chip-inline" + (clue.suspect === "V" ? " victim" : "");
+      chip.dataset.item = clue.suspect;
       chip.textContent = clue.suspect;
       li.appendChild(chip);
     }
@@ -594,6 +652,119 @@ function buildLegend() {
         Click a row or column number to apply the selected tool to that whole line at once (existing ✕s are left alone).
       </p>
     </details>`;
+}
+
+// --- Player panel (room dropdown + notes, pure solver scratch-space) -------
+// Not validated against anything — a coarser, player-scoped deduction ("I think A is
+// somewhere in the Windy Trail") the grid itself can't express. Kept separate from
+// grid progress: its own per-puzzle localStorage key, its own debounce, and excluded
+// from undo (folding debounced text edits into pushHistory() would make Undo erratic).
+
+let annotations = {}; // letter -> {room: roomId, note: string}
+
+function annotationsKey() {
+  return `murdoku:notes:${PUZZLE.id}`;
+}
+
+// Drops entries for suspects/rooms that no longer exist — the annotation-side
+// analogue of sanitizeRestoredGrid(), guarding against a puzzle edit (or an older
+// save) leaving a dangling room reference.
+function sanitizeAnnotations() {
+  const valid = {};
+  PUZZLE.suspects.forEach((letter) => {
+    const a = annotations[letter];
+    if (!a) return;
+    const room = a.room && PUZZLE.rooms[a.room] ? a.room : "";
+    const note = typeof a.note === "string" ? a.note.slice(0, 120) : "";
+    if (room || note) valid[letter] = { room, note };
+  });
+  annotations = valid;
+}
+
+function loadAnnotations() {
+  annotations = {};
+  try {
+    const raw = localStorage.getItem(annotationsKey());
+    if (raw) annotations = JSON.parse(raw) || {};
+  } catch (err) {
+    console.warn("Couldn't load player notes:", err);
+    annotations = {};
+  }
+  sanitizeAnnotations();
+}
+
+function saveAnnotations() {
+  if (EDIT) return; // edit mode never owns real annotation state
+  try {
+    localStorage.setItem(annotationsKey(), JSON.stringify(annotations));
+  } catch (err) {
+    console.warn("Couldn't save player notes:", err);
+  }
+}
+
+let annotationSaveTimer = null;
+function scheduleAnnotationSave() {
+  clearTimeout(annotationSaveTimer);
+  annotationSaveTimer = setTimeout(saveAnnotations, 400);
+}
+
+function buildPlayerPanel() {
+  playerPanelEl.innerHTML = "";
+  const heading = document.createElement("h2");
+  heading.textContent = "Player notes";
+  playerPanelEl.appendChild(heading);
+
+  PUZZLE.suspects.forEach((letter) => {
+    const row = document.createElement("div");
+    row.className = "player-row";
+    row.dataset.letter = letter;
+
+    const chip = document.createElement("span");
+    chip.className = "suspect-chip chip-inline" + (letter === "V" ? " victim" : "");
+    chip.dataset.item = letter;
+    chip.textContent = letter;
+    row.appendChild(chip);
+
+    const name = document.createElement("span");
+    name.className = "player-name";
+    name.textContent = PUZZLE.names[letter] || letter;
+    row.appendChild(name);
+
+    const select = document.createElement("select");
+    select.className = "room-guess";
+    const blank = document.createElement("option");
+    blank.value = "";
+    blank.textContent = "— room —";
+    select.appendChild(blank);
+    Object.entries(PUZZLE.rooms).forEach(([roomId, room]) => {
+      const opt = document.createElement("option");
+      opt.value = roomId;
+      opt.textContent = room.name;
+      select.appendChild(opt);
+    });
+    select.value = annotations[letter]?.room || "";
+    select.addEventListener("change", () => {
+      annotations[letter] = annotations[letter] || { room: "", note: "" };
+      annotations[letter].room = select.value;
+      scheduleAnnotationSave();
+    });
+    row.appendChild(select);
+
+    const note = document.createElement("input");
+    note.type = "text";
+    note.className = "player-note";
+    note.maxLength = 120;
+    note.placeholder = "Notes…";
+    note.value = annotations[letter]?.note || "";
+    note.addEventListener("input", () => {
+      annotations[letter] = annotations[letter] || { room: "", note: "" };
+      annotations[letter].note = note.value;
+      scheduleAnnotationSave();
+    });
+    row.appendChild(note);
+
+    playerPanelEl.appendChild(row);
+  });
 }
 
 // --- Grid rendering ----------------------------------------------------
@@ -768,9 +939,11 @@ function renderMarks() {
       const markEl = layerMarksEl.children[r * PUZZLE.cols + c];
       markEl.innerHTML = "";
       markEl.classList.remove("definite", "crossed");
+      delete markEl.dataset.letter;
 
       if (cell.definite) {
         markEl.classList.add("definite");
+        markEl.dataset.letter = cell.definite;
         const label = document.createElement("span");
         label.className = "cell-main";
         label.textContent = cell.definite;
@@ -824,6 +997,7 @@ function applyHighlights() {
       const markEl = layerMarksEl.children[r * PUZZLE.cols + c];
       const has = highlightLetter && (cell.definite === highlightLetter || cell.pencil.has(highlightLetter));
       markEl.classList.toggle("highlighted", !!has);
+      if (has) markEl.dataset.hl = highlightLetter; else delete markEl.dataset.hl;
       const pencilSpan = markEl.querySelector(`.pencil-grid span[data-letter="${highlightLetter}"]`);
       markEl.querySelectorAll(".pencil-grid span").forEach((s) => s.classList.remove("pencil-highlighted"));
       if (highlightLetter && pencilSpan) pencilSpan.classList.add("pencil-highlighted");
@@ -1237,7 +1411,7 @@ function loadProgressFromLocalStorage() {
 }
 
 saveBtn.addEventListener("click", () => {
-  const payload = { puzzleId: PUZZLE.id, savedAt: Date.now(), grid: snapshotGrid() };
+  const payload = { puzzleId: PUZZLE.id, savedAt: Date.now(), grid: snapshotGrid(), annotations };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -1264,6 +1438,12 @@ loadInput.addEventListener("change", () => {
       pushHistory();
       restoreSnapshot(data.grid);
       sanitizeRestoredGrid();
+      if (data.annotations && typeof data.annotations === "object") {
+        annotations = data.annotations;
+        sanitizeAnnotations();
+        buildPlayerPanel();
+        saveAnnotations();
+      }
       renderMarks();
       applyHighlights();
       saveProgress();
@@ -1401,6 +1581,51 @@ function saveSplitPref() {
   }
 }
 
+// --- View preferences (display toggles, puzzle-independent) ----------------
+
+let viewPrefs = { colorPencils: true, playerNotes: false };
+
+function loadViewPrefs() {
+  try {
+    const raw = localStorage.getItem("murdoku:viewPrefs");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      viewPrefs = {
+        colorPencils: typeof parsed.colorPencils === "boolean" ? parsed.colorPencils : true,
+        playerNotes: typeof parsed.playerNotes === "boolean" ? parsed.playerNotes : false,
+      };
+    }
+  } catch (err) {
+    console.warn("Couldn't load view preferences:", err);
+  }
+}
+
+function saveViewPrefs() {
+  try {
+    localStorage.setItem("murdoku:viewPrefs", JSON.stringify(viewPrefs));
+  } catch (err) {
+    console.warn("Couldn't save view preferences:", err);
+  }
+}
+
+function applyViewPrefs() {
+  document.body.classList.toggle("color-pencils", viewPrefs.colorPencils);
+  document.body.classList.toggle("show-player-notes", viewPrefs.playerNotes);
+  prefColorPencilsEl.checked = viewPrefs.colorPencils;
+  prefPlayerNotesEl.checked = viewPrefs.playerNotes;
+}
+
+prefColorPencilsEl.addEventListener("change", () => {
+  viewPrefs.colorPencils = prefColorPencilsEl.checked;
+  applyViewPrefs();
+  saveViewPrefs();
+});
+prefPlayerNotesEl.addEventListener("change", () => {
+  viewPrefs.playerNotes = prefPlayerNotesEl.checked;
+  applyViewPrefs();
+  saveViewPrefs();
+});
+
 // --- Edit mode -------------------------------------------------------------
 // A puzzle-authoring mode that swaps PUZZLE for a working clone, so the entire solving
 // render pipeline (renderStatic/renderMarks/applyHighlights/describeCell/isBlocked/
@@ -1466,6 +1691,7 @@ function enterEditMode(sourcePuzzle) {
   puzzleSelectEl.disabled = true;
   editRowsInput.value = PUZZLE.rows;
   editColsInput.value = PUZZLE.cols;
+  applySuspectColors();
   refreshPuzzleMeta();
   clueListEl.innerHTML = "";
   setEditTab("rooms");
@@ -1496,8 +1722,10 @@ function exitEditMode(mode) {
   editorBarEl.hidden = true;
   puzzleSelectEl.disabled = false;
 
+  applySuspectColors();
   buildPalette();
   buildClueList();
+  buildPlayerPanel();
   updateSelectionUI();
   updateHint();
   updateUndoButton();
@@ -1537,6 +1765,7 @@ function loadDraftPuzzle(data) {
   editRowsInput.value = PUZZLE.rows;
   editColsInput.value = PUZZLE.cols;
   EDIT.dirty = true;
+  applySuspectColors();
   refreshPuzzleMeta();
   renderStatic();
   renderMarks();
@@ -1805,6 +2034,7 @@ function buildDetailsPanel() {
         : { suspect: clue.suspect ?? null, text: clue.text, refs: { rooms: clue.refs?.rooms || [], objects: clue.refs?.objects || [], suspects: clue.refs?.suspects || [] } }));
       errorEl.textContent = "";
       EDIT.dirty = true;
+      applySuspectColors();
       validateDraft();
       scheduleDraftSave();
     } catch (err) {
@@ -2111,12 +2341,15 @@ function initPuzzle(data) {
   puzzleDifficultyEl.textContent = PUZZLE.difficulty ? `difficulty: ${PUZZLE.difficulty}` : "";
   puzzleDifficultyEl.className = "difficulty-badge" + (PUZZLE.difficulty ? ` difficulty-${PUZZLE.difficulty}` : "");
 
+  applySuspectColors();
   buildPalette();
   buildClueList();
   updateSelectionUI();
   updateHint();
   updateUndoButton();
   loadProgressFromLocalStorage();
+  loadAnnotations();
+  buildPlayerPanel();
   renderStatic();
   renderMarks();
   applyHighlights();
@@ -2135,6 +2368,8 @@ async function boot() {
   attachGestureListeners(); // element is reused across puzzle switches — attach exactly once
   attachSplitListeners();
   loadSplitPref();
+  loadViewPrefs();
+  applyViewPrefs();
   buildLegend();
 
   let manifest;

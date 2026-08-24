@@ -1,0 +1,93 @@
+{
+  "id": "preppers",
+  "title": "Preppers",
+  "difficulty": "medium",
+  "sourceFile": "source/preppers-color.pdf",
+  "rows": 9,
+  "cols": 9,
+  "suspects": ["A", "B", "C", "D", "E", "F", "G", "H", "V"],
+  "names": {
+    "A": "Angelo",
+    "B": "Blake",
+    "C": "Carolina",
+    "D": "Daryl",
+    "E": "Edna",
+    "F": "Friedrich",
+    "G": "Greg",
+    "H": "Howie",
+    "V": "Vivianna (victim)"
+  },
+  "clues": [
+    { "suspect": "A", "text": "Angelo (A) had a box in his area, but he was not beside any box.", "refs": { "objects": ["box"] } },
+    { "suspect": "B", "text": "Blake (B) was in the Bedroom.", "refs": { "rooms": ["bedroom"] } },
+    { "suspect": "C", "text": "Carolina (C) had a man on the bed in her area.", "refs": { "objects": ["bed"] } },
+    { "suspect": "D", "text": "Daryl (D) had someone else beside a shelf in her area.", "refs": { "objects": ["shelf"] } },
+    { "suspect": "E", "text": "Edna (E) was in the bottom row.", "refs": {} },
+    { "suspect": "F", "text": "Friedrich (F) was beside a TV.", "refs": { "objects": ["tv"] } },
+    { "suspect": "G", "text": "Greg (G) was sitting in a chair.", "refs": { "objects": ["chair"] } },
+    { "suspect": "H", "text": "Howie (H) was in the Bathroom.", "refs": { "rooms": ["bathroom"] } },
+    { "suspect": "V", "text": "Vivianna (V), the victim, was alone with the murderer — the killer was in the same area (room) as her.", "refs": {} }
+  ],
+  "rooms": {
+    "yard": { "name": "Yard" },
+    "kitchen": { "name": "Kitchen" },
+    "livingroom": { "name": "Living Room" },
+    "bathroom": { "name": "Bathroom" },
+    "bedroom": { "name": "Bedroom" },
+    "secretstairs": { "name": "Secret Stairs" },
+    "saferoom": { "name": "Safe Room" },
+    "supply": { "name": "Supply" }
+  },
+  "roomGrid": [
+    ["yard", "yard", "yard", "yard", "yard", "yard", "yard", "yard", "yard"],
+    ["yard", "kitchen", "kitchen", "kitchen", "livingroom", "livingroom", "livingroom", "yard", "yard"],
+    ["yard", "kitchen", "kitchen", "kitchen", "livingroom", "livingroom", "livingroom", "yard", "yard"],
+    ["yard", "kitchen", "kitchen", "kitchen", "livingroom", "livingroom", "livingroom", "yard", "yard"],
+    ["yard", "bathroom", "bathroom", "bedroom", "bedroom", "bedroom", "bedroom", "yard", "yard"],
+    ["yard", "bathroom", "bathroom", "bedroom", "bedroom", "bedroom", "bedroom", "supply", "supply"],
+    ["saferoom", "saferoom", "saferoom", "secretstairs", "bedroom", "supply", "supply", "supply", "supply"],
+    ["saferoom", "saferoom", "saferoom", "secretstairs", "secretstairs", "supply", "supply", "supply", "supply"],
+    ["saferoom", "saferoom", "saferoom", "saferoom", "saferoom", "supply", "supply", "supply", "supply"]
+  ],
+  "objects": [
+    { "type": "car", "cells": [[0, 6], [0, 7]] },
+    { "type": "shrub", "cells": [[3, 0]] },
+    { "type": "shrub", "cells": [[2, 8]] },
+    { "type": "box", "cells": [[1, 7]] },
+
+    { "type": "table", "cells": [[1, 1], [2, 1]] },
+    { "type": "table", "cells": [[1, 2]] },
+    { "type": "table", "cells": [[2, 3]] },
+    { "type": "chair", "cells": [[3, 3]] },
+
+    { "type": "chair", "cells": [[1, 4]] },
+    { "type": "chair", "cells": [[2, 4]] },
+    { "type": "tv", "cells": [[2, 6]] },
+    { "type": "shelf", "cells": [[3, 6]] },
+
+    { "type": "chair", "cells": [[5, 1]] },
+    { "type": "box", "cells": [[5, 2]] },
+
+    { "type": "table", "cells": [[4, 3]] },
+    { "type": "bed", "cells": [[4, 4], [4, 5]] },
+    { "type": "shelf", "cells": [[5, 3]] },
+
+    { "type": "box", "cells": [[6, 0]] },
+    { "type": "tv", "cells": [[6, 1]] },
+    { "type": "box", "cells": [[6, 2]] },
+    { "type": "safe", "cells": [[7, 0]] },
+    { "type": "chair", "cells": [[7, 1]] },
+    { "type": "box", "cells": [[7, 2]] },
+    { "type": "shelf", "cells": [[8, 1]] },
+    { "type": "box", "cells": [[8, 4]] },
+
+    { "type": "shelf", "cells": [[5, 7]] },
+    { "type": "box", "cells": [[5, 8]] },
+    { "type": "shelf", "cells": [[6, 5]] },
+    { "type": "box", "cells": [[6, 6]] },
+    { "type": "box", "cells": [[7, 7]] },
+    { "type": "box", "cells": [[7, 8]] },
+    { "type": "box", "cells": [[8, 6]] },
+    { "type": "shelf", "cells": [[8, 7]] }
+  ]
+}

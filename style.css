@@ -134,6 +134,14 @@ body.resizing { cursor: col-resize; }
 
 .suspect-palette { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
+.view-options {
+  align-items: center;
+  gap: 16px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.view-options label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+
 .palette-sep {
   width: 1px;
   height: 28px;
@@ -145,7 +153,7 @@ body.resizing { cursor: col-resize; }
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 2px solid var(--border);
+  border: 2px solid var(--sc, var(--border));
   background: #2f3239;
   color: var(--text);
   font-weight: 600;
@@ -157,9 +165,7 @@ body.resizing { cursor: col-resize; }
   transition: transform 0.1s, border-color 0.15s, background 0.15s;
 }
 .suspect-chip:hover { transform: scale(1.08); }
-.suspect-chip.selected { border-color: var(--accent); background: var(--accent-soft); }
-.suspect-chip.victim { border-color: #b34747; }
-.suspect-chip.victim.selected { background: rgba(179, 71, 71, 0.3); }
+.suspect-chip.selected { border-color: var(--sc, var(--accent)); background: rgba(var(--sc-rgb, 91,140,255), 0.28); }
 
 .suspect-chip.special-chip {
   border-radius: 10px;
@@ -253,7 +259,9 @@ body.edit-mode #undoBtn,
 body.edit-mode #clearBtn,
 body.edit-mode #saveBtn,
 body.edit-mode #loadBtn,
-body.edit-mode #editBtn {
+body.edit-mode #editBtn,
+body.edit-mode #viewOptions,
+body.edit-mode .players {
   display: none;
 }
 
@@ -451,9 +459,12 @@ body.edit-mode #editBtn {
   font-weight: 700;
   position: relative;
 }
-.mark.definite { color: var(--accent); }
+.mark.definite { color: var(--sc, var(--accent)); }
 .mark.crossed { color: var(--x-color); }
-.mark.highlighted { box-shadow: inset 0 0 0 3px var(--highlight); }
+.mark.highlighted {
+  background: rgba(var(--hl-rgb, 255, 209, 102), 0.16);
+  border-radius: 3px;
+}
 
 .cell-main { position: relative; z-index: 1; }
 
@@ -468,12 +479,26 @@ body.edit-mode #editBtn {
   font-size: 0.65rem;
   font-weight: 600;
   color: var(--muted);
+  opacity: 0.85;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.pencil-grid span.pencil-highlighted {
-  color: var(--highlight);
+
+/* Toggle ON: pencil glyph colour carries player identity; highlight emphasis
+   switches to weight + glow, since colour is already spoken for. */
+body.color-pencils .pencil-grid span { color: var(--sc, var(--muted)); }
+body.color-pencils .pencil-grid span.pencil-highlighted {
+  opacity: 1;
+  font-weight: 800;
+  text-shadow: 0 0 5px rgba(var(--sc-rgb, 255, 209, 102), 0.7);
+}
+
+/* Toggle OFF: uniform grey glyphs; highlight emphasis uses the player's own colour. */
+body:not(.color-pencils) .pencil-grid span.pencil-highlighted {
+  color: var(--sc, var(--highlight));
+  opacity: 1;
+  font-weight: 700;
 }
 
 /* Dim everything not referenced by the hovered clue */
@@ -521,6 +546,50 @@ body.edit-mode #editBtn {
 .clue-row.selected { border-color: var(--accent); background: var(--accent-soft); }
 .clue-row.no-suspect { cursor: default; padding-left: 44px; }
 .clue-row.no-suspect:hover { background: transparent; }
+
+/* --- Player panel (room guess + notes, toggleable) --- */
+
+.players {
+  display: none;
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+body.show-player-notes:not(.edit-mode) .players { display: block; }
+.players h2 { margin: 0 0 10px; font-size: 1rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.player-row:last-child { border-bottom: none; }
+.player-name { min-width: 110px; font-size: 0.85rem; flex-shrink: 0; }
+
+.room-guess {
+  background: #2f3239;
+  color: var(--text);
+  border: 1px solid var(--sc, var(--border));
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.player-note {
+  flex: 1;
+  min-width: 0;
+  background: #2f3239;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+}
 
 /* --- Legend --- */
 

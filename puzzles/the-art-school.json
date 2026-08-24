@@ -1,0 +1,99 @@
+{
+  "id": "the-art-school",
+  "title": "The Art School",
+  "difficulty": "medium",
+  "sourceFile": "source/the-art-school-color.pdf",
+  "rows": 9,
+  "cols": 9,
+  "suspects": ["A", "B", "C", "D", "E", "F", "G", "H", "V"],
+  "names": {
+    "A": "Anthony",
+    "B": "Ben",
+    "C": "Coralie",
+    "D": "Delilah",
+    "E": "Everly",
+    "F": "Fritz",
+    "G": "Ginevra",
+    "H": "Hartley",
+    "V": "Veronica (victim)"
+  },
+  "clues": [
+    { "suspect": "A", "text": "Anthony (A) was alone.", "refs": {} },
+    { "suspect": "B", "text": "Ben (B) had a framed painting on his square.", "refs": { "objects": ["framedpainting"] } },
+    { "suspect": "C", "text": "Coralie (C) was beside a statue.", "refs": { "objects": ["statue"] } },
+    { "suspect": "D", "text": "Delilah (D) was one row south of a woman who was alone in the Gallery.", "refs": { "rooms": ["gallery"] } },
+    { "suspect": "E", "text": "Everly (E) was beside an easel, directly south of it.", "refs": { "objects": ["easel"] } },
+    { "suspect": "F", "text": "Fritz (F) was on a carpet.", "refs": { "objects": ["carpet"] } },
+    { "suspect": "G", "text": "Ginevra (G) was the only person sitting in a chair.", "refs": { "objects": ["chair"] } },
+    { "suspect": "H", "text": "Hartley (H) was beside a table.", "refs": { "objects": ["table"] } },
+    { "suspect": "V", "text": "Veronica (V), the victim, was alone with the murderer — the killer was in the same area (room) as her.", "refs": {} }
+  ],
+  "rooms": {
+    "office": { "name": "Office" },
+    "modelplatform": { "name": "Model Platform" },
+    "supplies": { "name": "Supplies" },
+    "paintingstudio": { "name": "Painting Studio" },
+    "gallery": { "name": "Gallery" },
+    "sculptingstudio": { "name": "Sculpting Studio" }
+  },
+  "roomGrid": [
+    ["office", "office", "modelplatform", "modelplatform", "modelplatform", "modelplatform", "modelplatform", "supplies", "supplies"],
+    ["office", "office", "modelplatform", "modelplatform", "modelplatform", "modelplatform", "modelplatform", "supplies", "supplies"],
+    ["office", "paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio", "supplies"],
+    ["paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio"],
+    ["paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio"],
+    ["gallery", "gallery", "paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio", "paintingstudio", "sculptingstudio", "sculptingstudio"],
+    ["gallery", "gallery", "gallery", "gallery", "gallery", "sculptingstudio", "sculptingstudio", "sculptingstudio", "sculptingstudio"],
+    ["gallery", "gallery", "gallery", "gallery", "gallery", "sculptingstudio", "sculptingstudio", "sculptingstudio", "sculptingstudio"],
+    ["gallery", "gallery", "gallery", "gallery", "gallery", "sculptingstudio", "sculptingstudio", "sculptingstudio", "sculptingstudio"]
+  ],
+  "objects": [
+    { "type": "chair", "cells": [[0, 0]] },
+    { "type": "framedpainting", "cells": [[0, 1]] },
+    { "type": "table", "cells": [[1, 0]] },
+
+    { "type": "carpet", "cells": [[0, 3], [0, 4], [0, 5]] },
+    { "type": "carpet", "cells": [[1, 3], [1, 4]] },
+    { "type": "statue", "cells": [[0, 6]] },
+    { "type": "chair", "cells": [[1, 5]] },
+
+    { "type": "shelf", "cells": [[0, 7]] },
+    { "type": "shelf", "cells": [[0, 8]] },
+    { "type": "easel", "cells": [[1, 8]] },
+
+    { "type": "chair", "cells": [[2, 1]] },
+    { "type": "easel", "cells": [[2, 2]] },
+    { "type": "table", "cells": [[2, 6]] },
+    { "type": "chair", "cells": [[2, 7]] },
+
+    { "type": "chair", "cells": [[3, 1]] },
+    { "type": "easel", "cells": [[3, 2]] },
+    { "type": "statue", "cells": [[3, 3]] },
+
+    { "type": "chair", "cells": [[4, 2]] },
+    { "type": "easel", "cells": [[4, 3]] },
+    { "type": "easel", "cells": [[4, 4]] },
+    { "type": "easel", "cells": [[4, 6]] },
+
+    { "type": "chair", "cells": [[5, 6]] },
+
+    { "type": "framedpainting", "cells": [[5, 0]] },
+    { "type": "path", "cells": [[5, 1], [6, 1]] },
+    { "type": "path", "cells": [[7, 1], [7, 2], [7, 3], [7, 4]] },
+    { "type": "statue", "cells": [[6, 0]] },
+    { "type": "framedpainting", "cells": [[6, 2]] },
+    { "type": "table", "cells": [[6, 3]] },
+    { "type": "framedpainting", "cells": [[6, 4]] },
+    { "type": "statue", "cells": [[8, 2]] },
+
+    { "type": "chair", "cells": [[5, 7]] },
+    { "type": "statue", "cells": [[6, 5]] },
+    { "type": "statue", "cells": [[6, 6]] },
+    { "type": "statue", "cells": [[6, 8]] },
+    { "type": "chair", "cells": [[7, 5]] },
+    { "type": "statue", "cells": [[7, 7]] },
+    { "type": "chair", "cells": [[7, 8]] },
+    { "type": "chair", "cells": [[8, 6]] },
+    { "type": "table", "cells": [[8, 7]] }
+  ]
+}

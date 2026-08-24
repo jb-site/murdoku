@@ -1,0 +1,85 @@
+{
+  "id": "sleeping-with-the-fishes",
+  "title": "Sleeping with the Fishes",
+  "difficulty": "hard",
+  "sourceFile": "source/sleeping-with-the-fishes-color.pdf",
+  "rows": 9,
+  "cols": 11,
+  "suspects": ["A", "B", "C", "D", "E", "F", "G", "H", "V"],
+  "names": {
+    "A": "Antonio",
+    "B": "Barry",
+    "C": "Claire",
+    "D": "Delilah",
+    "E": "Erin",
+    "F": "Franklin",
+    "G": "Graham",
+    "H": "Hilton",
+    "V": "Vincenza (victim)"
+  },
+  "clues": [
+    { "suspect": "A", "text": "Antonio (A) was on a boat.", "refs": { "objects": ["boat"] } },
+    { "suspect": "B", "text": "Barry (B): there was a woman beside a crate in his area.", "refs": { "objects": ["crate"] } },
+    { "suspect": "C", "text": "Claire (C) was on a boat. She was east of Antonio.", "refs": { "objects": ["boat"] } },
+    { "suspect": "D", "text": "Delilah (D) was in the Fish Market.", "refs": { "rooms": ["fishmarket"] } },
+    { "suspect": "E", "text": "Erin (E) was sitting in a chair.", "refs": { "objects": ["chair"] } },
+    { "suspect": "F", "text": "Franklin (F) was on Dock A or B.", "refs": { "rooms": ["docka", "dockb"] } },
+    { "suspect": "G", "text": "Graham (G) was beside a crate.", "refs": { "objects": ["crate"] } },
+    { "suspect": "H", "text": "Hilton (H) was beside a shelf.", "refs": { "objects": ["shelf"] } },
+    { "suspect": "V", "text": "Vincenza (V), the victim, was alone with the murderer — the killer was in the same area (room) as him.", "refs": {} },
+    { "suspect": null, "text": "There are exactly two empty columns. One boat is inside the two empty columns.", "refs": { "objects": ["boat"] } }
+  ],
+  "rooms": {
+    "sea": { "name": "Sea" },
+    "boathouse": { "name": "Boathouse" },
+    "docka": { "name": "Dock A" },
+    "dockb": { "name": "Dock B" },
+    "boardwalk": { "name": "Boardwalk" },
+    "fishmarket": { "name": "Fish Market" },
+    "warehouse": { "name": "Warehouse" }
+  },
+  "roomGrid": [
+    ["sea", "sea", "sea", "sea", "sea", "sea", "sea", "sea", "sea", "sea", "sea"],
+    ["sea", "sea", "sea", "sea", "sea", "docka", "sea", "sea", "sea", "sea", "sea"],
+    ["boathouse", "boathouse", "boathouse", "sea", "sea", "docka", "sea", "sea", "dockb", "dockb", "dockb"],
+    ["boathouse", "boathouse", "boathouse", "sea", "docka", "docka", "sea", "sea", "dockb", "sea", "dockb"],
+    ["boardwalk", "boardwalk", "boardwalk", "boardwalk", "boardwalk", "sea", "sea", "boardwalk", "boardwalk", "boardwalk", "boardwalk"],
+    ["boardwalk", "boardwalk", "boardwalk", "boardwalk", "boardwalk", "boardwalk", "boardwalk", "boardwalk", "warehouse", "boardwalk", "boardwalk"],
+    ["fishmarket", "fishmarket", "fishmarket", "fishmarket", "boardwalk", "boardwalk", "warehouse", "warehouse", "warehouse", "warehouse", "boardwalk"],
+    ["fishmarket", "fishmarket", "fishmarket", "fishmarket", "boardwalk", "boardwalk", "warehouse", "warehouse", "warehouse", "warehouse", "warehouse"],
+    ["fishmarket", "fishmarket", "fishmarket", "fishmarket", "fishmarket", "fishmarket", "warehouse", "warehouse", "warehouse", "warehouse", "warehouse"]
+  ],
+  "objects": [
+    { "type": "boat", "cells": [[0, 2], [0, 3]] },
+    { "type": "boat", "cells": [[1, 6], [1, 7]] },
+    { "type": "boat", "cells": [[2, 1], [2, 2]] },
+
+    { "type": "crate", "cells": [[2, 0]] },
+    { "type": "box", "cells": [[2, 5]] },
+    { "type": "crate", "cells": [[2, 10]] },
+
+    { "type": "chair", "cells": [[3, 0]] },
+
+    { "type": "chair", "cells": [[4, 9]] },
+
+    { "type": "chair", "cells": [[5, 0]] },
+    { "type": "chair", "cells": [[5, 1]] },
+
+    { "type": "table", "cells": [[6, 1], [6, 2], [6, 3]] },
+    { "type": "shelf", "cells": [[6, 6]] },
+    { "type": "crate", "cells": [[6, 9]] },
+
+    { "type": "crate", "cells": [[7, 1]] },
+    { "type": "box", "cells": [[7, 3]] },
+    { "type": "crate", "cells": [[7, 6]] },
+    { "type": "crate", "cells": [[7, 8]] },
+
+    { "type": "box", "cells": [[8, 1]] },
+    { "type": "chair", "cells": [[8, 4]] },
+    { "type": "box", "cells": [[8, 5]] },
+    { "type": "shelf", "cells": [[8, 7]] },
+    { "type": "shelf", "cells": [[8, 8]] },
+    { "type": "crate", "cells": [[8, 9]] },
+    { "type": "shelf", "cells": [[8, 10]] }
+  ]
+}
