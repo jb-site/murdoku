@@ -175,6 +175,88 @@ body.resizing { cursor: col-resize; }
   flex-shrink: 0;
 }
 
+/* --- Puzzle editor mode --- */
+
+.editor-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #2a1f22;
+  border: 1px solid #6b3a3a;
+  border-radius: 10px;
+  padding: 12px;
+}
+.editor-bar[hidden] { display: none; } /* author display:flex above would otherwise beat the UA [hidden] rule */
+.editor-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.editor-row strong { color: var(--text); }
+.editor-spacer { flex: 1 1 auto; }
+.editor-row label { display: flex; align-items: center; gap: 4px; color: var(--muted); font-size: 0.85rem; }
+.editor-row input[type="number"] {
+  width: 4.5em;
+  background: #2f3239;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 6px;
+}
+
+.edit-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.editor-palette { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.room-chip {
+  border-radius: 10px;
+  width: auto;
+  min-width: 40px;
+  padding: 0 10px;
+  font-size: 0.75rem;
+}
+.room-chip.selected { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.object-chip {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: #2f3239;
+  cursor: pointer;
+  padding: 4px;
+}
+.object-chip.selected { border-color: var(--accent); background: var(--accent-soft); }
+.object-chip .object-art { width: 100%; height: 100%; opacity: 1; }
+
+.editor-details { display: flex; flex-direction: column; gap: 8px; }
+.editor-details input[type="text"],
+.editor-details select,
+.editor-details textarea {
+  background: #2f3239;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-family: inherit;
+}
+.editor-details textarea { min-height: 160px; font-family: ui-monospace, monospace; font-size: 0.8rem; }
+.editor-details .details-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.editor-details .details-row label { display: flex; flex-direction: column; gap: 2px; font-size: 0.8rem; color: var(--muted); flex: 1; }
+.editor-details .json-error { color: var(--x-color); font-size: 0.8rem; }
+
+.editor-validation { font-size: 0.82rem; }
+.editor-validation .valid { color: #7ed08c; }
+.editor-validation .error { color: var(--x-color); }
+.editor-validation .warning { color: var(--highlight); }
+.editor-validation ul { margin: 4px 0 0; padding-left: 18px; }
+
+body.edit-mode .toolbar .suspect-palette,
+body.edit-mode #undoBtn,
+body.edit-mode #clearBtn,
+body.edit-mode #saveBtn,
+body.edit-mode #loadBtn,
+body.edit-mode #editBtn {
+  display: none;
+}
+
 .puzzle-meta {
   width: 100%;
   display: flex;
@@ -329,6 +411,13 @@ body.resizing { cursor: col-resize; }
 .object-cell.ref-object .object-art {
   opacity: 1;
   filter: drop-shadow(0 0 6px var(--ref));
+}
+
+.object-preview {
+  background: var(--accent-soft);
+  border: 2px dashed var(--accent);
+  border-radius: 4px;
+  pointer-events: none;
 }
 
 /* --- Room labels --- */

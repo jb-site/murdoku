@@ -25,9 +25,37 @@
       <button class="tool-btn" id="loadBtn" title="Load progress from a file">📂 Load from file</button>
       <input type="file" id="loadInput" accept="application/json" hidden>
       <span class="autosave-note" id="autosaveNote"></span>
+      <button class="tool-btn" id="editBtn" title="Edit this puzzle's grid, rooms and objects">✏️ Edit puzzle</button>
     </div>
 
     <div class="suspect-palette" id="suspectPalette"></div>
+  </section>
+
+  <section class="editor-bar" id="editorBar" hidden>
+    <div class="editor-row">
+      <strong>Editing puzzle</strong> — solving is paused.
+      <span class="editor-spacer"></span>
+      <button class="tool-btn" id="editApplyBtn" title="Use these edits now, in this browser session">✅ Apply</button>
+      <button class="tool-btn" id="editDiscardBtn" title="Throw away edits and go back to solving">✖ Discard</button>
+      <button class="tool-btn" id="editDownloadBtn" title="Download the edited puzzle as a JSON file">⬇️ Download JSON</button>
+    </div>
+    <div class="editor-row">
+      <button class="tool-btn" id="editNewBtn" title="Start a blank puzzle">＋ New</button>
+      <button class="tool-btn" id="editOpenBtn" title="Open a puzzle JSON file to edit">📂 Open file…</button>
+      <input type="file" id="editFileInput" accept="application/json" hidden>
+      <span class="editor-spacer"></span>
+      <label>Rows <input type="number" id="editRows" min="1" max="24"></label>
+      <label>Cols <input type="number" id="editCols" min="1" max="24"></label>
+      <button class="tool-btn" id="editResizeBtn">Resize</button>
+    </div>
+    <div class="editor-row" id="editorTabs">
+      <button class="tool-btn edit-tab active" data-tab="rooms">Rooms</button>
+      <button class="tool-btn edit-tab" data-tab="objects">Objects</button>
+      <button class="tool-btn edit-tab" data-tab="details">Details</button>
+    </div>
+    <div class="editor-palette" id="editorPalette"></div>
+    <div class="editor-details" id="editorDetails" hidden></div>
+    <div class="editor-validation" id="editorValidation"></div>
   </section>
 
   <section class="puzzle-meta" id="puzzleMeta">

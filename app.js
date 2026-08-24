@@ -356,13 +356,16 @@ function normalizePuzzle(data) {
   return data;
 }
 
-function buildObjectIndex(data) {
+// errors: optional array to also collect messages into (used by the editor's live
+// validation panel) — existing callers pass nothing and are unaffected.
+function buildObjectIndex(data, errors) {
   const rows = data.rows, cols = data.cols;
   const at = Array.from({ length: rows }, () => Array(cols).fill(null));
+  const report = (msg) => { console.error(msg); errors?.push(msg); };
 
   data.objects.forEach((obj) => {
     if (!OBJECT_TYPES[obj.type]) {
-      console.error(`Unknown object type "${obj.type}" — skipping.`);
+      report(`Unknown object type "${obj.type}" — skipping.`);
       return;
     }
     const rs = obj.cells.map((cell) => cell[0]);
@@ -372,22 +375,22 @@ function buildObjectIndex(data) {
     const rowSpan = r1 - r0 + 1, colSpan = c1 - c0 + 1;
 
     if (obj.cells.length !== rowSpan * colSpan) {
-      console.error(`Object "${obj.type}" at [${r0},${c0}] doesn't form a filled rectangle — skipping.`);
+      report(`Object "${obj.type}" at [${r0},${c0}] doesn't form a filled rectangle — skipping.`);
       return;
     }
     if (r0 < 0 || c0 < 0 || r1 >= rows || c1 >= cols) {
-      console.error(`Object "${obj.type}" at [${r0},${c0}] is out of bounds — skipping.`);
+      report(`Object "${obj.type}" at [${r0},${c0}] is out of bounds — skipping.`);
       return;
     }
     if (obj.cells.some(([r, c]) => data.roomGrid[r][c] === null)) {
-      console.error(`Object "${obj.type}" at [${r0},${c0}] covers a void cell — skipping.`);
+      report(`Object "${obj.type}" at [${r0},${c0}] covers a void cell — skipping.`);
       return;
     }
 
     const record = { type: obj.type, cells: obj.cells, r0, c0, r1, c1, rowSpan, colSpan, occupiable: OBJECT_TYPES[obj.type].occupiable };
     for (const [r, c] of obj.cells) {
       if (at[r][c]) {
-        console.error(`Cell [${r},${c}] claimed by more than one object — skipping "${obj.type}".`);
+        report(`Cell [${r},${c}] claimed by more than one object — skipping "${obj.type}".`);
         return;
       }
     }
@@ -498,7 +501,7 @@ document.addEventListener("keydown", (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const tag = document.activeElement?.tagName;
   if (tag === "SELECT" || tag === "INPUT" || tag === "TEXTAREA") return;
-  if (!PUZZLE) return;
+  if (!PUZZLE || EDIT) return;
 
   if (e.key.toLowerCase() === "x") {
     selectItem("#x");
@@ -864,6 +867,7 @@ function attachGestureListeners() {
 }
 
 function onHeaderClick(e) {
+  if (EDIT) return; // rows/cols are edited via the editor bar's steppers, not the grid headers
   const btn = e.target.closest(".grid-header");
   if (!btn || !PUZZLE) return;
   applyToLine(btn.dataset.line, +btn.dataset.index);
@@ -876,6 +880,7 @@ function cellFromEvent(e) {
 }
 
 function onPointerDown(e) {
+  if (EDIT) return onEditPointerDown(e);
   if (e.button !== 0) return;
   const hit = cellFromEvent(e);
   if (!hit) return;
@@ -918,6 +923,7 @@ function onPointerDown(e) {
 }
 
 function onPointerMove(e) {
+  if (EDIT) return onEditPointerMove(e);
   if (!gesture || gesture.pointerId !== e.pointerId) return;
 
   if (gesture.mode === "pending") {
@@ -969,6 +975,7 @@ function clearPressingClass() {
 }
 
 function endGesture(e) {
+  if (EDIT) return onEditPointerUp(e);
   if (!gesture || gesture.pointerId !== e.pointerId) return;
   clearTimeout(gesture.timer);
   clearPressingClass();
@@ -1197,6 +1204,7 @@ function gridMatchesDimensions(g) {
 }
 
 function saveProgress() {
+  if (EDIT) return; // edit-mode writes go to the draft key instead, via scheduleDraftSave()
   try {
     localStorage.setItem(storageKey(), JSON.stringify({ puzzleId: PUZZLE.id, savedAt: Date.now(), grid: snapshotGrid() }));
     localStorage.setItem("murdoku:lastPuzzle", PUZZLE.id);
@@ -1393,6 +1401,688 @@ function saveSplitPref() {
   }
 }
 
+// --- Edit mode -------------------------------------------------------------
+// A puzzle-authoring mode that swaps PUZZLE for a working clone, so the entire solving
+// render pipeline (renderStatic/renderMarks/applyHighlights/describeCell/isBlocked/
+// isVoid/etc.) renders the draft with ZERO changes — it always just reads PUZZLE/
+// objectAt/grid, and those stay internally consistent throughout an edit session.
+// Solving-mode-only code paths (the gesture state machine, header bulk-fill, keyboard
+// shortcuts, progress persistence) are diverted by `if (EDIT) ...` guards placed at
+// their existing entry points — see onPointerDown/onPointerMove/endGesture/
+// onHeaderClick/saveProgress/the keydown listener.
+//
+// There is no backend: "export" is always a client-side JSON download the author then
+// places into puzzles/ by hand, exactly like the existing progress Save-to-file flow.
+
+const VOID_TOOL = "__void__"; // editor-only sentinel for "paint no room" (writes null)
+
+let EDIT = null; // null = solving mode. Otherwise {stash, tool, roomPaint, objPaint, drag, dirty}
+
+const editBtn = document.getElementById("editBtn");
+const editorBarEl = document.getElementById("editorBar");
+const editApplyBtn = document.getElementById("editApplyBtn");
+const editDiscardBtn = document.getElementById("editDiscardBtn");
+const editDownloadBtn = document.getElementById("editDownloadBtn");
+const editNewBtn = document.getElementById("editNewBtn");
+const editOpenBtn = document.getElementById("editOpenBtn");
+const editFileInput = document.getElementById("editFileInput");
+const editRowsInput = document.getElementById("editRows");
+const editColsInput = document.getElementById("editCols");
+const editResizeBtn = document.getElementById("editResizeBtn");
+const editorTabsEl = document.getElementById("editorTabs");
+const editorPaletteEl = document.getElementById("editorPalette");
+const editorDetailsEl = document.getElementById("editorDetails");
+const editorValidationEl = document.getElementById("editorValidation");
+
+function blankPuzzle() {
+  const rows = 6, cols = 6;
+  return {
+    id: "new-puzzle",
+    title: "Untitled",
+    difficulty: "easy",
+    sourceFile: "",
+    rows, cols,
+    suspects: ["A", "B", "C", "D", "E", "V"],
+    names: { A: "Suspect A", B: "Suspect B", C: "Suspect C", D: "Suspect D", E: "Suspect E", V: "Victim (victim)" },
+    clues: [],
+    rooms: { room1: { name: "Room 1" } },
+    roomGrid: Array.from({ length: rows }, () => Array(cols).fill("room1")),
+    objects: [],
+  };
+}
+
+function enterEditMode(sourcePuzzle) {
+  EDIT = { stash: { puzzle: PUZZLE, objectAt, grid, history, selection }, tool: "rooms", roomPaint: null, objPaint: null, drag: null, dirty: false };
+  PUZZLE = normalizePuzzle(structuredClone(sourcePuzzle ?? PUZZLE));
+  objectAt = buildObjectIndex(PUZZLE);
+  grid = freshGrid();
+  history = [];
+  selection = null;
+  hoveredSuspect = null;
+  hoverRefs = null;
+
+  document.body.classList.add("edit-mode");
+  editorBarEl.hidden = false;
+  puzzleSelectEl.disabled = true;
+  editRowsInput.value = PUZZLE.rows;
+  editColsInput.value = PUZZLE.cols;
+  refreshPuzzleMeta();
+  clueListEl.innerHTML = "";
+  setEditTab("rooms");
+  renderStatic();
+  renderMarks();
+  applyHighlights();
+  updateLayoutMode();
+  validateDraft();
+}
+
+function exitEditMode(mode) {
+  if (mode === "discard") {
+    ({ puzzle: PUZZLE, objectAt, grid, history, selection } = EDIT.stash);
+  } else {
+    const dimsChanged = PUZZLE.rows !== EDIT.stash.puzzle.rows || PUZZLE.cols !== EDIT.stash.puzzle.cols;
+    if (dimsChanged) {
+      grid = freshGrid();
+      history = [];
+    } else {
+      grid = EDIT.stash.grid;
+      history = EDIT.stash.history;
+    }
+    selection = null;
+  }
+  EDIT = null;
+  localStorage.removeItem("murdoku:draft");
+  document.body.classList.remove("edit-mode");
+  editorBarEl.hidden = true;
+  puzzleSelectEl.disabled = false;
+
+  buildPalette();
+  buildClueList();
+  updateSelectionUI();
+  updateHint();
+  updateUndoButton();
+  refreshPuzzleMeta();
+  if (mode === "apply") sanitizeRestoredGrid();
+  renderStatic();
+  renderMarks();
+  applyHighlights();
+  updateLayoutMode();
+  if (mode === "apply") saveProgress();
+}
+
+function refreshPuzzleMeta() {
+  puzzleTitleEl.textContent = PUZZLE.title || "(untitled)";
+  puzzleDifficultyEl.textContent = PUZZLE.difficulty ? `difficulty: ${PUZZLE.difficulty}` : "";
+  puzzleDifficultyEl.className = "difficulty-badge" + (PUZZLE.difficulty ? ` difficulty-${PUZZLE.difficulty}` : "");
+}
+
+editBtn.addEventListener("click", () => enterEditMode(PUZZLE));
+
+editApplyBtn.addEventListener("click", () => {
+  const { errors } = validateDraft();
+  if (errors.length && !confirm(`This puzzle has ${errors.length} validation error(s). Apply anyway?`)) return;
+  exitEditMode("apply");
+});
+
+editDiscardBtn.addEventListener("click", () => {
+  if (EDIT.dirty && !confirm("Discard your edits?")) return;
+  exitEditMode("discard");
+});
+
+function loadDraftPuzzle(data) {
+  PUZZLE = normalizePuzzle(data);
+  objectAt = buildObjectIndex(PUZZLE);
+  grid = freshGrid();
+  history = [];
+  editRowsInput.value = PUZZLE.rows;
+  editColsInput.value = PUZZLE.cols;
+  EDIT.dirty = true;
+  refreshPuzzleMeta();
+  renderStatic();
+  renderMarks();
+  applyHighlights();
+  updateLayoutMode();
+  buildEditorPalette();
+  validateDraft();
+  scheduleDraftSave();
+}
+
+editNewBtn.addEventListener("click", () => {
+  if (EDIT.dirty && !confirm("Discard current edits and start a new blank puzzle?")) return;
+  loadDraftPuzzle(blankPuzzle());
+});
+
+editOpenBtn.addEventListener("click", () => editFileInput.click());
+editFileInput.addEventListener("change", () => {
+  const file = editFileInput.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (!data.rows || !data.cols || !data.roomGrid) throw new Error("Doesn't look like a Murdoku puzzle file.");
+      loadDraftPuzzle(data);
+    } catch (err) {
+      alert("Couldn't open that file: " + err.message);
+    } finally {
+      editFileInput.value = "";
+    }
+  };
+  reader.readAsText(file);
+});
+
+editResizeBtn.addEventListener("click", () => resizeDraft(+editRowsInput.value, +editColsInput.value));
+
+function resizeDraft(newRows, newCols) {
+  newRows = Math.max(1, Math.min(24, Math.round(newRows) || PUZZLE.rows));
+  newCols = Math.max(1, Math.min(24, Math.round(newCols) || PUZZLE.cols));
+  if (newRows === PUZZLE.rows && newCols === PUZZLE.cols) return;
+
+  const droppedObjects = PUZZLE.objects.filter((o) => o.cells.some(([r, c]) => r >= newRows || c >= newCols));
+  const droppedRoomCells = [];
+  for (let r = newRows; r < PUZZLE.rows; r++) {
+    for (let c = 0; c < PUZZLE.cols; c++) if (PUZZLE.roomGrid[r][c] !== null) droppedRoomCells.push([r, c]);
+  }
+  for (let r = 0; r < Math.min(newRows, PUZZLE.rows); r++) {
+    for (let c = newCols; c < PUZZLE.cols; c++) if (PUZZLE.roomGrid[r][c] !== null) droppedRoomCells.push([r, c]);
+  }
+  if (droppedObjects.length || droppedRoomCells.length) {
+    const msg = `Resizing to ${newRows}×${newCols} will delete ${droppedObjects.length} object(s) and discard ${droppedRoomCells.length} room assignment(s). Continue?`;
+    if (!confirm(msg)) return;
+  }
+
+  const newRoomGrid = Array.from({ length: newRows }, (_, r) =>
+    Array.from({ length: newCols }, (_, c) => (r < PUZZLE.rows && c < PUZZLE.cols ? PUZZLE.roomGrid[r][c] : null))
+  );
+  PUZZLE.objects = PUZZLE.objects.filter((o) => !o.cells.some(([r, c]) => r >= newRows || c >= newCols));
+  PUZZLE.rows = newRows;
+  PUZZLE.cols = newCols;
+  PUZZLE.roomGrid = newRoomGrid;
+
+  objectAt = buildObjectIndex(PUZZLE);
+  grid = freshGrid();
+  history = [];
+  EDIT.dirty = true;
+  renderStatic();
+  renderMarks();
+  applyHighlights();
+  updateLayoutMode();
+  validateDraft();
+  scheduleDraftSave();
+}
+
+// --- Editor tabs & palettes ------------------------------------------------
+
+editorTabsEl.querySelectorAll(".edit-tab").forEach((btn) => {
+  btn.addEventListener("click", () => setEditTab(btn.dataset.tab));
+});
+
+function setEditTab(tab) {
+  EDIT.tool = tab;
+  editorTabsEl.querySelectorAll(".edit-tab").forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
+  editorDetailsEl.hidden = tab !== "details";
+  editorPaletteEl.hidden = tab === "details";
+  buildEditorPalette();
+}
+
+function buildEditorPalette() {
+  if (EDIT.tool === "rooms") buildRoomPalette();
+  else if (EDIT.tool === "objects") buildObjectPalette();
+  else buildDetailsPanel();
+}
+
+function addEditorChip(container, className, text, title, onClick, selected) {
+  const chip = document.createElement("button");
+  chip.type = "button";
+  chip.className = className + (selected ? " selected" : "");
+  chip.textContent = text;
+  if (title) chip.title = title;
+  chip.addEventListener("click", onClick);
+  container.appendChild(chip);
+  return chip;
+}
+
+function buildRoomPalette() {
+  editorPaletteEl.innerHTML = "";
+  Object.entries(PUZZLE.rooms).forEach(([id, room]) => {
+    const chip = addEditorChip(editorPaletteEl, "suspect-chip room-chip", room.name, "Click to select, double-click to rename",
+      () => { EDIT.roomPaint = id; buildRoomPalette(); }, EDIT.roomPaint === id);
+    chip.style.background = ROOM_COLORS[id] || DEFAULT_ROOM_COLOR;
+    chip.style.borderColor = ROOM_COLORS[id] || DEFAULT_ROOM_COLOR;
+    chip.addEventListener("dblclick", (e) => {
+      e.stopPropagation();
+      const name = prompt("Rename room:", room.name);
+      if (name && name.trim()) {
+        room.name = name.trim();
+        EDIT.dirty = true;
+        buildRoomPalette();
+        renderStatic();
+        renderMarks();
+        applyHighlights();
+        scheduleDraftSave();
+      }
+    });
+  });
+
+  addEditorChip(editorPaletteEl, "suspect-chip room-chip special-chip", "⊘ No room", "Paint cells as not part of the board",
+    () => { EDIT.roomPaint = VOID_TOOL; buildRoomPalette(); }, EDIT.roomPaint === VOID_TOOL);
+
+  addEditorChip(editorPaletteEl, "suspect-chip room-chip special-chip", "＋ New room", null, () => {
+    const name = prompt("New room name:");
+    if (!name || !name.trim()) return;
+    let id = name.trim().toLowerCase().replace(/[^a-z0-9]/g, "") || "room";
+    let uniqueId = id, n = 2;
+    while (PUZZLE.rooms[uniqueId]) uniqueId = id + n++;
+    PUZZLE.rooms[uniqueId] = { name: name.trim() };
+    EDIT.roomPaint = uniqueId;
+    EDIT.dirty = true;
+    buildRoomPalette();
+    validateDraft();
+    scheduleDraftSave();
+  });
+
+  addEditorChip(editorPaletteEl, "suspect-chip room-chip special-chip", "🗑 Delete room", "Delete the selected room (only if unused)", () => {
+    const id = EDIT.roomPaint;
+    if (!id || id === VOID_TOOL) { alert("Select a room chip first."); return; }
+    if (PUZZLE.roomGrid.some((row) => row.includes(id))) {
+      alert(`"${PUZZLE.rooms[id].name}" is still used by some cells — paint them a different room first.`);
+      return;
+    }
+    delete PUZZLE.rooms[id];
+    EDIT.roomPaint = null;
+    EDIT.dirty = true;
+    buildRoomPalette();
+    validateDraft();
+    scheduleDraftSave();
+  });
+}
+
+function buildObjectPalette() {
+  editorPaletteEl.innerHTML = "";
+  [true, false].forEach((occupiable) => {
+    Object.entries(OBJECT_TYPES).filter(([, t]) => t.occupiable === occupiable).forEach(([key, type]) => {
+      const chip = addEditorChip(editorPaletteEl, "object-chip", "", `${type.label} (${occupiable ? "can be occupied" : "cannot be occupied"})`,
+        () => { EDIT.objPaint = key; buildObjectPalette(); }, EDIT.objPaint === key);
+      chip.innerHTML = type.art(1, 1);
+    });
+  });
+
+  addEditorChip(editorPaletteEl, "suspect-chip special-chip", "🧽", "Erase object",
+    () => { EDIT.objPaint = "#erase"; buildObjectPalette(); }, EDIT.objPaint === "#erase");
+
+  addEditorChip(editorPaletteEl, "suspect-chip special-chip", "＋", "Define a new placeholder object type", openNewObjectTypeForm);
+}
+
+function openNewObjectTypeForm() {
+  const key = (prompt('New object type key (lowercase, e.g. "wheelbarrow"):') || "").trim();
+  if (!key) return;
+  if (!/^[a-z][a-z0-9]*$/.test(key)) { alert("Use lowercase letters/numbers, starting with a letter."); return; }
+  if (OBJECT_TYPES[key]) { alert(`"${key}" already exists.`); return; }
+  const label = prompt("Display label:", key) || key;
+  const occupiable = confirm("Can a person occupy this cell?\nOK = yes (occupiable), Cancel = no (blocking)");
+  const color = prompt("Colour (hex):", "#8a5a2e") || "#8a5a2e";
+  OBJECT_TYPES[key] = {
+    label, emoji: "❓", occupiable,
+    art() {
+      return svgObject(color, color, "#1a1a1a",
+        `<rect x="10" y="10" width="80" height="80" rx="14" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>`, 100, 100);
+    },
+  };
+  PUZZLE.customObjectTypes = PUZZLE.customObjectTypes || [];
+  PUZZLE.customObjectTypes.push({ key, label, occupiable, color });
+  EDIT.objPaint = key;
+  EDIT.dirty = true;
+  buildObjectPalette();
+  scheduleDraftSave();
+  setStatus(`"${label}" defined as a placeholder. For proper artwork, add a matching entry to OBJECT_TYPES in app.js later.`);
+}
+
+function buildDetailsPanel() {
+  editorDetailsEl.innerHTML = "";
+
+  const row = document.createElement("div");
+  row.className = "details-row";
+  row.innerHTML = `
+    <label>ID <input type="text" id="detailId"></label>
+    <label>Title <input type="text" id="detailTitle"></label>
+    <label>Difficulty
+      <select id="detailDifficulty">
+        <option value="">—</option>
+        <option value="easy">Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+    </label>
+  `;
+  editorDetailsEl.appendChild(row);
+  row.querySelector("#detailId").value = PUZZLE.id || "";
+  row.querySelector("#detailTitle").value = PUZZLE.title || "";
+  row.querySelector("#detailDifficulty").value = PUZZLE.difficulty || "";
+
+  row.querySelector("#detailId").addEventListener("input", (e) => {
+    PUZZLE.id = e.target.value;
+    EDIT.dirty = true;
+    scheduleDraftSave();
+  });
+  row.querySelector("#detailTitle").addEventListener("input", (e) => {
+    PUZZLE.title = e.target.value;
+    refreshPuzzleMeta();
+    EDIT.dirty = true;
+    scheduleDraftSave();
+  });
+  row.querySelector("#detailDifficulty").addEventListener("change", (e) => {
+    PUZZLE.difficulty = e.target.value || undefined;
+    refreshPuzzleMeta();
+    EDIT.dirty = true;
+    scheduleDraftSave();
+  });
+
+  const label = document.createElement("p");
+  label.className = "hint";
+  label.style.margin = "0";
+  label.textContent = "Suspects, names and clues (raw JSON — parsed when you click away):";
+  editorDetailsEl.appendChild(label);
+
+  const textarea = document.createElement("textarea");
+  textarea.id = "detailsJson";
+  textarea.value = JSON.stringify({ suspects: PUZZLE.suspects, names: PUZZLE.names, clues: PUZZLE.clues }, null, 2);
+  editorDetailsEl.appendChild(textarea);
+
+  const errorEl = document.createElement("p");
+  errorEl.className = "json-error";
+  editorDetailsEl.appendChild(errorEl);
+
+  textarea.addEventListener("blur", () => {
+    try {
+      const parsed = JSON.parse(textarea.value);
+      if (!Array.isArray(parsed.suspects) || typeof parsed.names !== "object" || !Array.isArray(parsed.clues)) {
+        throw new Error("Expected {suspects: [...], names: {...}, clues: [...]}");
+      }
+      PUZZLE.suspects = parsed.suspects;
+      PUZZLE.names = parsed.names;
+      PUZZLE.clues = parsed.clues.map((clue) => (typeof clue === "string"
+        ? { suspect: null, text: clue, refs: {} }
+        : { suspect: clue.suspect ?? null, text: clue.text, refs: { rooms: clue.refs?.rooms || [], objects: clue.refs?.objects || [], suspects: clue.refs?.suspects || [] } }));
+      errorEl.textContent = "";
+      EDIT.dirty = true;
+      validateDraft();
+      scheduleDraftSave();
+    } catch (err) {
+      errorEl.textContent = "JSON error: " + err.message;
+    }
+  });
+}
+
+// --- Edit-mode gestures (room paint / object rectangle place) --------------
+
+function onEditPointerDown(e) {
+  if (e.button !== 0) return;
+  const hit = cellFromEvent(e);
+  if (!hit) return;
+  e.preventDefault();
+  layerCellsEl.setPointerCapture(e.pointerId);
+
+  if (EDIT.tool === "rooms") {
+    if (!EDIT.roomPaint) { setStatus("Pick a room (or 'No room') first."); return; }
+    EDIT.drag = { pointerId: e.pointerId, kind: "room" };
+    paintRoom(hit.r, hit.c);
+  } else if (EDIT.tool === "objects") {
+    if (!EDIT.objPaint) { setStatus("Pick an object type (or Erase) first."); return; }
+    EDIT.drag = { pointerId: e.pointerId, kind: "object", r0: hit.r, c0: hit.c, r1: hit.r, c1: hit.c };
+    updateObjectPreview();
+  }
+}
+
+function onEditPointerMove(e) {
+  if (!EDIT.drag || EDIT.drag.pointerId !== e.pointerId) return;
+  const hit = cellFromEvent(e);
+  if (!hit) return;
+
+  if (EDIT.drag.kind === "room") {
+    paintRoom(hit.r, hit.c);
+  } else if (EDIT.drag.kind === "object") {
+    EDIT.drag.r1 = hit.r;
+    EDIT.drag.c1 = hit.c;
+    updateObjectPreview();
+  }
+}
+
+function onEditPointerUp(e) {
+  if (!EDIT.drag || EDIT.drag.pointerId !== e.pointerId) return;
+  if (EDIT.drag.kind === "object") {
+    const { r0, c0, r1, c1 } = EDIT.drag;
+    const rr0 = Math.min(r0, r1), rr1 = Math.max(r0, r1);
+    const cc0 = Math.min(c0, c1), cc1 = Math.max(c0, c1);
+    if (EDIT.objPaint === "#erase") eraseObjectsInRect(rr0, cc0, rr1, cc1);
+    else placeObject(rr0, cc0, rr1, cc1, EDIT.objPaint);
+    clearObjectPreview();
+  }
+  EDIT.drag = null;
+}
+
+function paintRoom(r, c) {
+  const value = EDIT.roomPaint === VOID_TOOL ? null : EDIT.roomPaint;
+  if (PUZZLE.roomGrid[r][c] === value) return;
+  if (value === null) {
+    // An object can't sit on a void cell — clear anything covering this one.
+    PUZZLE.objects = PUZZLE.objects.filter((o) => !o.cells.some(([or, oc]) => or === r && oc === c));
+  }
+  PUZZLE.roomGrid[r][c] = value;
+  EDIT.dirty = true;
+  scheduleEditRerender();
+  scheduleDraftSave();
+}
+
+let editRerenderRaf = null;
+function scheduleEditRerender() {
+  if (editRerenderRaf) return;
+  editRerenderRaf = requestAnimationFrame(() => {
+    editRerenderRaf = null;
+    objectAt = buildObjectIndex(PUZZLE);
+    renderStatic();
+    renderMarks();
+    applyHighlights();
+    validateDraft();
+  });
+}
+
+function updateObjectPreview() {
+  clearObjectPreview();
+  if (!EDIT.drag) return;
+  const { r0, c0, r1, c1 } = EDIT.drag;
+  const rr0 = Math.min(r0, r1), rr1 = Math.max(r0, r1);
+  const cc0 = Math.min(c0, c1), cc1 = Math.max(c0, c1);
+  const preview = document.createElement("div");
+  preview.className = "object-preview";
+  preview.style.gridRow = `${rr0 + 2} / span ${rr1 - rr0 + 1}`;
+  preview.style.gridColumn = `${cc0 + 2} / span ${cc1 - cc0 + 1}`;
+  layerObjectsEl.appendChild(preview);
+}
+
+function clearObjectPreview() {
+  layerObjectsEl.querySelectorAll(".object-preview").forEach((el) => el.remove());
+}
+
+function placeObject(r0, c0, r1, c1, type) {
+  const cells = [];
+  for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) cells.push([r, c]);
+  if (cells.some(([r, c]) => PUZZLE.roomGrid[r][c] === null)) {
+    setStatus("Objects can't be placed on void cells.");
+    return;
+  }
+  const doomed = new Set(cells.map(([r, c]) => objectAt[r]?.[c]).filter(Boolean));
+  PUZZLE.objects = PUZZLE.objects.filter((o) => !doomed.has(objectAt[o.cells[0][0]]?.[o.cells[0][1]]));
+  PUZZLE.objects.push({ type, cells });
+  EDIT.dirty = true;
+  objectAt = buildObjectIndex(PUZZLE);
+  renderStatic();
+  renderMarks();
+  applyHighlights();
+  validateDraft();
+  scheduleDraftSave();
+}
+
+function eraseObjectsInRect(r0, c0, r1, c1) {
+  const doomed = new Set();
+  for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) if (objectAt[r]?.[c]) doomed.add(objectAt[r][c]);
+  if (doomed.size === 0) return;
+  PUZZLE.objects = PUZZLE.objects.filter((o) => !doomed.has(objectAt[o.cells[0][0]]?.[o.cells[0][1]]));
+  EDIT.dirty = true;
+  objectAt = buildObjectIndex(PUZZLE);
+  renderStatic();
+  renderMarks();
+  applyHighlights();
+  validateDraft();
+  scheduleDraftSave();
+}
+
+// --- Validation --------------------------------------------------------
+
+function validateDraft() {
+  const errors = [], warnings = [];
+
+  if (!PUZZLE.id || !/^[a-z0-9-]+$/.test(PUZZLE.id)) errors.push("id should be a non-empty kebab-case slug.");
+  if (!PUZZLE.title) errors.push("title is empty.");
+  if (!Number.isInteger(PUZZLE.rows) || PUZZLE.rows < 1) errors.push("rows must be a positive integer.");
+  if (!Number.isInteger(PUZZLE.cols) || PUZZLE.cols < 1) errors.push("cols must be a positive integer.");
+  if (PUZZLE.roomGrid.length !== PUZZLE.rows) errors.push(`roomGrid has ${PUZZLE.roomGrid.length} rows, expected ${PUZZLE.rows}.`);
+  PUZZLE.roomGrid.forEach((row, r) => {
+    if (row.length !== PUZZLE.cols) errors.push(`roomGrid row ${r} has ${row.length} entries, expected ${PUZZLE.cols}.`);
+  });
+
+  let voidCount = 0;
+  for (let r = 0; r < PUZZLE.roomGrid.length; r++) {
+    for (let c = 0; c < (PUZZLE.roomGrid[r] || []).length; c++) {
+      const rid = PUZZLE.roomGrid[r][c];
+      if (rid === null) { voidCount++; continue; }
+      if (!PUZZLE.rooms[rid]) errors.push(`Cell [${r},${c}] uses unknown room "${rid}".`);
+    }
+  }
+  if (voidCount) warnings.push(`${voidCount} cell(s) have no room assigned yet.`);
+  Object.keys(PUZZLE.rooms).forEach((id) => {
+    if (!PUZZLE.roomGrid.some((row) => row.includes(id))) warnings.push(`Room "${PUZZLE.rooms[id].name}" has no cells.`);
+  });
+
+  const objErrors = [];
+  buildObjectIndex(PUZZLE, objErrors);
+  errors.push(...objErrors);
+
+  const letters = PUZZLE.suspects || [];
+  if (new Set(letters).size !== letters.length) errors.push("Suspect letters must be unique.");
+  if (letters.filter((l) => l === "V").length !== 1) errors.push('Exactly one suspect must be "V" (the victim).');
+  letters.forEach((l) => { if (!PUZZLE.names?.[l]) warnings.push(`No name set for suspect "${l}".`); });
+
+  (PUZZLE.clues || []).forEach((clue, i) => {
+    if (clue.suspect && !letters.includes(clue.suspect)) errors.push(`Clue ${i + 1} references unknown suspect "${clue.suspect}".`);
+    (clue.refs?.rooms || []).forEach((rid) => { if (!PUZZLE.rooms[rid]) errors.push(`Clue ${i + 1} refs unknown room "${rid}".`); });
+    (clue.refs?.objects || []).forEach((type) => { if (!OBJECT_TYPES[type]) errors.push(`Clue ${i + 1} refs unknown object type "${type}".`); });
+  });
+  letters.forEach((l) => { if (l !== "V" && !(PUZZLE.clues || []).some((c) => c.suspect === l)) warnings.push(`Suspect "${l}" has no clue.`); });
+
+  renderValidation(errors, warnings);
+  return { errors, warnings };
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+}
+
+function renderValidation(errors, warnings) {
+  if (!errors.length && !warnings.length) {
+    editorValidationEl.innerHTML = `<span class="valid">✓ Ready to export</span>`;
+    return;
+  }
+  let html = "";
+  if (errors.length) html += `<div class="error">${errors.length} error(s)<ul>${errors.map((e) => `<li>${escapeHtml(e)}</li>`).join("")}</ul></div>`;
+  if (warnings.length) html += `<div class="warning">${warnings.length} warning(s)<ul>${warnings.map((w) => `<li>${escapeHtml(w)}</li>`).join("")}</ul></div>`;
+  editorValidationEl.innerHTML = html;
+}
+
+// --- Draft persistence & export ---------------------------------------
+
+let draftSaveTimer = null;
+function scheduleDraftSave() {
+  clearTimeout(draftSaveTimer);
+  draftSaveTimer = setTimeout(saveDraft, 500);
+}
+
+function saveDraft() {
+  if (!EDIT) return;
+  try {
+    localStorage.setItem("murdoku:draft", JSON.stringify({ savedAt: Date.now(), baseId: EDIT.stash.puzzle.id || null, puzzle: PUZZLE }));
+  } catch (err) {
+    console.warn("Couldn't save draft:", err);
+  }
+}
+
+function checkForDraft() {
+  const raw = localStorage.getItem("murdoku:draft");
+  if (!raw) return;
+  let data;
+  try {
+    data = JSON.parse(raw);
+  } catch {
+    localStorage.removeItem("murdoku:draft");
+    return;
+  }
+  if (!data?.puzzle) {
+    localStorage.removeItem("murdoku:draft");
+    return;
+  }
+  const when = new Date(data.savedAt).toLocaleString();
+  const label = data.puzzle.title ? ` (${data.puzzle.title})` : "";
+  if (confirm(`You have unsaved puzzle edits from ${when}${label}. Resume editing them?`)) {
+    enterEditMode(data.puzzle);
+  } else {
+    localStorage.removeItem("murdoku:draft");
+  }
+}
+
+function exportPuzzleJSON() {
+  const ordered = {
+    id: PUZZLE.id,
+    title: PUZZLE.title,
+    difficulty: PUZZLE.difficulty,
+    sourceFile: PUZZLE.sourceFile || "",
+    rows: PUZZLE.rows,
+    cols: PUZZLE.cols,
+    suspects: PUZZLE.suspects,
+    names: PUZZLE.names,
+    clues: PUZZLE.clues,
+    rooms: PUZZLE.rooms,
+    roomGrid: PUZZLE.roomGrid,
+    objects: PUZZLE.objects,
+  };
+  if (PUZZLE.customObjectTypes?.length) ordered.customObjectTypes = PUZZLE.customObjectTypes;
+  return ordered;
+}
+
+editDownloadBtn.addEventListener("click", () => {
+  const { errors } = validateDraft();
+  if (errors.length) {
+    alert(`Fix ${errors.length} error(s) before downloading:\n\n` + errors.join("\n"));
+    return;
+  }
+  const payload = exportPuzzleJSON();
+  const probeErrors = [];
+  buildObjectIndex(normalizePuzzle(structuredClone(payload)), probeErrors);
+  if (probeErrors.length) {
+    alert("Round-trip check failed:\n\n" + probeErrors.join("\n"));
+    return;
+  }
+
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${payload.id || "puzzle"}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  const manifestLine = `{ "id": "${payload.id}", "title": "${payload.title}", "file": "${payload.id}.json" }`;
+  setStatus(`Downloaded ${payload.id}.json — add to puzzles/index.json: ${manifestLine}`);
+});
+
 // --- Puzzle library ----------------------------------------------------
 
 async function loadManifest() {
@@ -1472,6 +2162,8 @@ async function boot() {
   }
   puzzleSelectEl.value = startId;
   await selectPuzzle(startId, manifest);
+
+  checkForDraft(); // offer to resume an in-progress edit session, if any
 }
 
 boot();

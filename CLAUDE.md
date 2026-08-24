@@ -114,6 +114,25 @@ on the same cell at once.
   a placement/pencil mark somewhere no longer legal.
 - `localStorage["murdoku:cluesWidth"]` remembers the clues-column width from the split layout below
   (a bare pixel integer, puzzle-independent).
+- `localStorage["murdoku:draft"]` holds an in-progress edit-mode session (see below), offered back
+  to the player on next load via `checkForDraft()`.
+
+## Editing puzzles (edit mode)
+
+Clicking **✏️ Edit puzzle** enters an authoring mode for the loaded puzzle's rows/cols, rooms and
+objects. The whole feature works by **swapping `PUZZLE`/`objectAt`/`grid` for a working clone**
+(`enterEditMode()`), stashing the originals — so the entire solving render pipeline
+(`renderStatic`/`renderMarks`/`applyHighlights`/`describeCell`/etc.) renders the draft with zero
+changes, since it only ever reads those three globals. Solving-only code paths (the gesture state
+machine, header bulk-fill, keyboard shortcuts, progress persistence) are diverted by `if (EDIT)`
+guards at their existing entry points rather than duplicated. **Apply** keeps the edited `PUZZLE`
+(resetting solving progress only if the dimensions changed); **Discard** restores the stash
+verbatim. Both are session-only — there's no backend, so **Download JSON** (a client-side blob
+download, same pattern as the progress Save-to-file button) is the only way to get an edit out of
+the browser; the author places it into `puzzles/` and registers it in `puzzles/index.json` by hand.
+`validateDraft()` mirrors `PUZZLE_IMPORT_PROMPT.md`'s checklist and blocks export on errors (not
+on every keystroke — mid-edit invalidity is normal). Edits autosave to `murdoku:draft` (debounced)
+so a refresh doesn't lose work.
 
 ## Layout
 
@@ -134,9 +153,10 @@ measure), and on window resize.
 Core solving interactions (pencil marks, definitive placement via click/hold/drag, cross-out,
 erase, undo), room/object rendering with SVG art and multi-cell spans, room labels, a legend,
 hover status, clue-ref highlighting, irregular/non-rectangular grids (void cells), the row/column
-bulk-fill headers, the side-by-side clues layout, and the multi-puzzle library are all working.
-Not yet built: an in-app puzzle editor mode (rows/cols, room tool, object tool — planned, not yet
-implemented) and a "report the crime" fun/finishing feature once solving mechanics feel complete.
+bulk-fill headers, the side-by-side clues layout, the multi-puzzle library, and the in-app puzzle
+editor mode (rows/cols, rooms, objects, JSON import/export/validation) are all working. Not yet
+built: structured suspects/clues editing in the editor (currently a raw-JSON textarea) and a
+"report the crime" fun/finishing feature once solving mechanics feel complete.
 
 ## Conventions
 

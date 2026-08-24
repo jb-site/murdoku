@@ -167,7 +167,19 @@ locally by an assistant that can already read images/PDFs directly.
 >   array in `murdoku/puzzles/index.json` so it shows up in the app's puzzle
 >   picker.
 >
-> **7. Double-check before finishing:**
+> **7. Verify in the in-app editor, then double-check the data.** Serve the
+> app (`python3 -m http.server 8000` from `murdoku/`), click **✏️ Edit
+> puzzle → 📂 Open file…** and load the JSON you just wrote. The editor
+> renders the rooms, boundaries and furniture exactly as the app will, and
+> its validation panel lists structural problems automatically (out-of-
+> bounds or overlapping objects, cells with no room, unknown object types,
+> clue refs pointing at rooms/objects that don't exist). Put the source
+> image side by side with the browser and compare room boundaries and
+> furniture cell-by-cell — this catches misreads far more reliably than
+> re-reading your own JSON. Fix anything wrong with the Rooms/Objects tools
+> and **⬇️ Download JSON** to get the corrected file back.
+>
+> Then a final manual pass:
 > - Every row in `roomGrid` has exactly `cols` entries, and there are exactly
 >   `rows` rows — `null` void entries count towards `cols` like any other
 >   entry. Every row and every column contains at least one non-`null` cell.
