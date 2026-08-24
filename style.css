@@ -63,7 +63,9 @@ main.split { max-width: var(--split-max, 1280px); }
 main.split .workspace {
   display: grid;
   width: 100%;
-  align-items: start;
+  /* default align-items:stretch — the handle needs full row height to be draggable
+     along its whole length, and letting .clues stretch to match the grid's height
+     is fine since it's already position:sticky + overflow-y:auto. */
 }
 main.split .resize-handle { display: block; }
 main.split .clues {

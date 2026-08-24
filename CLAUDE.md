@@ -104,6 +104,22 @@ on the same cell at once.
 - `sanitizeRestoredGrid()` runs after every restore (localStorage or file load) and clears state on
   any cell that's now blocked — guards against a puzzle data correction (or an older save) leaving
   a placement/pencil mark somewhere no longer legal.
+- `localStorage["murdoku:cluesWidth"]` remembers the clues-column width from the split layout below
+  (a bare pixel integer, puzzle-independent).
+
+## Layout
+
+On wide viewports the clue list sits beside the grid instead of below it, with a draggable divider
+(`#resizeHandle`) between them. This is a JS-computed mode, not a media query — `canSplit()` (in
+`app.js`) measures the *currently loaded* puzzle's actual minimum grid width (`gridMinWidth()`,
+puzzle sizes range 6×6 to 12×12+ with very different floors) against the viewport, since a fixed
+breakpoint can't account for that. `desiredCluesWidth` is the player's *wish*, set only by an
+explicit drag/keyboard/reset gesture and persisted; every render instead applies
+`clampCluesWidth(desiredCluesWidth)`, so a puzzle switch that forces a visually narrower column
+(or drops to stacked entirely) never overwrites the remembered preference — widening the viewport
+or switching back to a smaller puzzle restores it exactly. `updateLayoutMode()` runs at boot, at
+the end of every `initPuzzle()` (after `renderStatic()`, since it needs a real rendered `.cell` to
+measure), and on window resize.
 
 ## Status / Next up
 
