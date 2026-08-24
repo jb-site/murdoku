@@ -31,6 +31,12 @@ locally by an assistant that can already read images/PDFs directly.
 >   the actual boundary lines cell-by-cell — rooms are often irregular
 >   shapes, not clean rectangles. Look for a thicker/darker border between
 >   cells in different rooms vs. a thin line between cells in the same room.
+> - `roomGrid` voids — `rows`/`cols` always describe the **bounding
+>   rectangle**, and every row still has exactly `cols` entries. If the
+>   board's outline isn't a full rectangle, write `null` (JSON null, not the
+>   string `"null"`) for each cell that isn't part of the board at all. This
+>   covers cut corners, L-shapes and staircase edges, and equally a hole
+>   punched in the middle of an otherwise solid grid.
 > - `objects` — a list of every physical object and every cell it covers:
 >   `{ "type": "bed", "cells": [[0,0],[0,1]] }`. Look extremely carefully at
 >   whether a piece of furniture spans more than one grid cell (a wide bed or
@@ -55,10 +61,49 @@ locally by an assistant that can already read images/PDFs directly.
 > to find only as many distinct anchors as there are real objects — don't
 > assume every cell showing canopy has its own trunk.
 >
+> **A cell that isn't there is not the same as a cell nobody can stand on.**
+> Two different things look similar at a glance: a cell holding a blocking
+> object (a tree, a table) that a person can never occupy, and a cell that
+> simply isn't part of the board. Encode the first with an `objects` entry —
+> it still has a room, still draws its room's borders, still shows its
+> furniture. Encode the second as `null` in `roomGrid` — it has no room, no
+> art, and no borders of its own. Tell them apart by asking whether the
+> **thick outer boundary line runs between that cell and the board**: if it
+> does, the cell is outside, so `null`. A blocking object always sits
+> *inside* the outline, tinted with its room's colour like every other cell
+> in that room.
+>
+> **Trace the outer boundary before you read a single cell.** It's easy to
+> assume the grid is a plain rectangle because the last puzzle was, and then
+> quietly mis-index every row after the first irregularity. Follow the heavy
+> outline all the way round first and write down where it steps in or out;
+> the steps always land on cell boundaries, so each one is a whole number of
+> rows/columns. Then lay your row/column overlay over the **bounding
+> rectangle** (not the visible shape) so coordinates stay stable, and mark
+> the excluded cells. Do this before object extraction — background artwork
+> often bleeds into the excluded region and will otherwise read as
+> furniture. Never infer that a row is "shorter" — infer that specific cells
+> are absent; a row whose visible left edge starts two columns in still uses
+> its true column indices (`2..11`, not `0..9`), or every object and room id
+> in that row shifts.
+>
+> **If the puzzle is a vector PDF, measure rather than eyeball.**
+> Illustrator-produced Murdoku PDFs often draw the full lattice and then
+> clip it with a single polygon that *is* the outline, so the exact void set
+> can sometimes be read straight out of the page's content stream instead of
+> guessed from pixels — and the same stream can distinguish room boundaries
+> from ordinary grid lines by the gap between adjacent cell rectangles (thin
+> ≈ same room, roughly 3× thicker ≈ room divider). This is a heavier
+> technique than the usual pixel-render-and-overlay approach and is worth
+> reaching for only when a puzzle's irregularity makes the visual method
+> genuinely unreliable — `puzzles/source/the-hiking-trip-color.pdf` is the
+> worked example.
+>
 > **3. Object types.** Use these existing keys if the icon matches — occupiable
 > (a person can be there): `bed`, `chair`, `car`, `oilslick`, `path`;
 > blocking (a person can never be placed there): `tv`, `shelf`, `table`,
-> `plant`, `tree`, `bonsai`, `cactus`, `lilypad`, `flower`, `shrub`. Check
+> `plant`, `tree`, `bonsai`, `cactus`, `lilypad`, `flower`, `shrub`, `bear`,
+> `boulder`. Check
 > the legend on the puzzle image itself ("Can be occupied" / "Cannot be
 > occupied") — occupiability is a puzzle-design choice, not something to
 > guess from the icon alone. Note `path` is a real object type (a distinct
@@ -107,7 +152,7 @@ locally by an assistant that can already read images/PDFs directly.
 >     { "suspect": "A", "text": "...", "refs": { "objects": ["shelf"] } }
 >   ],
 >   "rooms": { "roomid": { "name": "Display Name" } },
->   "roomGrid": [["roomid", "..."], ["...", "..."]],
+>   "roomGrid": [["roomid", null, "..."], ["...", "..."]],
 >   "objects": [
 >     { "type": "bed", "cells": [[0,0],[0,1]] },
 >     { "type": "chair", "cells": [[2,3]] }
@@ -124,9 +169,11 @@ locally by an assistant that can already read images/PDFs directly.
 >
 > **7. Double-check before finishing:**
 > - Every row in `roomGrid` has exactly `cols` entries, and there are exactly
->   `rows` rows.
+>   `rows` rows — `null` void entries count towards `cols` like any other
+>   entry. Every row and every column contains at least one non-`null` cell.
 > - Every `objects[].cells` entry is in-bounds, no cell is claimed by more
->   than one object, and each object's cells form a filled rectangle.
+>   than one object, no cell is `null` in `roomGrid`, and each object's cells
+>   form a filled rectangle.
 > - Every `refs.rooms` id exists in `rooms`, and every `refs.objects` type
 >   exists in `OBJECT_TYPES`.
 > - Every suspect letter is unique, `V` appears exactly once, and every

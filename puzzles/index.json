@@ -1,5 +1,6 @@
 [
   { "id": "netflix-and-kill", "title": "Netflix and Kill", "file": "netflix-and-kill.json" },
   { "id": "car-repair", "title": "Car Repair", "file": "car-repair.json" },
-  { "id": "the-botanical-garden", "title": "The Botanical Garden", "file": "the-botanical-garden.json" }
+  { "id": "the-botanical-garden", "title": "The Botanical Garden", "file": "the-botanical-garden.json" },
+  { "id": "the-hiking-trip", "title": "The Hiking Trip", "file": "the-hiking-trip.json" }
 ]

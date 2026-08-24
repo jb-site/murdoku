@@ -14,6 +14,12 @@ clues and rules, the solver must place every person onto a grid such that:
 - Cells may hold **furniture objects**, some spanning multiple cells (a wide bed, a dining table) —
   some occupiable (bed, chair), some blocking (TV, shelf, table, plant) — a person can never be
   placed on a blocking object's cell.
+- The grid's `rows`×`cols` is always a bounding rectangle, but a puzzle's actual playable board
+  doesn't have to be a full rectangle — a cell can be a **void** (`roomGrid[r][c] === null`),
+  meaning it isn't part of the board at all. This covers non-rectangular outlines (cut corners,
+  staircases) and equally an interior hole fully surrounded by real cells. Void is distinct from a
+  blocked furniture cell: a blocked cell is real board (it has a room, art, hover text, room
+  borders); a void cell has none of those and simply doesn't exist.
 
 This is a static, client-side web app (vanilla HTML/CSS/JS, no build step, no backend) hosted free
 on GitHub Pages at `https://jonbaker99.github.io/adhoc-projects/murdoku/`.
@@ -55,7 +61,9 @@ in that track, so it would drift every cell out of alignment in the other four.
 
 1. `layer-cells` — room background tint + borders (thick between different rooms, thin within one).
    **This is the only interactive layer for single-cell actions** — all pointer listeners are
-   delegated here.
+   delegated here. A void cell (`isVoid(r,c)`) gets no `.cell` element at all — just a
+   non-interactive `.void-cell` skin — so the entire gesture layer is naturally void-unaware:
+   `cellFromEvent()`'s `.closest(".cell")` can never land on one.
 2. `layer-objects` — one SVG per object (`OBJECT_TYPES[type].art(colSpan, rowSpan)`), spanning
    multiple grid cells for multi-cell objects.
 3. `layer-labels` — room-name pills, anchored to each room's longest bottom-most horizontal run.
@@ -125,8 +133,10 @@ measure), and on window resize.
 
 Core solving interactions (pencil marks, definitive placement via click/hold/drag, cross-out,
 erase, undo), room/object rendering with SVG art and multi-cell spans, room labels, a legend,
-hover status, clue-ref highlighting, and the multi-puzzle library are all working. Not yet built:
-a "report the crime" fun/finishing feature once solving mechanics feel complete.
+hover status, clue-ref highlighting, irregular/non-rectangular grids (void cells), the row/column
+bulk-fill headers, the side-by-side clues layout, and the multi-puzzle library are all working.
+Not yet built: an in-app puzzle editor mode (rows/cols, room tool, object tool — planned, not yet
+implemented) and a "report the crime" fun/finishing feature once solving mechanics feel complete.
 
 ## Conventions
 

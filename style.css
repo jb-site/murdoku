@@ -276,6 +276,18 @@ body.resizing { cursor: col-resize; }
   filter: saturate(0.6) brightness(0.85);
 }
 
+/* Not part of the board at all. Deliberately NOT a .cell: it carries no room tint, no
+   borders, and no data-r/data-c, so cellFromEvent()'s .closest(".cell") walks straight
+   past it — no gesture code needs a void special case. */
+.void-cell {
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(45deg,
+      rgba(255, 255, 255, 0.022) 0 6px,
+      transparent 6px 12px),
+    #14161b;
+}
+
 .cell.ref-room {
   outline: 2px dashed var(--ref);
   outline-offset: -3px;

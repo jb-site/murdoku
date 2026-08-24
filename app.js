@@ -198,6 +198,27 @@ const OBJECT_TYPES = {
       `, 100, 100);
     },
   },
+  bear: {
+    label: "Bear", emoji: "🐻", occupiable: false,
+    art() {
+      return svgObject("#a38a70", "#625851", "#332c26", `
+        <ellipse cx="50" cy="58" rx="30" ry="26" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <circle cx="30" cy="28" r="10" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <circle cx="60" cy="24" r="14" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <ellipse cx="62" cy="28" rx="6" ry="5" fill="var(--obj-fill2)"/>
+      `, 100, 100);
+    },
+  },
+  boulder: {
+    label: "Boulder", emoji: "🪨", occupiable: false,
+    art() {
+      return svgObject("#7d7e80", "#ddd9df", "#333436", `
+        <path d="M50 12 C74 12 88 30 84 52 C80 76 62 88 42 86 C20 84 10 66 14 46 C18 26 30 12 50 12Z"
+          fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M38 30 C48 26 60 32 58 44" stroke="var(--obj-fill2)" stroke-width="3" fill="none" stroke-linecap="round"/>
+      `, 100, 100);
+    },
+  },
 };
 
 const ROOM_COLORS = {
@@ -217,6 +238,15 @@ const ROOM_COLORS = {
   arboretum: "#2c4536",
   pond: "#234548",
   restingarea: "#2c4a40",
+  summit: "#3a3d44",
+  rangershut: "#4a3547",
+  windytrail: "#45403a",
+  rockytrail: "#3f3c36",
+  pineforest: "#28402e",
+  bearwoods: "#443728",
+  grove: "#2e4634",
+  lake: "#23414a",
+  booth: "#3b3a45",
 };
 const DEFAULT_ROOM_COLOR = "#2f313a";
 
@@ -255,6 +285,15 @@ function isSuspectSelection(sel) {
 function isBlocked(r, c) {
   const o = objectAt[r][c];
   return !!o && !OBJECT_TYPES[o.type].occupiable;
+}
+
+// A cell that is not part of the board at all — outside an irregular boundary, or a
+// hole punched inside one. Distinct from "blocked": a blocked cell is a real board
+// cell holding furniture nobody can stand on (it has a room, art, hover text, and
+// room borders); a void cell has none of those and simply doesn't exist. Cheap to
+// test straight off roomGrid — no index to build.
+function isVoid(r, c) {
+  return PUZZLE.roomGrid[r][c] === null;
 }
 
 function freshGrid() {
@@ -300,6 +339,20 @@ function normalizePuzzle(data) {
     };
   });
 
+  // A wholly-void row/column would collapse to zero height/width in the CSS grid
+  // (nothing left to size that track via .cell's min-width/aspect-ratio) — not
+  // hardened against, just flagged, since no puzzle has needed one yet.
+  for (let r = 0; r < rows; r++) {
+    if (data.roomGrid[r].every((room) => room === null)) console.error(`Row ${r} is entirely void.`);
+  }
+  for (let c = 0; c < cols; c++) {
+    if (data.roomGrid.every((row) => row[c] === null)) console.error(`Column ${c} is entirely void.`);
+  }
+  Object.keys(data.rooms || {}).forEach((roomId) => {
+    const used = data.roomGrid.some((row) => row.includes(roomId));
+    if (!used) console.error(`Room "${roomId}" has no cells — its label has nowhere to anchor.`);
+  });
+
   return data;
 }
 
@@ -324,6 +377,10 @@ function buildObjectIndex(data) {
     }
     if (r0 < 0 || c0 < 0 || r1 >= rows || c1 >= cols) {
       console.error(`Object "${obj.type}" at [${r0},${c0}] is out of bounds — skipping.`);
+      return;
+    }
+    if (obj.cells.some(([r, c]) => data.roomGrid[r][c] === null)) {
+      console.error(`Object "${obj.type}" at [${r0},${c0}] covers a void cell — skipping.`);
       return;
     }
 
@@ -538,6 +595,11 @@ function buildLegend() {
 
 // --- Grid rendering ----------------------------------------------------
 
+// A real cell adjacent to a void (roomGrid entry null) compares null !== "someRoom" and
+// gets the thick divider — exactly the out-of-bounds treatment, which is correct: from a
+// real cell's view, a void is the edge of the world, whether it's the outer boundary or a
+// hole punched inside one. (Two adjacent voids would compare null === null and get a thin
+// border, but that's unobservable — void cells never get a .cell element to draw it on.)
 function borderStyle(r, c, dr, dc) {
   const nr = r + dr, nc = c + dc;
   const outOfBounds = nr < 0 || nr >= PUZZLE.rows || nc < 0 || nc >= PUZZLE.cols;
@@ -563,6 +625,7 @@ function computeRoomAnchors() {
     let c = 0;
     while (c < PUZZLE.cols) {
       const roomId = PUZZLE.roomGrid[r][c];
+      if (roomId === null) { c++; continue; } // voids belong to no room's run
       let c1 = c;
       while (c1 + 1 < PUZZLE.cols && PUZZLE.roomGrid[r][c1 + 1] === roomId) c1++;
       const runLength = c1 - c + 1;
@@ -602,20 +665,34 @@ function renderStatic() {
   // coordinates throughout — only the grid placement carries the offset.
   for (let r = 0; r < PUZZLE.rows; r++) {
     for (let c = 0; c < PUZZLE.cols; c++) {
-      const blocked = isBlocked(r, c);
-      const cellEl = document.createElement("div");
-      cellEl.className = "cell" + (blocked ? " blocked" : "");
-      cellEl.dataset.r = r;
-      cellEl.dataset.c = c;
-      cellEl.style.gridRow = r + 2;
-      cellEl.style.gridColumn = c + 2;
-      cellEl.style.background = ROOM_COLORS[PUZZLE.roomGrid[r][c]] || DEFAULT_ROOM_COLOR;
-      cellEl.style.borderTop = borderStyle(r, c, -1, 0);
-      cellEl.style.borderBottom = borderStyle(r, c, 1, 0);
-      cellEl.style.borderLeft = borderStyle(r, c, 0, -1);
-      cellEl.style.borderRight = borderStyle(r, c, 0, 1);
-      layerCellsEl.appendChild(cellEl);
+      if (isVoid(r, c)) {
+        // Not part of the board at all — no .cell element, so it's automatically
+        // non-interactive (cellFromEvent()'s .closest(".cell") can never find it) and
+        // draws no room tint/borders of its own. Purely decorative "hole" skin.
+        const voidEl = document.createElement("div");
+        voidEl.className = "void-cell";
+        voidEl.style.gridRow = r + 2;
+        voidEl.style.gridColumn = c + 2;
+        layerCellsEl.appendChild(voidEl);
+      } else {
+        const blocked = isBlocked(r, c);
+        const cellEl = document.createElement("div");
+        cellEl.className = "cell" + (blocked ? " blocked" : "");
+        cellEl.dataset.r = r;
+        cellEl.dataset.c = c;
+        cellEl.style.gridRow = r + 2;
+        cellEl.style.gridColumn = c + 2;
+        cellEl.style.background = ROOM_COLORS[PUZZLE.roomGrid[r][c]] || DEFAULT_ROOM_COLOR;
+        cellEl.style.borderTop = borderStyle(r, c, -1, 0);
+        cellEl.style.borderBottom = borderStyle(r, c, 1, 0);
+        cellEl.style.borderLeft = borderStyle(r, c, 0, -1);
+        cellEl.style.borderRight = borderStyle(r, c, 0, 1);
+        layerCellsEl.appendChild(cellEl);
+      }
 
+      // Marks layer stays dense (one per bounding-box cell, same as for blocked cells)
+      // so renderMarks()/applyHighlights()'s `r * PUZZLE.cols + c` indexing holds
+      // unchanged — a void's mark div just stays permanently empty.
       const markEl = document.createElement("div");
       markEl.className = "mark";
       markEl.dataset.r = r;
@@ -948,7 +1025,7 @@ gridEl.addEventListener("pointerleave", () => {
 // --- Tool logic ----------------------------------------------------------
 
 function canApplySelection(r, c) {
-  if (isBlocked(r, c)) return false;
+  if (isVoid(r, c) || isBlocked(r, c)) return false;
   const cell = grid[r][c];
   if (selection === "#x") return !cell.definite;
   if (selection === "#erase") return !!cell.definite || cell.x || cell.pencil.size > 0;
@@ -963,7 +1040,7 @@ function canApplySelection(r, c) {
 // until the X is erased) would be surprising. Every case here is "turn on / clear",
 // never a toggle, so a cell that already has the mark is correctly a no-op.
 function canBulkApply(r, c) {
-  if (isBlocked(r, c)) return false;
+  if (isVoid(r, c) || isBlocked(r, c)) return false;
   const cell = grid[r][c];
   if (selection === "#x") return !cell.definite && !cell.x;
   if (selection === "#erase") return !!cell.definite || cell.x || cell.pencil.size > 0;
@@ -974,9 +1051,9 @@ function canBulkApply(r, c) {
 function lineCells(kind, index) {
   const out = [];
   if (kind === "row") {
-    for (let c = 0; c < PUZZLE.cols; c++) out.push([index, c]);
+    for (let c = 0; c < PUZZLE.cols; c++) if (!isVoid(index, c)) out.push([index, c]);
   } else {
-    for (let r = 0; r < PUZZLE.rows; r++) out.push([r, index]);
+    for (let r = 0; r < PUZZLE.rows; r++) if (!isVoid(r, index)) out.push([r, index]);
   }
   return out;
 }
@@ -1003,7 +1080,7 @@ function applyToLine(kind, index) {
 
 // forceApply: null = toggle and report which way it went; true/false = force that state (for drag painting)
 function applySelectionToCell(r, c, forceApply) {
-  if (isBlocked(r, c)) return null;
+  if (isVoid(r, c) || isBlocked(r, c)) return null;
   const cell = grid[r][c];
 
   if (selection === "#x") {
@@ -1040,7 +1117,7 @@ function placeDefinitely(r, c, letter) {
   cell.pencil.clear();
   cell.x = false;
   for (let cc = 0; cc < PUZZLE.cols; cc++) {
-    if (cc === c || isBlocked(r, cc)) continue;
+    if (cc === c || isVoid(r, cc) || isBlocked(r, cc)) continue;
     const other = grid[r][cc];
     if (!other.definite) {
       other.x = true;
@@ -1048,7 +1125,7 @@ function placeDefinitely(r, c, letter) {
     }
   }
   for (let rr = 0; rr < PUZZLE.rows; rr++) {
-    if (rr === r || isBlocked(rr, c)) continue;
+    if (rr === r || isVoid(rr, c) || isBlocked(rr, c)) continue;
     const other = grid[rr][c];
     if (!other.definite) {
       other.x = true;
@@ -1080,7 +1157,7 @@ function restoreSnapshot(snapshot) {
 function sanitizeRestoredGrid() {
   for (let r = 0; r < PUZZLE.rows; r++) {
     for (let c = 0; c < PUZZLE.cols; c++) {
-      if (isBlocked(r, c)) {
+      if (isVoid(r, c) || isBlocked(r, c)) {
         grid[r][c] = { pencil: new Set(), definite: null, x: false };
       }
     }
@@ -1211,7 +1288,9 @@ function gridMinWidth() {
   const gs = getComputedStyle(gridEl);
   const hdr = parseFloat(gs.getPropertyValue("--hdr-size")) || 28;
   const border = parseFloat(gs.borderLeftWidth) + parseFloat(gs.borderRightWidth);
-  const firstCell = layerCellsEl.firstElementChild;
+  // .cell, not firstElementChild — a void tile (which carries no min-width) can be
+  // the very first child once a puzzle has a void cell at or before its first real one.
+  const firstCell = layerCellsEl.querySelector(".cell");
   const cellMin = firstCell ? parseFloat(getComputedStyle(firstCell).minWidth) : 52;
   return Math.ceil(hdr + border + PUZZLE.cols * cellMin);
 }
