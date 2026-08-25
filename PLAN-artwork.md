@@ -637,6 +637,60 @@ strip too; portraits already look right, so build the board half only.
   logged twice above — the room chips were showing under the Details panel too, not
   just under Art), and `renderArtLayer()` now reuses the existing `<img>` when the src
   is unchanged, since the Art tab drives a full re-render per drag frame.
+### Follow-up (same day): two-point alignment, the loupe, and the square-cell lock
+
+Board art landed for all 12 puzzles (`7174887`), and extraction went badly for 9 of them —
+auto-detection's vertical search collapsed to the page edges, leaving them at
+`boardCrop ~ {x:.2, y:0, w:.8, h:1}` with the board sitting somewhere inside a
+full-page-height image. That makes calibration a large crop-down, not a nudge, so the Art
+tab gained three things:
+
+1. **Align by 2 points (correspondence pairs).** Not "click the board's two corners" —
+   the outer corner is ambiguous on exactly the puzzles that need this most (The Hiking
+   Trip's board edge is fuzzy mountain scenery), while interior grid intersections are
+   sharp. The author gives two correspondences: a grid intersection, then its matching
+   point in the artwork, twice. The grid half **snaps to the nearest cell intersection**,
+   so it carries zero human error, and a marker shows exactly what was registered.
+   Corner-picking is just the special case where the grid points are (0,0) and
+   (cols,rows). Throughout the mode the WHOLE padded PNG is fitted (contain, letterboxed)
+   into the cell area, because the point being clicked is usually outside the current
+   crop. Escape cancels at any stage, including mid-pair; nothing is written until both
+   pairs are complete.
+
+   Closed-form, since the transform is axis-aligned scale + translate:
+   `w = (ix2-ix1)/(gx2-gx1)`, `x = ix1 - gx1*w`, and the mirror on y. Refuses the
+   degenerate case (two points sharing a row or column) and the inverted case, and warns
+   when the picks are less than a third of the board apart, since the error in `w` scales
+   as `1/(gx2-gx1)`.
+
+2. **Magnifier loupe**, 140px at 5x, following the cursor while picking the image half of
+   a pair, with crosshairs on the exact point that will be registered. Implemented as a
+   `background-position` offset on the same PNG — no canvas, no pixel readback.
+
+3. **Square-cell lock, on by default.** `boardCrop` is normalized against a PNG that is
+   not itself square, so equal w and h do NOT mean square cells — the condition is in
+   pixels: `(w*imgW)/cols == (h*imgH)/rows`. With the lock on, the author manipulates
+   three degrees of freedom (pan x, pan y, scale) and "every cell subtly rectangular"
+   becomes unreachable. A "cell px" input exposes the scale directly, and a readout
+   shows the cell size on both axes, flagged in red when off-square. The checkbox
+   unlocks it for a source that genuinely needs a stretch, and the independent w/h
+   inputs keep working when unlocked.
+
+   Which axis is authoritative: **hold w and derive h** for typed/zoomed changes and when
+   the lock is switched on (it was the *vertical* search that collapsed, so x/w is the
+   trustworthy pair on the badly-detected puzzles). For two-point alignment, the axis with
+   the **greater pick separation** wins — that is the more accurate measurement — and the
+   panel states which one it used. The derived axis is anchored on the midpoint of the two
+   picks, so the correspondence the author clicked stays as true as the constraint allows.
+
+**Verified on car-repair** (one of the badly-detected 9). Starting crop
+`{x:0.2, y:0, w:0.8, h:1}`, cells 64.00 x 96.33 px, aspect 0.664. Two pairs — grid (1,1)
+to image pixel (190.5, 235.5) and grid (5,5) to (392.5, 437.5) — produced
+`{x:0.2917, y:0.3201, w:0.6313, h:0.5242}`, cells 50.50 x 50.50 px, aspect 1.0001. That
+matches an independent offline detection of the board's border lines in the PNG
+(x0=140, y0=185, x1=443, y1=488 in a 480x578 image -> 0.29167, 0.32007, 0.63125, 0.52422)
+to four decimal places.
+
 - **Gotcha for the calibration pass:** `python3 -m http.server` sends no cache headers,
   and Chrome will heuristically serve a stale `puzzles/<id>.json` from disk cache without
   revalidating — a freshly extracted `art` block can appear to be missing entirely. If a

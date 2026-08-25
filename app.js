@@ -1126,6 +1126,11 @@ function renderArtLayer() {
     img = document.createElement("img");
     img.setAttribute("src", src);
     img.alt = "";
+    // naturalWidth is 0 until it decodes, and the Art tab's square-cell maths and
+    // contain-fit both need it — refresh the panel once it lands.
+    img.addEventListener("load", () => {
+      if (EDIT?.tool === "art") { syncArtInputs(); updateArtCellNote(); }
+    }, { once: true });
     layerArtEl.appendChild(img);
   }
   const crop = artCrop();
@@ -1133,6 +1138,11 @@ function renderArtLayer() {
   img.style.setProperty("--art-y", crop.y);
   img.style.setProperty("--art-w", crop.w);
   img.style.setProperty("--art-h", crop.h);
+
+  // Two-point alignment abandons the crop and fits the WHOLE padded PNG into the cell
+  // area, because the point being clicked is usually outside the current crop.
+  if (EDIT?.artPick) applyArtFit(img); else clearArtFit(img);
+  renderArtPickMarkers();
 }
 
 const IDENTITY_CROP = { x: 0, y: 0, w: 1, h: 1 };
@@ -2075,7 +2085,8 @@ function enterEditMode(sourcePuzzle) {
   // PUZZLE.art.boardCrop can't reach back into it.
   const baseCrop = (sourcePuzzle ?? PUZZLE)?.art?.boardCrop;
   EDIT = { stash: { puzzle: PUZZLE, objectAt, grid, history, selection }, tool: "rooms", roomPaint: null, objPaint: null, drag: null, dirty: false,
-    artBase: baseCrop ? { ...baseCrop } : { x: 0, y: 0, w: 1, h: 1 } };
+    artBase: baseCrop ? { ...baseCrop } : { x: 0, y: 0, w: 1, h: 1 },
+    artSquareLock: true, artPick: null, artPickNote: "" };
   PUZZLE = normalizePuzzle(structuredClone(sourcePuzzle ?? PUZZLE));
   objectAt = buildObjectIndex(PUZZLE);
   grid = freshGrid();
@@ -2101,6 +2112,7 @@ function enterEditMode(sourcePuzzle) {
 }
 
 function exitEditMode(mode) {
+  endArtPick(); // clears the pick overlay/loupe and the art-pick body class
   if (mode === "discard") {
     ({ puzzle: PUZZLE, objectAt, grid, history, selection } = EDIT.stash);
   } else {
@@ -2246,6 +2258,7 @@ editorTabsEl.querySelectorAll(".edit-tab").forEach((btn) => {
 });
 
 function setEditTab(tab) {
+  if (EDIT.tool === "art" && tab !== "art") endArtPick();
   EDIT.tool = tab;
   editorTabsEl.querySelectorAll(".edit-tab").forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
   // Both the Details and Art panels are column layouts and share .editor-details;
@@ -2457,12 +2470,59 @@ function buildDetailsPanel() {
 // The primary output is the "Copy boardCrop" button, NOT the whole-puzzle JSON download:
 // the author calibrates all 12 puzzles in one sitting and pastes four numbers back each
 // time. Portrait crops are deliberately out of scope (see PLAN-artwork.md).
+//
+// Two controls exist because auto-detection's vertical search collapsed to the page
+// edges on 9 of the 12 puzzles, leaving them at boardCrop ~ {x:.2, y:0, w:.8, h:1} —
+// the board sits somewhere inside a full-page-height image, so the correction is a big
+// crop-down, not a nudge:
+//   * corner picking (two clicks on the whole, un-cropped PNG), for the coarse move;
+//   * the square-cell lock, which removes the fourth degree of freedom entirely.
 
 const artInputEls = {};
 
+function artImg() {
+  const img = layerArtEl.querySelector("img");
+  return img && img.naturalWidth ? img : null; // naturalWidth is 0 until it decodes
+}
+
+function artImgDims() {
+  const img = artImg();
+  return img ? { W: img.naturalWidth, H: img.naturalHeight } : null;
+}
+
+// Cell size in SOURCE IMAGE PIXELS on each axis. This — not w vs h — is what
+// "square cells" means: boardCrop is normalized against a PNG that is itself not
+// square, so a genuinely square board stores as unequal w/h (netflix-and-kill is
+// w:0.8131 h:0.7692, and resolves to 65.05 x 65.00 px cells).
+function artCellPx(crop = artCrop()) {
+  const d = artImgDims();
+  if (!d) return null;
+  return { cw: (crop.w * d.W) / PUZZLE.cols, ch: (crop.h * d.H) / PUZZLE.rows };
+}
+
+// Force (w*W)/cols == (h*H)/rows. `from` picks which axis is authoritative:
+//   "w"    — hold the horizontal extent, derive h. The default, and the right one for
+//            the badly-detected puzzles: it was the vertical search that collapsed, so
+//            x/w are the trustworthy pair.
+//   "h"    — the mirror, used when the author types an explicit h.
+//   "both" — neither is trustworthy (two hand-placed corner clicks), so split the
+//            difference: the geometric mean of the two cell sizes.
+// The derived axis is recomputed about its own centre, so nothing jumps sideways.
+function squareifyCrop(crop, from) {
+  const d = artImgDims();
+  if (!d) return crop;
+  const cw = (crop.w * d.W) / PUZZLE.cols;
+  const ch = (crop.h * d.H) / PUZZLE.rows;
+  if (!(cw > 0) || !(ch > 0)) return crop;
+  const s = from === "h" ? ch : from === "both" ? Math.sqrt(cw * ch) : cw;
+  const w = (s * PUZZLE.cols) / d.W;
+  const h = (s * PUZZLE.rows) / d.H;
+  return { x: crop.x + (crop.w - w) / 2, y: crop.y + (crop.h - h) / 2, w, h };
+}
+
 function buildArtPanel() {
   editorDetailsEl.innerHTML = "";
-  artInputEls.x = artInputEls.y = artInputEls.w = artInputEls.h = null;
+  ["x", "y", "w", "h", "cell"].forEach((k) => { artInputEls[k] = null; });
 
   if (!PUZZLE.art?.board) {
     const msg = document.createElement("p");
@@ -2476,17 +2536,14 @@ function buildArtPanel() {
   }
 
   const help = document.createElement("p");
-  help.className = "hint";
-  help.style.textAlign = "left";
-  help.style.margin = "0";
-  help.textContent = "Drag on the grid to pan the artwork. Arrow keys nudge (hold Shift for a coarse step). " +
-    "Zoom scales about the centre of the visible board. Room tints are shown at half opacity so " +
-    "misalignment against the art's own cell boundaries is obvious.";
+  help.className = "hint art-instructions";
+  help.id = "artInstructions";
   editorDetailsEl.appendChild(help);
 
   const controls = document.createElement("div");
   controls.className = "editor-row art-controls";
   controls.innerHTML = `
+    <button type="button" class="tool-btn" id="artPickBtn" title="Align by two correspondences: a grid intersection and its matching point in the artwork, twice">⌖ Align by 2 points</button>
     <button type="button" class="tool-btn" data-zoom="0.99">Zoom −</button>
     <button type="button" class="tool-btn" data-zoom="1.01">Zoom +</button>
     <button type="button" class="tool-btn" data-zoom="0.95">− −</button>
@@ -2499,16 +2556,38 @@ function buildArtPanel() {
   controls.querySelectorAll("[data-zoom]").forEach((btn) => {
     btn.addEventListener("click", () => zoomArt(+btn.dataset.zoom));
   });
+  controls.querySelector("#artPickBtn").addEventListener("click", () => {
+    if (EDIT.artPick) endArtPick(); else startArtPick();
+  });
   controls.querySelector("#artResetBtn").addEventListener("click", () => {
-    setArtCrop(EDIT.artBase);
+    endArtPick();
+    setArtCrop(EDIT.artBase); // verbatim: Reset means "as extracted", lock or no lock
     buildArtPanel();
   });
   controls.querySelector("#artCopyBtn").addEventListener("click", copyBoardCrop);
 
+  const lockRow = document.createElement("div");
+  lockRow.className = "editor-row art-lock-row";
+  lockRow.innerHTML = `
+    <label><input type="checkbox" id="artSquareLock"> Square cells (lock w/h together)</label>
+    <span class="art-cell-note" id="artCellNote"></span>
+  `;
+  editorDetailsEl.appendChild(lockRow);
+  const lockEl = lockRow.querySelector("#artSquareLock");
+  lockEl.checked = EDIT.artSquareLock;
+  lockEl.addEventListener("change", () => {
+    EDIT.artSquareLock = lockEl.checked;
+    // Turning it on snaps the current crop; turning it off changes nothing.
+    if (EDIT.artSquareLock) setArtCrop(artCrop(), { lock: "w" });
+    else syncArtInputs();
+    updateArtCellNote();
+  });
+
   const nums = document.createElement("div");
   nums.className = "details-row art-numbers";
   nums.innerHTML = ["x", "y", "w", "h"].map((k) =>
-    `<label>${k}<input type="number" step="0.001" data-crop="${k}"></label>`).join("");
+    `<label>${k}<input type="number" step="0.001" data-crop="${k}"></label>`).join("") +
+    `<label>cell px<input type="number" step="0.1" data-crop="cell" title="Cell size in source-image pixels — the single scale control when the square lock is on"></label>`;
   editorDetailsEl.appendChild(nums);
   nums.querySelectorAll("[data-crop]").forEach((input) => {
     const key = input.dataset.crop;
@@ -2516,15 +2595,53 @@ function buildArtPanel() {
     input.addEventListener("input", () => {
       const v = parseFloat(input.value);
       if (!Number.isFinite(v)) return;
-      setArtCrop({ ...artCrop(), [key]: v }, input);
+      if (key === "cell") {
+        setScaleFromCellPx(v, input);
+      } else {
+        // Only w/h feed the lock; x/y are pure pan and can't break squareness.
+        setArtCrop({ ...artCrop(), [key]: v }, { except: input, lock: key === "w" || key === "h" ? key : null });
+      }
     });
   });
 
-  // No "calibrated for NxM" note here on purpose: the panel isn't rebuilt on a resize,
-  // so it would go stale exactly when it mattered. validateDraft() reports the mismatch
-  // (as a warning, never an error) and re-runs on every dimension change.
+  if (EDIT.artPickNote) {
+    const pn = document.createElement("p");
+    pn.className = "hint art-pick-note";
+    pn.textContent = EDIT.artPickNote;
+    editorDetailsEl.appendChild(pn);
+  }
 
   syncArtInputs();
+  updateArtInstructions();
+  updateArtCellNote();
+}
+
+function updateArtInstructions() {
+  const el = document.getElementById("artInstructions");
+  if (!el) return;
+  const pick = EDIT?.artPick;
+  el.classList.toggle("picking", !!pick);
+  if (pick) {
+    const n = pick.pairs.length + 1;
+    el.textContent = pick.pending
+      ? `ALIGN — pair ${n} of 2: now click the MATCHING point in the artwork. The loupe magnifies where you are pointing. (Esc cancels everything)`
+      : `ALIGN — pair ${n} of 2: click a GRID INTERSECTION (a cell corner); it snaps to the nearest one. Pick landmarks as far apart as you can. (Esc cancels everything)`;
+    return;
+  }
+  el.textContent = "Drag on the grid to pan the artwork. Arrow keys nudge (hold Shift for a coarse step). " +
+    "Zoom scales about the centre of the visible board. Room tints are shown at half opacity so " +
+    "misalignment against the art's own cell boundaries is obvious. For a big correction, use Align by 2 points.";
+}
+
+function updateArtCellNote() {
+  const el = document.getElementById("artCellNote");
+  if (!el) return;
+  const px = artCellPx();
+  if (!px) { el.textContent = "(artwork still loading…)"; return; }
+  const aspect = px.cw / px.ch;
+  const square = Math.abs(aspect - 1) < 0.003;
+  el.textContent = `Cell: ${px.cw.toFixed(2)} × ${px.ch.toFixed(2)} px (aspect ${aspect.toFixed(4)})${square ? "" : " — NOT square"}`;
+  el.classList.toggle("off-square", !square);
 }
 
 function syncArtInputs(except) {
@@ -2533,16 +2650,22 @@ function syncArtInputs(except) {
     const el = artInputEls[k];
     if (el && el !== except) el.value = round4(crop[k]);
   });
+  const px = artCellPx(crop);
+  if (artInputEls.cell && artInputEls.cell !== except) {
+    artInputEls.cell.value = px ? Math.round(px.cw * 100) / 100 : "";
+  }
 }
 
 function round4(n) {
   return Math.round(n * 10000) / 10000;
 }
 
-// The single write path for the crop. `except` is the input currently being typed into,
-// which must not have its own value rewritten out from under the caret.
-function setArtCrop(crop, except) {
+// The single write path for the crop. opts.except is the input currently being typed
+// into, which must not have its value rewritten out from under the caret; opts.lock
+// names the authoritative axis for the square-cell constraint (see squareifyCrop).
+function setArtCrop(crop, opts = {}) {
   if (!PUZZLE.art) return;
+  if (opts.lock && EDIT.artSquareLock) crop = squareifyCrop(crop, opts.lock);
   PUZZLE.art.boardCrop = {
     x: round4(crop.x),
     y: round4(crop.y),
@@ -2550,14 +2673,27 @@ function setArtCrop(crop, except) {
     h: round4(Math.max(crop.h, 0.01)),
   };
   EDIT.dirty = true;
-  syncArtInputs(except);
+  syncArtInputs(opts.except);
+  updateArtCellNote();
   scheduleEditRerender();
   scheduleDraftSave();
 }
 
+// The scale degree of freedom, expressed the way the constraint is: pixels per cell.
+function setScaleFromCellPx(s, except) {
+  const d = artImgDims();
+  if (!d || !(s > 0)) return;
+  const crop = artCrop();
+  const w = (s * PUZZLE.cols) / d.W;
+  // Feeding it through the "w" branch derives h from the same s when the lock is on,
+  // and leaves h alone when it isn't (scale then means horizontal scale only).
+  setArtCrop({ ...crop, x: crop.x + (crop.w - w) / 2, w }, { except, lock: "w" });
+}
+
 // Zoom scales w/h about the CENTRE of the current crop, so the middle of the visible
-// board stays put. Scaling about the top-left corner (i.e. leaving x/y alone) renders
-// fine but is useless for calibration — every zoom step would also pan.
+// board stays put. Scaling about the top-left corner renders fine but is useless for
+// calibration — every zoom step would also pan. A uniform factor on both axes preserves
+// the square-cell ratio by construction, so no lock handling is needed here.
 // factor > 1 = zoom in = a SMALLER window onto the source = bigger apparent artwork.
 function zoomArt(factor) {
   const crop = artCrop();
@@ -2583,7 +2719,11 @@ function panArt(dx, dy) {
 // Fine nudge. One step is 1/8 of a cell (Shift: one whole cell) in screen terms, which
 // is the scale sub-cell misalignment actually shows up at.
 function onArtKey(e) {
-  if (!PUZZLE.art?.board) return;
+  if (e.key === "Escape") {
+    if (EDIT.artPick) endArtPick();
+    return;
+  }
+  if (!PUZZLE.art?.board || EDIT.artPick) return;
   const dirs = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
   const dir = dirs[e.key];
   if (!dir) return;
@@ -2594,11 +2734,246 @@ function onArtKey(e) {
   panArt(dir[0] * cellW * step, dir[1] * cellH * step);
 }
 
+// --- Two-point alignment (correspondence pairs) ----------------------------
+//
+// Not "click the board's two outer corners": the outer corner is ambiguous on exactly
+// the puzzles that most need calibrating (The Hiking Trip's board edge is fuzzy mountain
+// scenery with no crisp corner), while interior grid intersections are sharp. So the
+// author gives two CORRESPONDENCES — "this grid intersection is that point in the
+// artwork" — and any two identifiable landmarks will do. Outer-corner picking is just
+// the special case where the grid points are (0,0) and (cols,rows).
+//
+// The transform is axis-aligned scale + translate, so it is exact and closed-form.
+// A grid intersection at normalized board coords (gx,gy) maps to the image point
+// ix = crop.x + gx*crop.w, so from two pairs:
+//     crop.w = (ix2-ix1)/(gx2-gx1)      crop.x = ix1 - gx1*crop.w
+//     crop.h = (iy2-iy1)/(gy2-gy1)      crop.y = iy1 - gy1*crop.h
+//
+// The GRID half of each pair snaps to the nearest cell intersection, so it carries zero
+// human error — the app knows that geometry exactly. Only the image half needs care,
+// which is what the magnifier loupe is for.
+//
+// Throughout the mode the WHOLE padded PNG is fitted (contain, letterboxed) into the
+// cell area, because the point the author needs to click is usually OUTSIDE the current
+// crop — on the badly-detected puzzles the board is scrolled well out of view.
+
+const PICK_MIN_SEPARATION = 1 / 3; // below this, click error is amplified enough to warn
+
+// Where the whole image sits inside layer-art's box under contain-fit. Recomputed on
+// demand rather than cached, so a resize mid-pick can't desync the click mapping.
+function artFitBox() {
+  const d = artImgDims();
+  if (!d) return null;
+  const WB = layerArtEl.clientWidth, HB = layerArtEl.clientHeight;
+  if (!WB || !HB) return null;
+  const k = Math.min(WB / d.W, HB / d.H);
+  const dw = d.W * k, dh = d.H * k;
+  return { dw, dh, left: (WB - dw) / 2, top: (HB - dh) / 2 };
+}
+
+// Inline width/height/left/top beat .layer-art img's calc() rules from the stylesheet,
+// so fit mode needs no extra CSS and clears by removing the four properties again.
+function applyArtFit(img) {
+  const fit = artFitBox();
+  if (!fit) return;
+  img.style.width = `${fit.dw}px`;
+  img.style.height = `${fit.dh}px`;
+  img.style.left = `${fit.left}px`;
+  img.style.top = `${fit.top}px`;
+}
+
+function clearArtFit(img) {
+  ["width", "height", "left", "top"].forEach((prop) => img.style.removeProperty(prop));
+}
+
+function startArtPick() {
+  if (!artImgDims()) { setStatus("The board artwork hasn't finished loading yet."); return; }
+  EDIT.artPick = { pairs: [], pending: null };
+  EDIT.artPickNote = "";
+  document.body.classList.add("art-pick");
+  document.getElementById("artPickBtn")?.classList.add("active");
+  scheduleEditRerender();
+  updateArtInstructions();
+}
+
+// Cancels cleanly at any stage — including half-way through a pair — without touching
+// the crop. Nothing is written until both pairs are complete.
+function endArtPick() {
+  if (!EDIT.artPick) return;
+  EDIT.artPick = null;
+  hideArtLoupe();
+  document.body.classList.remove("art-pick");
+  document.getElementById("artPickBtn")?.classList.remove("active");
+  scheduleEditRerender();
+  updateArtInstructions();
+}
+
+// Screen point -> normalized IMAGE coordinates, in fit space. Clamped, so a click on
+// the letterbox margin still resolves to the nearest edge of the image.
+function artPointFromEvent(e) {
+  const fit = artFitBox();
+  if (!fit) return null;
+  const rect = layerArtEl.getBoundingClientRect();
+  const u = (e.clientX - rect.left - fit.left) / fit.dw;
+  const v = (e.clientY - rect.top - fit.top) / fit.dh;
+  return { u: Math.min(Math.max(u, 0), 1), v: Math.min(Math.max(v, 0), 1) };
+}
+
+// Screen point -> nearest cell INTERSECTION, in normalized board coordinates. layer-art's
+// box is exactly the cell area, so col/cols and row/rows are the whole conversion.
+function artGridPointFromEvent(e) {
+  const rect = layerArtEl.getBoundingClientRect();
+  if (!rect.width || !rect.height) return null;
+  const col = Math.min(Math.max(Math.round(((e.clientX - rect.left) / rect.width) * PUZZLE.cols), 0), PUZZLE.cols);
+  const row = Math.min(Math.max(Math.round(((e.clientY - rect.top) / rect.height) * PUZZLE.rows), 0), PUZZLE.rows);
+  return { col, row, gx: col / PUZZLE.cols, gy: row / PUZZLE.rows };
+}
+
+function onArtPickClick(e) {
+  const pick = EDIT.artPick;
+  if (pick.pending) {
+    const p = artPointFromEvent(e);
+    if (!p) return;
+    pick.pairs.push({ ...pick.pending, ix: p.u, iy: p.v });
+    pick.pending = null;
+    hideArtLoupe();
+    if (pick.pairs.length >= 2) { commitArtPick(); return; }
+  } else {
+    const g = artGridPointFromEvent(e);
+    if (!g) return;
+    pick.pending = g;
+  }
+  scheduleEditRerender();
+  updateArtInstructions();
+}
+
+function commitArtPick() {
+  const [p, q] = EDIT.artPick.pairs;
+  const dgx = q.gx - p.gx, dgy = q.gy - p.gy;
+  if (Math.abs(dgx) < 1e-9 || Math.abs(dgy) < 1e-9) {
+    endArtPick();
+    setStatus("Those two grid points share a row or a column, so the scale on that axis is undefined. Pick two points that differ both across and down.");
+    return;
+  }
+  let w = (q.ix - p.ix) / dgx;
+  let h = (q.iy - p.iy) / dgy;
+  if (!(w > 0) || !(h > 0)) {
+    endArtPick();
+    setStatus("Those pairs invert the image (the second artwork point sits the other side of the first). Nothing changed — try again.");
+    return;
+  }
+  let x = p.ix - p.gx * w;
+  let y = p.iy - p.gy * h;
+
+  const notes = [];
+  if (Math.abs(dgx) < PICK_MIN_SEPARATION || Math.abs(dgy) < PICK_MIN_SEPARATION) {
+    notes.push("the two points were less than a third of the board apart, which amplifies click error — check the fit, or redo it with points further apart");
+  }
+
+  // Two pairs overdetermine the crop when the square lock is on. Honour the axis with
+  // the GREATER pick separation — that is the more accurate measurement — and derive
+  // the other from the square-cell constraint. The derived axis is anchored on the
+  // midpoint of the two picks rather than on the crop's centre, so the correspondence
+  // the author actually clicked stays as true as the constraint allows.
+  if (EDIT.artSquareLock) {
+    const d = artImgDims();
+    if (d) {
+      const holdX = Math.abs(dgx) >= Math.abs(dgy);
+      if (holdX) {
+        const s = (w * d.W) / PUZZLE.cols;
+        h = (s * PUZZLE.rows) / d.H;
+        y = (p.iy + q.iy) / 2 - ((p.gy + q.gy) / 2) * h;
+      } else {
+        const s = (h * d.H) / PUZZLE.rows;
+        w = (s * PUZZLE.cols) / d.W;
+        x = (p.ix + q.ix) / 2 - ((p.gx + q.gx) / 2) * w;
+      }
+      const sepA = Math.abs(holdX ? dgx : dgy), sepB = Math.abs(holdX ? dgy : dgx);
+      const axis = holdX ? "horizontal" : "vertical";
+      EDIT.artPickNote = `Square lock: the ${axis} axis was authoritative (separation ${sepA.toFixed(2)} vs ${sepB.toFixed(2)} of the board${Math.abs(sepA - sepB) < 1e-6 ? " — a tie, so horizontal wins" : ""}); the other axis was derived from it.`;
+    }
+  } else {
+    EDIT.artPickNote = "Square lock off — both axes taken exactly as picked.";
+  }
+
+  endArtPick();
+  setArtCrop({ x, y, w, h });
+  buildArtPanel();
+  setStatus(notes.length
+    ? "Aligned from 2 correspondence pairs. Note: " + notes.join("; ") + "."
+    : "Aligned from 2 correspondence pairs. Fine-tune with drag, the arrow keys or Zoom.");
+}
+
+// Markers for what has been registered so far, drawn into layer-art (pointer-events:none,
+// and already the cell-area box). Rebuilt by renderArtLayer on every edit re-render.
+function renderArtPickMarkers() {
+  layerArtEl.querySelectorAll(".art-marker").forEach((el) => el.remove());
+  const pick = EDIT?.artPick;
+  if (!pick) return;
+  const WB = layerArtEl.clientWidth, HB = layerArtEl.clientHeight;
+  const fit = artFitBox();
+  const marker = (left, top, cls, label) => {
+    const el = document.createElement("div");
+    el.className = `art-marker ${cls}`;
+    el.style.left = `${left}px`;
+    el.style.top = `${top}px`;
+    el.dataset.label = label;
+    layerArtEl.appendChild(el);
+  };
+  pick.pairs.forEach((pair, i) => {
+    marker(pair.gx * WB, pair.gy * HB, "grid", `${i + 1}G`);
+    if (fit) marker(fit.left + pair.ix * fit.dw, fit.top + pair.iy * fit.dh, "image", `${i + 1}A`);
+  });
+  if (pick.pending) marker(pick.pending.gx * WB, pick.pending.gy * HB, "grid pending", `${pick.pairs.length + 1}G`);
+}
+
+// --- Magnifier loupe -------------------------------------------------------
+// Only while picking the IMAGE half of a pair — hitting a specific artwork pixel at the
+// fitted-down scale is otherwise guesswork. Implemented as a background-position offset
+// on the same PNG (no canvas, no pixel readback).
+
+const ART_LOUPE_SIZE = 140;
+const ART_LOUPE_ZOOM = 5;
+let artLoupeEl = null;
+
+function updateArtLoupe(e) {
+  const pick = EDIT?.artPick;
+  const img = artImg();
+  if (!pick || !pick.pending || !img) { hideArtLoupe(); return; }
+  const fit = artFitBox();
+  const p = artPointFromEvent(e);
+  if (!fit || !p) { hideArtLoupe(); return; }
+
+  if (!artLoupeEl) {
+    artLoupeEl = document.createElement("div");
+    artLoupeEl.className = "art-loupe";
+    artLoupeEl.innerHTML = `<span class="art-loupe-x"></span><span class="art-loupe-y"></span>`;
+    document.body.appendChild(artLoupeEl);
+  }
+  // Magnify the FITTED display by ART_LOUPE_ZOOM, then offset so the pointed-at point
+  // lands under the loupe's centre crosshair.
+  const bw = fit.dw * ART_LOUPE_ZOOM, bh = fit.dh * ART_LOUPE_ZOOM;
+  artLoupeEl.style.backgroundImage = `url("${img.getAttribute("src")}")`;
+  artLoupeEl.style.backgroundSize = `${bw}px ${bh}px`;
+  artLoupeEl.style.backgroundPosition = `${ART_LOUPE_SIZE / 2 - p.u * bw}px ${ART_LOUPE_SIZE / 2 - p.v * bh}px`;
+  // Sit beside the cursor, flipping near the viewport edge so it never runs off-screen.
+  const pad = 22;
+  const left = e.clientX + pad + ART_LOUPE_SIZE > window.innerWidth ? e.clientX - pad - ART_LOUPE_SIZE : e.clientX + pad;
+  const top = e.clientY + pad + ART_LOUPE_SIZE > window.innerHeight ? e.clientY - pad - ART_LOUPE_SIZE : e.clientY + pad;
+  artLoupeEl.style.left = `${left}px`;
+  artLoupeEl.style.top = `${top}px`;
+  artLoupeEl.hidden = false;
+}
+
+function hideArtLoupe() {
+  if (artLoupeEl) artLoupeEl.hidden = true;
+}
+
 function copyBoardCrop() {
   const crop = artCrop();
   const text = `"boardCrop": { "x": ${round4(crop.x)}, "y": ${round4(crop.y)}, "w": ${round4(crop.w)}, "h": ${round4(crop.h)} },`;
   const note = document.getElementById("artCopyNote");
-  const done = (ok) => { if (note) note.textContent = ok ? "Copied \u2713" : text; };
+  const done = (ok) => { if (note) note.textContent = ok ? "Copied ✓" : text; };
   if (navigator.clipboard?.writeText) {
     navigator.clipboard.writeText(text).then(() => done(true), () => done(false));
   } else {
@@ -2617,6 +2992,7 @@ function onEditPointerDown(e) {
   if (EDIT.tool === "art") {
     if (!PUZZLE.art?.board) return;
     e.preventDefault();
+    if (EDIT.artPick) { onArtPickClick(e); return; } // pick clicks, not a pan drag
     layerCellsEl.setPointerCapture(e.pointerId);
     EDIT.drag = { pointerId: e.pointerId, kind: "art", px: e.clientX, py: e.clientY };
     return;
@@ -2642,6 +3018,9 @@ function onEditPointerDown(e) {
 }
 
 function onEditPointerMove(e) {
+  // The loupe follows the bare pointer — there is no drag behind it — so it has to be
+  // handled before the drag guard below.
+  if (EDIT.tool === "art" && EDIT.artPick) { updateArtLoupe(e); return; }
   if (!EDIT.drag || EDIT.drag.pointerId !== e.pointerId) return;
 
   if (EDIT.drag.kind === "art") {

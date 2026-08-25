@@ -794,3 +794,83 @@ body.show-player-notes:not(.edit-mode) .players { display: block; }
   color: var(--muted);
   line-height: 1.5;
 }
+
+/* --- Art tab: two-point alignment (correspondence pairs) + loupe ---
+   Pick mode abandons the crop and fits the whole padded PNG into the cell area, so the
+   room tints drop to near-invisible: the author is aiming at artwork pixels, and a
+   half-opacity tint on top of them is just noise. The grid lines stay, because the grid
+   half of each pair is clicked on them. */
+body.art-pick .grid {
+  outline: 2px dashed var(--accent, #6ea8fe);
+  outline-offset: 3px;
+}
+body.art-mode.art-calibrate.art-pick .layer-cells .cell {
+  opacity: 0.12;
+}
+body.art-pick .layer-cells,
+body.art-pick .layer-cells .cell {
+  cursor: crosshair;
+}
+.art-instructions {
+  text-align: left;
+  margin: 0;
+}
+.art-instructions.picking {
+  color: var(--accent, #6ea8fe);
+  font-weight: 700;
+}
+.art-pick-note { text-align: left; margin: 0; }
+.art-cell-note { color: var(--muted); font-size: 0.8rem; font-family: ui-monospace, monospace; }
+.art-cell-note.off-square { color: var(--x-color); }
+.art-lock-row label { cursor: pointer; }
+
+/* Registered pick points. Grid markers (snapped to an intersection, so exact) and
+   artwork markers are deliberately different colours — they are different spaces. */
+.art-marker {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px #000, 0 0 6px #000;
+  pointer-events: none;
+}
+.art-marker.grid { background: var(--accent, #6ea8fe); }
+.art-marker.image { background: var(--ref, #4dd6c1); }
+.art-marker.pending { background: transparent; animation: art-marker-pulse 1s infinite; }
+.art-marker::after {
+  content: attr(data-label);
+  position: absolute;
+  left: 15px;
+  top: -3px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 0 3px #000, 0 0 3px #000;
+}
+@keyframes art-marker-pulse { 50% { opacity: 0.25; } }
+
+/* Magnifier: the same PNG as a scaled background, offset so the pointed-at point sits
+   under the centre crosshair. No canvas, no pixel readback. */
+.art-loupe {
+  position: fixed;
+  z-index: 60;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px #000, 0 4px 18px rgba(0, 0, 0, 0.6);
+  background-repeat: no-repeat;
+  background-color: #14161b;
+  image-rendering: pixelated;
+  pointer-events: none;
+  overflow: hidden;
+}
+.art-loupe[hidden] { display: none; }
+.art-loupe .art-loupe-x, .art-loupe .art-loupe-y {
+  position: absolute;
+  background: rgba(255, 0, 80, 0.9);
+}
+.art-loupe .art-loupe-x { left: 0; right: 0; top: 50%; height: 1px; margin-top: -0.5px; }
+.art-loupe .art-loupe-y { top: 0; bottom: 0; left: 50%; width: 1px; margin-left: -0.5px; }
