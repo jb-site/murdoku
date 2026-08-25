@@ -2,5 +2,13 @@
   { "id": "netflix-and-kill", "title": "Netflix and Kill", "file": "netflix-and-kill.json" },
   { "id": "car-repair", "title": "Car Repair", "file": "car-repair.json" },
   { "id": "the-botanical-garden", "title": "The Botanical Garden", "file": "the-botanical-garden.json" },
-  { "id": "the-hiking-trip", "title": "The Hiking Trip", "file": "the-hiking-trip.json" }
+  { "id": "the-hiking-trip", "title": "The Hiking Trip", "file": "the-hiking-trip.json" },
+  { "id": "preppers", "title": "Preppers", "file": "preppers.json" },
+  { "id": "sleeping-with-the-fishes", "title": "Sleeping with the Fishes", "file": "sleeping-with-the-fishes.json" },
+  { "id": "the-art-school", "title": "The Art School", "file": "the-art-school.json" },
+  { "id": "the-courtroom", "title": "The Courtroom", "file": "the-courtroom.json" },
+  { "id": "the-golf-course", "title": "The Golf Course", "file": "the-golf-course.json" },
+  { "id": "the-movie-studio", "title": "The Movie Studio", "file": "the-movie-studio.json" },
+  { "id": "the-mystery-islands", "title": "The Mystery Islands", "file": "the-mystery-islands.json" },
+  { "id": "the-zoo", "title": "The Zoo", "file": "the-zoo.json" }
 ]

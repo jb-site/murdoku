@@ -219,6 +219,253 @@ const OBJECT_TYPES = {
       `, 100, 100);
     },
   },
+  carpet: {
+    label: "Carpet", emoji: "🧵", occupiable: true,
+    art(colSpan, rowSpan) {
+      const w = 100 * colSpan, h = 100 * rowSpan;
+      return svgObject("#c96f6f", "#e8c15a", "#5c2f2f", `
+        <rect x="${w * 0.06}" y="${h * 0.06}" width="${w * 0.88}" height="${h * 0.88}" rx="6" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="${w * 0.16}" y="${h * 0.16}" width="${w * 0.68}" height="${h * 0.68}" rx="4" fill="none" stroke="var(--obj-fill2)" stroke-width="3"/>
+      `, w, h);
+    },
+  },
+  boat: {
+    label: "Boat", emoji: "🚤", occupiable: true,
+    art(colSpan, rowSpan) {
+      const w = 100 * colSpan, h = 100 * rowSpan;
+      const horizontal = colSpan >= rowSpan;
+      return svgObject("#d9974f", "#8a5a2e", "#4a3319", horizontal ? `
+        <path d="M${w * 0.05} ${h * 0.55} Q${w * 0.5} ${h * 0.85} ${w * 0.95} ${h * 0.55} L${w * 0.85} ${h * 0.35} L${w * 0.15} ${h * 0.35} Z" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="${w * 0.42}" y="${h * 0.15}" width="${w * 0.16}" height="${h * 0.22}" fill="var(--obj-fill2)"/>
+      ` : `
+        <path d="M${w * 0.55} ${h * 0.05} Q${w * 0.85} ${h * 0.5} ${w * 0.55} ${h * 0.95} L${w * 0.35} ${h * 0.85} L${w * 0.35} ${h * 0.15} Z" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="${w * 0.15}" y="${h * 0.42}" width="${w * 0.22}" height="${h * 0.16}" fill="var(--obj-fill2)"/>
+      `, w, h);
+    },
+  },
+  box: {
+    label: "Box", emoji: "📦", occupiable: false,
+    art() {
+      return svgObject("#c2a86a", "#8a6f3a", "#4a3c1f", `
+        <rect x="12" y="18" width="76" height="64" rx="4" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <line x1="50" y1="18" x2="50" y2="82" stroke="var(--obj-fill2)" stroke-width="3"/>
+      `, 100, 100);
+    },
+  },
+  crate: {
+    label: "Crate", emoji: "🪵", occupiable: false,
+    art() {
+      return svgObject("#b98a4f", "#7a5528", "#40290f", `
+        <rect x="10" y="14" width="80" height="72" rx="3" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <line x1="10" y1="14" x2="90" y2="86" stroke="var(--obj-fill2)" stroke-width="3"/>
+        <line x1="90" y1="14" x2="10" y2="86" stroke="var(--obj-fill2)" stroke-width="3"/>
+        <rect x="10" y="14" width="80" height="72" rx="3" fill="none" stroke="var(--obj-stroke)" stroke-width="3"/>
+      `, 100, 100);
+    },
+  },
+  safe: {
+    label: "Safe", emoji: "🔒", occupiable: false,
+    art() {
+      return svgObject("#8f96a3", "#3a3f4a", "#1c1f26", `
+        <rect x="14" y="10" width="72" height="80" rx="6" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <circle cx="50" cy="48" r="16" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="46" y="44" width="8" height="8" fill="var(--obj-fill)"/>
+      `, 100, 100);
+    },
+  },
+  statue: {
+    label: "Statue", emoji: "🗿", occupiable: false,
+    art() {
+      return svgObject("#c9c3b0", "#8a7fc9", "#4a4636", `
+        <rect x="26" y="70" width="48" height="18" rx="2" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M50 14 C64 14 68 30 62 42 C70 48 70 62 60 70 L40 70 C30 62 30 48 38 42 C32 30 36 14 50 14Z" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+      `, 100, 100);
+    },
+  },
+  easel: {
+    label: "Easel", emoji: "🖼️", occupiable: false,
+    art() {
+      return svgObject("#d9cdb0", "#8a5a2e", "#4a3319", `
+        <rect x="24" y="14" width="52" height="42" rx="2" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <line x1="50" y1="56" x2="50" y2="90" stroke="var(--obj-fill2)" stroke-width="5"/>
+        <line x1="50" y1="70" x2="22" y2="90" stroke="var(--obj-fill2)" stroke-width="5"/>
+        <line x1="50" y1="70" x2="78" y2="90" stroke="var(--obj-fill2)" stroke-width="5"/>
+      `, 100, 100);
+    },
+  },
+  framedpainting: {
+    label: "Framed Painting", emoji: "🖼️", occupiable: true,
+    art() {
+      return svgObject("#8fbde0", "#8a5a2e", "#4a3319", `
+        <rect x="14" y="14" width="72" height="72" rx="2" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="4"/>
+        <rect x="24" y="24" width="52" height="52" rx="1" fill="var(--obj-fill)"/>
+      `, 100, 100);
+    },
+  },
+  water: {
+    label: "Water", emoji: "🌊", occupiable: false,
+    art(colSpan, rowSpan) {
+      const w = 100 * colSpan, h = 100 * rowSpan;
+      return svgObject("#5ab0d9", "#2f7fa8", "#1a4d66", `
+        <rect x="0" y="0" width="${w}" height="${h}" fill="var(--obj-fill)"/>
+        <path d="M0 ${h * 0.3} Q${w * 0.25} ${h * 0.18} ${w * 0.5} ${h * 0.3} T${w} ${h * 0.3}" stroke="var(--obj-fill2)" stroke-width="4" fill="none"/>
+        <path d="M0 ${h * 0.6} Q${w * 0.25} ${h * 0.48} ${w * 0.5} ${h * 0.6} T${w} ${h * 0.6}" stroke="var(--obj-fill2)" stroke-width="4" fill="none"/>
+      `, w, h);
+    },
+  },
+  lion: {
+    label: "Lion", emoji: "🦁", occupiable: false,
+    art() {
+      return svgObject("#e0a94f", "#a86a2f", "#4a2f14", `
+        <circle cx="50" cy="52" r="34" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <circle cx="50" cy="50" r="20" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+      `, 100, 100);
+    },
+  },
+  penguin: {
+    label: "Penguin", emoji: "🐧", occupiable: false,
+    art() {
+      return svgObject("#2f333a", "#e8ecef", "#14161a", `
+        <ellipse cx="50" cy="55" rx="26" ry="34" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <ellipse cx="50" cy="60" rx="14" ry="22" fill="var(--obj-fill2)"/>
+        <path d="M44 32 L56 32 L50 42 Z" fill="#e8a940"/>
+      `, 100, 100);
+    },
+  },
+  crocodile: {
+    label: "Crocodile", emoji: "🐊", occupiable: false,
+    art(colSpan, rowSpan) {
+      const w = 100 * colSpan, h = 100 * rowSpan;
+      return svgObject("#5c9a5c", "#3a6b3a", "#1f3d1f", `
+        <ellipse cx="${w * 0.5}" cy="${h * 0.55}" rx="${w * 0.42}" ry="${h * 0.24}" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M${w * 0.1} ${h * 0.55} L${w * 0.02} ${h * 0.4} L${w * 0.02} ${h * 0.7} Z" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
+      `, w, h);
+    },
+  },
+  shark: {
+    label: "Shark", emoji: "🦈", occupiable: false,
+    art() {
+      return svgObject("#8a97a3", "#5c6773", "#2c333a", `
+        <path d="M12 60 Q50 30 88 60 Q50 74 12 60Z" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M46 34 L58 34 L50 14 Z" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
+      `, 100, 100);
+    },
+  },
+  elephant: {
+    label: "Elephant", emoji: "🐘", occupiable: false,
+    art(colSpan, rowSpan) {
+      const w = 100 * colSpan, h = 100 * rowSpan;
+      return svgObject("#a3a8b3", "#6b7078", "#333640", `
+        <ellipse cx="${w * 0.55}" cy="${h * 0.5}" rx="${w * 0.36}" ry="${h * 0.32}" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M${w * 0.24} ${h * 0.5} Q${w * 0.1} ${h * 0.7} ${w * 0.16} ${h * 0.9}" stroke="var(--obj-fill2)" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <circle cx="${w * 0.72}" cy="${h * 0.36}" r="${Math.min(w, h) * 0.06}" fill="var(--obj-stroke)"/>
+      `, w, h);
+    },
+  },
+  mudpuddle: {
+    label: "Mud Puddle", emoji: "💧", occupiable: true,
+    art() {
+      return svgObject("#6b4a2c", "#8a6540", "#3a2716", `
+        <ellipse cx="50" cy="55" rx="38" ry="24" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <ellipse cx="34" cy="48" rx="10" ry="6" fill="var(--obj-fill2)" opacity="0.6"/>
+      `, 100, 100);
+    },
+  },
+  barrel: {
+    label: "Barrel", emoji: "🛢️", occupiable: false,
+    art() {
+      return svgObject("#a86a3a", "#5c3d20", "#2c1c0e", `
+        <rect x="24" y="10" width="52" height="80" rx="16" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <line x1="24" y1="28" x2="76" y2="28" stroke="var(--obj-fill2)" stroke-width="4"/>
+        <line x1="24" y1="72" x2="76" y2="72" stroke="var(--obj-fill2)" stroke-width="4"/>
+      `, 100, 100);
+    },
+  },
+  rubble: {
+    label: "Rubble", emoji: "🪨", occupiable: false,
+    art() {
+      return svgObject("#8a8580", "#5c5854", "#2c2a28", `
+        <path d="M14 70 L34 46 L50 62 L66 40 L88 70 Z" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <circle cx="30" cy="76" r="8" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
+        <circle cx="66" cy="78" r="10" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
+      `, 100, 100);
+    },
+  },
+  catapult: {
+    label: "Catapult", emoji: "🏹", occupiable: false,
+    art() {
+      return svgObject("#a8763f", "#5c3d20", "#2c1c0e", `
+        <rect x="14" y="70" width="72" height="14" rx="3" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <line x1="30" y1="70" x2="30" y2="30" stroke="var(--obj-fill)" stroke-width="8"/>
+        <line x1="70" y1="70" x2="70" y2="30" stroke="var(--obj-fill)" stroke-width="8"/>
+        <line x1="30" y1="30" x2="70" y2="30" stroke="var(--obj-fill)" stroke-width="6"/>
+        <circle cx="50" cy="30" r="10" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
+      `, 100, 100);
+    },
+  },
+  camera: {
+    label: "Camera", emoji: "🎥", occupiable: false,
+    art() {
+      return svgObject("#3a3f4a", "#1c1f26", "#0e0f13", `
+        <rect x="14" y="30" width="56" height="42" rx="6" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <circle cx="42" cy="51" r="16" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M70 40 L90 30 L90 72 L70 62 Z" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+      `, 100, 100);
+    },
+  },
+  house: {
+    label: "House", emoji: "🏠", occupiable: true,
+    art() {
+      return svgObject("#d9974f", "#8a5a2e", "#4a3319", `
+        <path d="M50 12 L88 44 L78 44 L78 88 L22 88 L22 44 L12 44Z" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="34" y="56" width="32" height="32" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="2"/>
+      `, 100, 100);
+    },
+  },
+  sand: {
+    label: "Sand", emoji: "🏖️", occupiable: true,
+    art(colSpan, rowSpan) {
+      const w = 100 * colSpan, h = 100 * rowSpan;
+      return svgObject("#e8d29a", "#c9b06a", "#8a7440", `
+        <rect x="0" y="0" width="${w}" height="${h}" fill="var(--obj-fill)"/>
+        <circle cx="${w * 0.28}" cy="${h * 0.34}" r="4" fill="var(--obj-fill2)" opacity="0.7"/>
+        <circle cx="${w * 0.62}" cy="${h * 0.58}" r="5" fill="var(--obj-fill2)" opacity="0.7"/>
+        <circle cx="${w * 0.42}" cy="${h * 0.72}" r="3" fill="var(--obj-fill2)" opacity="0.7"/>
+      `, w, h);
+    },
+  },
+  tee: {
+    label: "Tee", emoji: "⛳", occupiable: true,
+    art() {
+      return svgObject("#e8ecef", "#5c9a5c", "#2f4a2f", `
+        <ellipse cx="50" cy="86" rx="30" ry="8" fill="var(--obj-fill2)" opacity="0.4"/>
+        <line x1="50" y1="30" x2="50" y2="86" stroke="var(--obj-stroke)" stroke-width="4"/>
+        <path d="M40 24 Q50 12 60 24 L50 34Z" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="2"/>
+      `, 100, 100);
+    },
+  },
+  flag: {
+    label: "Flag", emoji: "🚩", occupiable: true,
+    art() {
+      return svgObject("#d94f4f", "#5c9a5c", "#2f4a2f", `
+        <ellipse cx="50" cy="90" rx="26" ry="6" fill="var(--obj-fill2)" opacity="0.4"/>
+        <line x1="30" y1="12" x2="30" y2="90" stroke="var(--obj-stroke)" stroke-width="4"/>
+        <path d="M30 14 L70 26 L30 38Z" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="2"/>
+      `, 100, 100);
+    },
+  },
+  cart: {
+    label: "Cart", emoji: "🛺", occupiable: true,
+    art(colSpan, rowSpan) {
+      const w = 100 * colSpan, h = 100 * rowSpan;
+      return svgObject("#e8ecef", "#3a6b3a", "#1f3d1f", `
+        <rect x="${w * 0.14}" y="${h * 0.34}" width="${w * 0.72}" height="${h * 0.4}" rx="8" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="${w * 0.2}" y="${h * 0.14}" width="${w * 0.36}" height="${h * 0.24}" fill="none" stroke="var(--obj-fill2)" stroke-width="4"/>
+        <circle cx="${w * 0.28}" cy="${h * 0.8}" r="${Math.min(w, h) * 0.09}" fill="var(--obj-stroke)"/>
+        <circle cx="${w * 0.72}" cy="${h * 0.8}" r="${Math.min(w, h) * 0.09}" fill="var(--obj-stroke)"/>
+      `, w, h);
+    },
+  },
 };
 
 const ROOM_COLORS = {

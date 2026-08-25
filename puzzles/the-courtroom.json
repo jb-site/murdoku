@@ -21,7 +21,7 @@
     { "suspect": "A", "text": "Arthur (A) was at the Judge's Bench.", "refs": { "rooms": ["judgesbench"] } },
     { "suspect": "B", "text": "Benjamin (B) was with the only person sitting in a chair.", "refs": { "objects": ["chair"] } },
     { "suspect": "C", "text": "Camila (C) was in the Gallery.", "refs": { "rooms": ["gallery"] } },
-    { "suspect": "D", "text": "Daisy (D) was on a carpet.", "refs": {} },
+    { "suspect": "D", "text": "Daisy (D) was on a carpet.", "refs": { "objects": ["carpet"] } },
     { "suspect": "E", "text": "Eliza (E) was at the Witness Stand.", "refs": { "rooms": ["witnessstand"] } },
     { "suspect": "F", "text": "Fritz (F) was beside a table.", "refs": { "objects": ["table"] } },
     { "suspect": "G", "text": "Graham (G) was in the Security area.", "refs": { "rooms": ["security"] } },
@@ -90,6 +90,11 @@
     { "type": "chair", "cells": [[8, 3]] },
     { "type": "chair", "cells": [[8, 5]] },
     { "type": "table", "cells": [[8, 6]] },
-    { "type": "chair", "cells": [[8, 8]] }
+    { "type": "chair", "cells": [[8, 8]] },
+
+    { "type": "carpet", "cells": [[1, 6], [1, 7]] },
+    { "type": "carpet", "cells": [[5, 1], [6, 1]] },
+    { "type": "carpet", "cells": [[6, 3], [6, 4], [6, 5]] },
+    { "type": "carpet", "cells": [[7, 4], [8, 4]] }
   ]
 }

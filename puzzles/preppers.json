@@ -18,10 +18,10 @@
     "V": "Vivianna (victim)"
   },
   "clues": [
-    { "suspect": "A", "text": "Angelo (A) had a box in his area, but he was not beside any box.", "refs": { "objects": ["box"] } },
+    { "suspect": "A", "text": "Angelo (A): there was a box in his area. He was not beside any box.", "refs": { "objects": ["box"] } },
     { "suspect": "B", "text": "Blake (B) was in the Bedroom.", "refs": { "rooms": ["bedroom"] } },
-    { "suspect": "C", "text": "Carolina (C) had a man on the bed in her area.", "refs": { "objects": ["bed"] } },
-    { "suspect": "D", "text": "Daryl (D) had someone else beside a shelf in her area.", "refs": { "objects": ["shelf"] } },
+    { "suspect": "C", "text": "Carolina (C): there was a man on the bed in her area.", "refs": { "objects": ["bed"] } },
+    { "suspect": "D", "text": "Daryl (D): someone else was beside a shelf in her area.", "refs": { "objects": ["shelf"] } },
     { "suspect": "E", "text": "Edna (E) was in the bottom row.", "refs": {} },
     { "suspect": "F", "text": "Friedrich (F) was beside a TV.", "refs": { "objects": ["tv"] } },
     { "suspect": "G", "text": "Greg (G) was sitting in a chair.", "refs": { "objects": ["chair"] } },

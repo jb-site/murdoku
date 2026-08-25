@@ -1,0 +1,1161 @@
+{
+  "id": "the-mystery-islands",
+  "title": "The Mystery Islands",
+  "difficulty": "expert",
+  "sourceFile": "source/the-mystery-islands-color.pdf",
+  "rows": 16,
+  "cols": 16,
+  "suspects": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "V"
+  ],
+  "names": {
+    "A": "Ayla",
+    "B": "Bastian",
+    "C": "Cassius",
+    "D": "Denise",
+    "E": "Emma",
+    "F": "Fred",
+    "G": "Graham",
+    "H": "Helena",
+    "I": "Irene",
+    "J": "Joseph",
+    "K": "Kent",
+    "L": "Lyra",
+    "M": "Michael",
+    "N": "Nikita",
+    "O": "Olivia",
+    "V": "Vincent (victim)"
+  },
+  "clues": [
+    {
+      "suspect": null,
+      "text": "The killer was alone with the victim, in the same area.",
+      "refs": {
+        "rooms": [],
+        "objects": [],
+        "suspects": [
+          "V"
+        ]
+      }
+    },
+    {
+      "suspect": "A",
+      "text": "Ayla (A) was on Empty or Desert Island. There was a shark in her row.",
+      "refs": {
+        "rooms": [
+          "empty",
+          "desert"
+        ],
+        "objects": [
+          "shark"
+        ]
+      }
+    },
+    {
+      "suspect": "B",
+      "text": "Bastian (B): the only man on Desert Island. He was beside exactly two cacti.",
+      "refs": {
+        "rooms": [
+          "desert"
+        ],
+        "objects": [
+          "cactus"
+        ]
+      }
+    },
+    {
+      "suspect": "C",
+      "text": "Cassius (C) was alone with someone in the sea. He was east of Olivia.",
+      "refs": {
+        "rooms": [
+          "sea"
+        ],
+        "objects": [],
+        "suspects": [
+          "O"
+        ]
+      }
+    },
+    {
+      "suspect": "D",
+      "text": "Denise (D) was northeast of Ayla.",
+      "refs": {
+        "rooms": [],
+        "objects": [],
+        "suspects": [
+          "A"
+        ]
+      }
+    },
+    {
+      "suspect": "E",
+      "text": "Emma (E) was on a sand tile.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "sand"
+        ]
+      }
+    },
+    {
+      "suspect": "F",
+      "text": "Fred (F) was the southmost person on Town Island.",
+      "refs": {
+        "rooms": [
+          "town"
+        ],
+        "objects": []
+      }
+    },
+    {
+      "suspect": "G",
+      "text": "Graham (G) was six rows south of Joseph, who was on the same island.",
+      "refs": {
+        "rooms": [],
+        "objects": [],
+        "suspects": [
+          "J"
+        ]
+      }
+    },
+    {
+      "suspect": "H",
+      "text": "Helena (H) was with Denise. Both were not beside a tree or cactus.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "tree",
+          "cactus"
+        ],
+        "suspects": [
+          "D"
+        ]
+      }
+    },
+    {
+      "suspect": "I",
+      "text": "Irene (I) was north of Nikita and on the same island.",
+      "refs": {
+        "rooms": [],
+        "objects": [],
+        "suspects": [
+          "N"
+        ]
+      }
+    },
+    {
+      "suspect": "J",
+      "text": "Joseph (J) was beside a tree and east of Lyra.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "tree"
+        ],
+        "suspects": [
+          "L"
+        ]
+      }
+    },
+    {
+      "suspect": "K",
+      "text": "Kent (K) was the only person in a house.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "house"
+        ]
+      }
+    },
+    {
+      "suspect": "L",
+      "text": "Lyra (L) was beside a tree on a four people island of exactly three women.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "tree"
+        ]
+      }
+    },
+    {
+      "suspect": "M",
+      "text": "Michael (M): there was at least one shark in his column. He was on an island.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "shark"
+        ]
+      }
+    },
+    {
+      "suspect": "N",
+      "text": "Nikita (N) was south of Irene and on the same island.",
+      "refs": {
+        "rooms": [],
+        "objects": [],
+        "suspects": [
+          "I"
+        ]
+      }
+    },
+    {
+      "suspect": "O",
+      "text": "Olivia (O): exactly two people were south of her.",
+      "refs": {
+        "rooms": [],
+        "objects": []
+      }
+    },
+    {
+      "suspect": "V",
+      "text": "Vincent (V): the victim. He was alone with the murderer.",
+      "refs": {
+        "rooms": [],
+        "objects": []
+      }
+    },
+    {
+      "suspect": null,
+      "text": "Every island had a unique number of people (0 is possible).",
+      "refs": {
+        "rooms": [
+          "desert",
+          "forest",
+          "town",
+          "empty",
+          "lonely"
+        ],
+        "objects": []
+      }
+    }
+  ],
+  "rooms": {
+    "desert": {
+      "name": "Desert Island"
+    },
+    "forest": {
+      "name": "Forest Island"
+    },
+    "town": {
+      "name": "Town Island"
+    },
+    "empty": {
+      "name": "Empty Island"
+    },
+    "lonely": {
+      "name": "Lonely Island"
+    },
+    "sea": {
+      "name": "Sea"
+    }
+  },
+  "roomGrid": [
+    [
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "desert",
+      "desert",
+      "desert",
+      "desert",
+      "desert",
+      "desert",
+      "desert",
+      "desert"
+    ],
+    [
+      "sea",
+      "sea",
+      "forest",
+      "forest",
+      "forest",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "desert",
+      "desert",
+      "desert",
+      "desert",
+      "desert",
+      "desert",
+      "desert"
+    ],
+    [
+      "sea",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "desert",
+      "desert",
+      "desert",
+      "desert",
+      "desert",
+      "sea"
+    ],
+    [
+      "sea",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "sea",
+      "sea",
+      "desert",
+      "desert",
+      "desert",
+      "desert",
+      "desert",
+      "sea"
+    ],
+    [
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "sea",
+      "sea",
+      "desert",
+      "desert",
+      "desert",
+      "desert",
+      "sea"
+    ],
+    [
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "sea",
+      "sea",
+      "desert",
+      "desert",
+      "desert",
+      "sea",
+      "sea"
+    ],
+    [
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "desert",
+      "desert",
+      "sea",
+      "sea"
+    ],
+    [
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea"
+    ],
+    [
+      "forest",
+      "forest",
+      "forest",
+      "forest",
+      "sea",
+      "sea",
+      "town",
+      "town",
+      "town",
+      "town",
+      "sea",
+      "sea",
+      "sea",
+      "empty",
+      "sea",
+      "sea"
+    ],
+    [
+      "forest",
+      "forest",
+      "forest",
+      "sea",
+      "sea",
+      "town",
+      "town",
+      "town",
+      "town",
+      "town",
+      "town",
+      "sea",
+      "empty",
+      "empty",
+      "empty",
+      "sea"
+    ],
+    [
+      "forest",
+      "forest",
+      "sea",
+      "sea",
+      "sea",
+      "town",
+      "town",
+      "town",
+      "town",
+      "town",
+      "town",
+      "sea",
+      "empty",
+      "empty",
+      "empty",
+      "sea"
+    ],
+    [
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "town",
+      "town",
+      "town",
+      "town",
+      "town",
+      "sea",
+      "sea",
+      "empty",
+      "empty",
+      "empty",
+      "sea"
+    ],
+    [
+      "lonely",
+      "lonely",
+      "lonely",
+      "sea",
+      "sea",
+      "town",
+      "town",
+      "town",
+      "town",
+      "town",
+      "sea",
+      "empty",
+      "empty",
+      "empty",
+      "empty",
+      "sea"
+    ],
+    [
+      "lonely",
+      "lonely",
+      "lonely",
+      "lonely",
+      "sea",
+      "sea",
+      "town",
+      "town",
+      "town",
+      "sea",
+      "sea",
+      "empty",
+      "empty",
+      "empty",
+      "empty",
+      "sea"
+    ],
+    [
+      "lonely",
+      "lonely",
+      "lonely",
+      "lonely",
+      "lonely",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "empty",
+      "empty",
+      "sea",
+      "sea"
+    ],
+    [
+      "lonely",
+      "lonely",
+      "lonely",
+      "lonely",
+      "lonely",
+      "lonely",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea",
+      "sea"
+    ]
+  ],
+  "objects": [
+    {
+      "type": "tree",
+      "cells": [
+        [
+          2,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          3,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          3,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          4,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          4,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          4,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          4,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          5,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          5,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          5,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          6,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          6,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          7,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          8,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          9,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          9,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          10,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          15,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "cactus",
+      "cells": [
+        [
+          0,
+          11
+        ]
+      ]
+    },
+    {
+      "type": "cactus",
+      "cells": [
+        [
+          0,
+          13
+        ]
+      ]
+    },
+    {
+      "type": "cactus",
+      "cells": [
+        [
+          1,
+          10
+        ]
+      ]
+    },
+    {
+      "type": "cactus",
+      "cells": [
+        [
+          1,
+          13
+        ]
+      ]
+    },
+    {
+      "type": "cactus",
+      "cells": [
+        [
+          1,
+          15
+        ]
+      ]
+    },
+    {
+      "type": "cactus",
+      "cells": [
+        [
+          2,
+          10
+        ]
+      ]
+    },
+    {
+      "type": "cactus",
+      "cells": [
+        [
+          2,
+          12
+        ]
+      ]
+    },
+    {
+      "type": "cactus",
+      "cells": [
+        [
+          2,
+          14
+        ]
+      ]
+    },
+    {
+      "type": "cactus",
+      "cells": [
+        [
+          4,
+          11
+        ]
+      ]
+    },
+    {
+      "type": "cactus",
+      "cells": [
+        [
+          4,
+          13
+        ]
+      ]
+    },
+    {
+      "type": "cactus",
+      "cells": [
+        [
+          5,
+          12
+        ]
+      ]
+    },
+    {
+      "type": "house",
+      "cells": [
+        [
+          2,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "house",
+      "cells": [
+        [
+          1,
+          12
+        ]
+      ]
+    },
+    {
+      "type": "house",
+      "cells": [
+        [
+          6,
+          12
+        ]
+      ]
+    },
+    {
+      "type": "house",
+      "cells": [
+        [
+          5,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "house",
+      "cells": [
+        [
+          9,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "house",
+      "cells": [
+        [
+          9,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "house",
+      "cells": [
+        [
+          11,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "house",
+      "cells": [
+        [
+          11,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "house",
+      "cells": [
+        [
+          14,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          1,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          1,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          2,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          2,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          3,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          3,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          4,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          4,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          5,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          6,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          6,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          6,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          7,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          8,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          9,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          10,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          10,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "shark",
+      "cells": [
+        [
+          1,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "shark",
+      "cells": [
+        [
+          6,
+          15
+        ]
+      ]
+    },
+    {
+      "type": "shark",
+      "cells": [
+        [
+          7,
+          14
+        ]
+      ]
+    },
+    {
+      "type": "shark",
+      "cells": [
+        [
+          9,
+          11
+        ]
+      ]
+    },
+    {
+      "type": "shark",
+      "cells": [
+        [
+          11,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "shark",
+      "cells": [
+        [
+          11,
+          15
+        ]
+      ]
+    },
+    {
+      "type": "shark",
+      "cells": [
+        [
+          15,
+          10
+        ]
+      ]
+    },
+    {
+      "type": "shrub",
+      "cells": [
+        [
+          13,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "shrub",
+      "cells": [
+        [
+          14,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "shrub",
+      "cells": [
+        [
+          15,
+          1
+        ]
+      ]
+    }
+  ]
+}

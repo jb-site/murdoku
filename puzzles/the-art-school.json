@@ -19,9 +19,9 @@
   },
   "clues": [
     { "suspect": "A", "text": "Anthony (A) was alone.", "refs": {} },
-    { "suspect": "B", "text": "Ben (B) had a framed painting on his square.", "refs": { "objects": ["framedpainting"] } },
+    { "suspect": "B", "text": "Ben (B): there was a framed painting on his square.", "refs": { "objects": ["framedpainting"] } },
     { "suspect": "C", "text": "Coralie (C) was beside a statue.", "refs": { "objects": ["statue"] } },
-    { "suspect": "D", "text": "Delilah (D) was one row south of a woman who was alone in the Gallery.", "refs": { "rooms": ["gallery"] } },
+    { "suspect": "D", "text": "Delilah (D): there was a woman alone in the Gallery, one row north of her.", "refs": { "rooms": ["gallery"] } },
     { "suspect": "E", "text": "Everly (E) was beside an easel, directly south of it.", "refs": { "objects": ["easel"] } },
     { "suspect": "F", "text": "Fritz (F) was on a carpet.", "refs": { "objects": ["carpet"] } },
     { "suspect": "G", "text": "Ginevra (G) was the only person sitting in a chair.", "refs": { "objects": ["chair"] } },

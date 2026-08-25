@@ -13,17 +13,39 @@ locally by an assistant that can already read images/PDFs directly.
 > You are converting a photo or PDF of a "Murdoku" (whodunnit-sudoku) puzzle
 > into a JSON file for the Murdoku web app at `murdoku/`.
 >
-> **1. Look closely.** If it's a PDF, render it to a high-resolution PNG
-> (e.g. `pdftoppm -png -r 300 input.pdf output`) and crop/zoom into the grid
-> region — furniture icons and thin grid lines are easy to misread at low
-> resolution. Read each quadrant of the grid separately if it's large. For a
-> large grid (8+ per side), it's worth detecting the exact pixel row/column
-> boundaries programmatically (look for the dark grid-line bands) and
-> overlaying row/col labels on a copy of the image before reading cells —
-> far less error-prone than eyeballing coordinates. Also note the `title`
-> and `difficulty` shown near the puzzle's logo (e.g. "difficulty: easy").
+> **1. Extract the text layer first — it's nearly free and gives verbatim
+> wording.** Before touching the image, run `pdftotext -layout input.pdf -`
+> and read the output. For puzzles produced from this template, it cleanly
+> yields the `title`, `difficulty`, every room label, the legend's
+> occupiable/non-occupiable object names, and — most importantly — every
+> suspect's clue sentence(s), character-for-character. Treat this text as
+> the **authoritative source for clue wording** (see step 5) rather than
+> transcribing clues by eye off a rendered image; it's both cheaper (no
+> vision tokens) and more accurate (no OCR-by-eye drift). Two caveats to
+> watch for: (a) the PDF's own column/portrait layout can make `pdftotext`
+> interleave text in a jumbled order, so a sentence's *wording* is reliable
+> but which suspect it belongs to sometimes isn't — confirm attribution
+> against the image if a name-to-clue pairing looks ambiguous or a stray
+> extra name appears; (b) some PDFs have leftover invisible/placeholder
+> "Lorem ipsum" design text sitting behind the real clue text, which
+> `pdftotext` will happily extract mixed in with the real sentence — if a
+> clue's extracted text looks garbled or contains obvious filler Latin, that
+> one clue must be read directly off the rendered image instead.
 >
-> **2. Extract the grid structure:**
+> **2. Look closely at the image for everything spatial.** Render the PDF to
+> a high-resolution PNG (e.g. `pdftoppm -png -r 300 input.pdf output`) and
+> crop/zoom into the grid region — furniture icons and thin grid lines are
+> easy to misread at low resolution. Read each quadrant of the grid
+> separately if it's large. For a large grid (8+ per side), it's worth
+> detecting the exact pixel row/column boundaries programmatically (look for
+> the dark grid-line bands) and overlaying row/col labels on a copy of the
+> image before reading cells — far less error-prone than eyeballing
+> coordinates. Room boundaries, void cells, furniture positions/spans, and
+> suspect portraits/reading order are genuinely spatial information that
+> `pdftotext` can't give you — this pass is still required even when step 1
+> supplied the text.
+>
+> **3. Extract the grid structure:**
 > - `rows` / `cols` — count the grid cells.
 > - `rooms` — every named area (e.g. "Bedroom", "Kitchen"). Assign each a
 >   short lowercase `id` (e.g. `bedroom`).
@@ -99,7 +121,7 @@ locally by an assistant that can already read images/PDFs directly.
 > genuinely unreliable — `puzzles/source/the-hiking-trip-color.pdf` is the
 > worked example.
 >
-> **3. Object types.** Use these existing keys if the icon matches — occupiable
+> **4. Object types.** Use these existing keys if the icon matches — occupiable
 > (a person can be there): `bed`, `chair`, `car`, `oilslick`, `path`;
 > blocking (a person can never be placed there): `tv`, `shelf`, `table`,
 > `plant`, `tree`, `bonsai`, `cactus`, `lilypad`, `flower`, `shrub`, `bear`,
@@ -115,19 +137,39 @@ locally by an assistant that can already read images/PDFs directly.
 > renderer plus `label` and `occupiable` added to `OBJECT_TYPES` in
 > `murdoku/app.js` before the puzzle will render correctly.
 >
-> **4. Extract suspects and clues:**
-> - List every named person, in the order they appear.
+> **5. Extract suspects and clues — verbatim, sourced from step 1's text.**
+> - List every named person, in the order their portrait appears in the
+>   image (use the image for reading order and name attribution even though
+>   the wording comes from `pdftotext` — see step 1's caveats).
 > - Assign each a single-letter id: A, B, C, ... in reading order — **except**
 >   the victim, who is always assigned letter `V` regardless of where they'd
 >   fall alphabetically.
 > - `names` maps each letter to the full display name (append "(victim)" to
 >   V's name).
 > - Each clue is an object: `{ "suspect": "A", "text": "...", "refs": {...} }`.
->   `text` should faithfully transcribe the clue (format
->   `"Name (Letter) <clue text>."` reads well, but don't paraphrase away
->   meaningful detail — adjacency, room references, counts like "the only
->   person..."). Use `suspect: null` for a general/rule clue that isn't tied
->   to one person (e.g. a fact about the victim's murder).
+>   `text` must be the clue **verbatim** from the pdftotext extraction (or
+>   the image, for a clue step 1 flagged as garbled) — do not paraphrase,
+>   restructure, or summarize away detail, and do not merge two separately
+>   printed sentences into one reworded composite. The only transformation
+>   allowed is substituting the printed pronoun for the person's name, per
+>   this house style:
+>   - If the printed clue starts with a pronoun ("He was beside a shelf."),
+>     replace just the pronoun: `"Austin (A) was beside a shelf."`
+>   - If the printed clue doesn't lead with a pronoun ("There was a woman
+>     beside a crate in his area."), prefix `"Name (Letter): "` and
+>     lowercase the original first letter, but otherwise leave the sentence
+>     exactly as printed: `"Barry (B): there was a woman beside a crate in
+>     his area."` — don't rewrite it into a pronoun-led sentence yourself
+>     (e.g. don't turn this into "Barry (B) had a woman beside a crate in
+>     his area.").
+>   - A clue that's printed as two separate sentences (e.g. a personal line
+>     plus a general board-rule line, or two numbered rules) may combine
+>     them under one entry if they're printed together as one suspect's
+>     clue, but two sentences that are printed as *distinct*, separately
+>     numbered/labelled clues (e.g. a per-suspect clue and a general puzzle
+>     rule that happens to appear near it) must become two separate `clues[]`
+>     entries, the general one with `suspect: null` — never blended into a
+>     single reworded sentence.
 > - `refs` — the room ids and/or object type keys that clue actually talks
 >   about, used to highlight the board on hover: e.g. a clue about "beside a
 >   shelf" gets `"refs": {"objects": ["shelf"]}`; a clue about "in the
@@ -136,7 +178,7 @@ locally by an assistant that can already read images/PDFs directly.
 >   refs from vague language — only add one when the clue clearly names that
 >   room or object type.
 >
-> **5. Output.** Produce one JSON file matching this exact shape:
+> **6. Output.** Produce one JSON file matching this exact shape:
 >
 > ```json
 > {
@@ -160,14 +202,14 @@ locally by an assistant that can already read images/PDFs directly.
 > }
 > ```
 >
-> **6. Save and register it:**
+> **7. Save and register it:**
 > - Write the JSON to `murdoku/puzzles/<id>.json`.
 > - Copy the original source image/PDF to `murdoku/puzzles/source/<id>.<ext>`.
 > - Add `{ "id": "<id>", "title": "<title>", "file": "<id>.json" }` to the
 >   array in `murdoku/puzzles/index.json` so it shows up in the app's puzzle
 >   picker.
 >
-> **7. Verify in the in-app editor, then double-check the data.** Serve the
+> **8. Verify in the in-app editor, then double-check the data.** Serve the
 > app (`python3 -m http.server 8000` from `murdoku/`), click **✏️ Edit
 > puzzle → 📂 Open file…** and load the JSON you just wrote. The editor
 > renders the rooms, boundaries and furniture exactly as the app will, and
@@ -194,6 +236,29 @@ locally by an assistant that can already read images/PDFs directly.
 > - Spot-check a handful of cells against the source image one more time —
 >   room/object misreads (and missed multi-cell spans) are the most common
 >   mistakes.
+> - Every `clues[].text` matches the `pdftotext` extraction verbatim (modulo
+>   only the pronoun→name substitution from step 5) — diff it against the
+>   raw extraction one more time and watch for reworded/merged sentences.
+
+---
+
+## Importing multiple puzzles at once
+
+When importing several puzzles in one session, run `pdftotext -layout` on
+every source PDF **yourself, centrally, before dispatching any per-puzzle
+work** (whether that's separate subagents or just separate passes of your
+own). Read the output, assemble each puzzle's title/difficulty/room-labels/
+clue-pool text, and hand that pre-extracted text directly into each
+puzzle's import step instead of having each one re-derive it from the
+image. This is the single biggest lever on both cost and accuracy: it cuts
+the redundant "read this whole prompt doc + a full reference JSON + do a
+full-page vision pass for text" overhead per puzzle, and it makes verbatim
+clue capture (step 5) close to automatic instead of relying on careful
+transcription-by-eye under time/token pressure. Each puzzle's remaining
+work — grid/room/object extraction, suspect reading-order and clue
+attribution, resolving any garbled/contaminated text flagged in step 1 — is
+still genuinely visual and still needs the full image-inspection guidance
+above; only the clue *wording* moves out of the image-reading budget.
 
 ---
 
