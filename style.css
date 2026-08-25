@@ -591,7 +591,12 @@ body.art-mode .pencil-grid span.pencil-highlighted {
    layer underneath and untouched by .cell's opacity, so the same rule dims nothing.
    Give art mode its own real scrim + a positive fill on the ref'd room, instead of
    relying on the opacity rule above (left untouched for non-art-mode). */
-body.art-mode .grid.refs-active .layer-cells .cell:not(.ref-room) {
+/* Void cells are deliberately NOT .cell (see CLAUDE.md), and body.art-mode gives them
+   `background: transparent !important` so the source scenery shows through — which means
+   they need scrimming here explicitly, or the spotlight punches bright holes through
+   itself wherever the board is non-rectangular (only The Hiking Trip, today). */
+body.art-mode .grid.refs-active .layer-cells .cell:not(.ref-room),
+body.art-mode .grid.refs-active .layer-cells .void-cell {
   background: rgba(0, 0, 0, 0.45) !important;
 }
 body.art-mode .cell.ref-room {
