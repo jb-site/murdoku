@@ -89,5 +89,18 @@
     { "type": "box", "cells": [[7, 8]] },
     { "type": "box", "cells": [[8, 6]] },
     { "type": "shelf", "cells": [[8, 7]] }
-  ]
+  ],
+  "art": {
+    "board": "art/preppers/board.png",
+    "boardCrop": {
+      "x": 0.2,
+      "y": 0.0,
+      "w": 0.8,
+      "h": 1.0
+    },
+    "calibratedFor": {
+      "rows": 9,
+      "cols": 9
+    }
+  }
 }

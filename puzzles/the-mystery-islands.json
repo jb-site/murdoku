@@ -1157,5 +1157,18 @@
         ]
       ]
     }
-  ]
+  ],
+  "art": {
+    "board": "art/the-mystery-islands/board.png",
+    "boardCrop": {
+      "x": 0.1945,
+      "y": 0.1759,
+      "w": 0.7782,
+      "h": 0.7035
+    },
+    "calibratedFor": {
+      "rows": 16,
+      "cols": 16
+    }
+  }
 }

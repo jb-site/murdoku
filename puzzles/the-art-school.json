@@ -95,5 +95,18 @@
     { "type": "chair", "cells": [[7, 8]] },
     { "type": "chair", "cells": [[8, 6]] },
     { "type": "table", "cells": [[8, 7]] }
-  ]
+  ],
+  "art": {
+    "board": "art/the-art-school/board.png",
+    "boardCrop": {
+      "x": 0.1667,
+      "y": 0.17,
+      "w": 0.6667,
+      "h": 0.6801
+    },
+    "calibratedFor": {
+      "rows": 9,
+      "cols": 9
+    }
+  }
 }

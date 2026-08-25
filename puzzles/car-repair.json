@@ -53,5 +53,18 @@
     { "type": "oilslick", "cells": [[4, 3]] },
     { "type": "oilslick", "cells": [[5, 1]] },
     { "type": "car", "cells": [[5, 3], [5, 4]] }
-  ]
+  ],
+  "art": {
+    "board": "art/car-repair/board.png",
+    "boardCrop": {
+      "x": 0.2,
+      "y": 0.0,
+      "w": 0.8,
+      "h": 1.0
+    },
+    "calibratedFor": {
+      "rows": 6,
+      "cols": 6
+    }
+  }
 }
