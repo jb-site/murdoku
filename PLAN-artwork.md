@@ -426,3 +426,115 @@ evidence, not to recommend dropping it.
 ### Start here
 Step 3: add the `--board` path to `tools/extract_art.py`. Then step 4, the legibility
 checkpoint. Do not go past step 4 without checking in.
+
+---
+
+# Follow-up fixes (planned 2026-08-25, after step 4 shipped)
+
+Three fixes requested after the art-mode legibility checkpoint landed (`005b780`).
+Fix 3 is the important one. Do them in one branch; they are independent of each other.
+
+**Still not started, and out of scope for this pass:** the Art tab (crop-nudging UI) and
+running board extraction on the remaining 11 puzzles. Do not start either.
+
+## Fix 1 — make the ✕ marks larger
+
+`.mark` sets `font-size: 1.4rem` for all mark content (`style.css:454-460`), so the ✕ is
+rendered at the same size as a definite letter. It reads as too faint next to the letters.
+
+- Add a `.mark.crossed .cell-main` rule bumping the ✕ to roughly `1.9rem`. Do not raise
+  `.mark`'s base size — that would enlarge definite letters too.
+- Cells have `min-width/min-height: 52px`, so ~30px of glyph fits with room to spare. Check
+  the smallest rendered case anyway (a 16x16 puzzle in the split layout, where cells sit at
+  their floor).
+- The ✕ already picks up the art-mode halo via
+  `body.art-mode .mark.crossed .cell-main` (`style.css:553-556`) — no change needed there,
+  but re-check the halo still looks right at the larger size.
+
+## Fix 2 — placing a suspect clears their pencil marks board-wide and ticks them off
+
+Two separate changes. Interpretation of the request: "tick off" = mark as done in the
+suspect list, i.e. strike through their letter once they are placed.
+
+### 2a. Board-wide pencil sweep
+`placeDefinitely()` (`app.js:1607`) currently clears pencil marks only in the placed cell and
+in the cells it auto-crosses along that row and column. Pencil marks for the same suspect
+elsewhere on the board survive, which is wrong — once A is placed, A cannot be anywhere.
+
+- After the existing row/column loops, sweep every cell and delete `letter` from its pencil
+  set. Skip the placed cell itself (already cleared).
+- **Do not** touch other suspects' pencil marks, and **do not** clear `x` flags.
+- No history work needed: `placeDefinitely()` is already called inside the gesture's single
+  `pushHistory()` entry, so one Undo still reverts the whole thing atomically. Verify this
+  rather than assuming it.
+
+### 2b. Strike through a placed suspect's letter
+- Add a helper returning the set of letters currently placed (scan `grid` for `definite`).
+- Toggle a `.placed` class on the palette chips (`addPaletteChip`, `app.js:777`) and on the
+  clue-row chips (`buildClueList`) for those letters, with `text-decoration: line-through`
+  and reduced opacity in CSS.
+- **Drive it from `renderMarks()`**, not from a new call at each mutation site. There are 19
+  `renderMarks()` call sites; deriving the state there means undo, file load, localStorage
+  restore and Clear all stay correct for free. Add a small `updatePlacedStates()` and call it
+  at the end of `renderMarks()`.
+- The chips must stay clickable and selectable when struck through — this is a status
+  indicator, not a disable.
+- Guard for edit mode: `buildPalette()` runs there too, and `grid` is a blank clone.
+
+## Fix 3 — clue-ref highlighting is invisible in art mode  (MOST IMPORTANT)
+
+### Diagnosis
+`applyHighlights()` (`app.js:1303-1341`) still sets the right classes in art mode — the JS is
+not broken. The styling those classes rely on is what art mode disables:
+
+1. **Object refs are completely dead.** `body.art-mode .layer-objects { display: none }`
+   (`style.css:534-537`) hides the whole layer, and `.object-cell.ref-object .object-art`
+   (`style.css:420-422`) is the only thing that draws an object highlight. Nothing renders.
+2. **Room refs lose their spotlight.** The "dim everything else" effect comes from
+   `.grid.refs-active .layer-cells .cell:not(.ref-room) { opacity: 0.55 }`
+   (`style.css:506`). In art mode cells are `background: transparent !important`, so
+   lowering their opacity dims nothing — the artwork lives on `layer-art`, a different
+   layer, which is never dimmed. The `.cell.ref-room` dashed outline (`style.css:382`)
+   should still draw, but on its own, per-cell, over busy artwork, it is weak.
+
+**Confirm both in the browser before changing anything** — particularly whether the dashed
+outline is drawing at all. This diagnosis is from reading the CSS, not from seeing it.
+
+### Approach
+The app still knows all the geometry in art mode; it just stopped drawing anything stylable.
+Fix by keeping the geometry present-but-invisible and giving art mode its own highlight
+treatment, rather than by changing `applyHighlights()`.
+
+**Stop hiding the objects layer wholesale — hide only the artwork inside it.**
+Replace the `body.art-mode .layer-objects { display: none }` rule with one that hides
+`.object-cell .object-art` (the SVG) while leaving the `.object-cell` wrappers in the flow.
+Those wrappers already carry the correct multi-cell grid spans and already receive the
+`ref-object` class from `applyHighlights()`, so a `body.art-mode .object-cell.ref-object`
+rule (dashed teal outline plus a soft teal fill) lights up the right cells with **zero JS
+change**. The layer is `pointer-events: none`, so nothing becomes clickable.
+
+**Replace the no-op opacity dim with a real scrim.** In art mode, give
+`.refs-active .cell:not(.ref-room)` a translucent dark background instead of reduced
+opacity — roughly `rgba(0,0,0,0.45)`. The cells layer sits above `layer-art`, so this dims
+the artwork everywhere except the referenced room, restoring the spotlight the tinted
+rendering gets for free. Needs `!important` or higher specificity to beat the inline
+per-cell background from `renderStatic()`.
+
+**Give ref'd rooms a positive fill too**, not just the outline — a light teal wash
+(`var(--ref)` at low alpha) over the art reads far better than a dashed outline alone.
+
+**Watch the interaction with the halo.** Marks sitting on scrimmed cells will now be
+light-on-dark, which is fine, but marks on the highlighted room sit on a teal wash. Check a
+definite letter, a ✕ and pencil marks in a highlighted room before calling it done.
+
+### Optional, decide by eye
+Room name pills are hidden in art mode (`body.art-mode .layer-labels { display: none }`).
+When a clue references a room, the player may not know which room the spotlight is. Consider
+showing the pill for referenced rooms only while refs are active. This *does* need a small
+JS change — a `ref-label` class toggled on `.room-label[data-room]` in `applyHighlights()`,
+next to the existing room/object loops. Try it; drop it if it looks cluttered.
+
+### Verification
+Netflix and Kill is the only puzzle with `art.board`. Test with art mode both on and off,
+hovering a clue that references a room (e.g. Dean/Kitchen) and one that references an object
+(e.g. Austin/shelf, Enid/TV), and confirm the non-art rendering is completely unchanged.
