@@ -728,6 +728,8 @@ const workspaceEl = document.getElementById("workspace");
 const resizeHandleEl = document.getElementById("resizeHandle");
 const prefColorPencilsEl = document.getElementById("prefColorPencils");
 const prefPlayerNotesEl = document.getElementById("prefPlayerNotes");
+const prefPortraitsEl = document.getElementById("prefPortraits");
+const prefPortraitsLabelEl = document.getElementById("prefPortraitsLabel");
 const playerPanelEl = document.getElementById("playerPanel");
 
 clearBtn.addEventListener("click", () => {
@@ -831,6 +833,23 @@ function buildClueList() {
     }
 
     if (clue.suspect) {
+      const portrait = PUZZLE.art?.portraits?.[clue.suspect];
+      if (portrait) {
+        const wrap = document.createElement("span");
+        wrap.className = "clue-portrait-wrap";
+        const img = document.createElement("img");
+        img.className = "clue-portrait";
+        img.src = `puzzles/${portrait.src}`;
+        img.loading = "lazy";
+        img.alt = PUZZLE.names[clue.suspect] || clue.suspect;
+        const crop = portrait.crop || { x: 0, y: 0, w: 1, h: 1 };
+        img.style.setProperty("--pc-x", crop.x);
+        img.style.setProperty("--pc-y", crop.y);
+        img.style.setProperty("--pc-w", crop.w);
+        img.style.setProperty("--pc-h", crop.h);
+        wrap.appendChild(img);
+        li.appendChild(wrap);
+      }
       const chip = document.createElement("span");
       chip.className = "suspect-chip chip-inline" + (clue.suspect === "V" ? " victim" : "");
       chip.dataset.item = clue.suspect;
@@ -1830,7 +1849,7 @@ function saveSplitPref() {
 
 // --- View preferences (display toggles, puzzle-independent) ----------------
 
-let viewPrefs = { colorPencils: true, playerNotes: false };
+let viewPrefs = { colorPencils: true, playerNotes: false, portraits: true };
 
 function loadViewPrefs() {
   try {
@@ -1840,6 +1859,7 @@ function loadViewPrefs() {
       viewPrefs = {
         colorPencils: typeof parsed.colorPencils === "boolean" ? parsed.colorPencils : true,
         playerNotes: typeof parsed.playerNotes === "boolean" ? parsed.playerNotes : false,
+        portraits: typeof parsed.portraits === "boolean" ? parsed.portraits : true,
       };
     }
   } catch (err) {
@@ -1858,12 +1878,20 @@ function saveViewPrefs() {
 function applyViewPrefs() {
   document.body.classList.toggle("color-pencils", viewPrefs.colorPencils);
   document.body.classList.toggle("show-player-notes", viewPrefs.playerNotes);
+  document.body.classList.toggle("show-portraits", viewPrefs.portraits);
   prefColorPencilsEl.checked = viewPrefs.colorPencils;
   prefPlayerNotesEl.checked = viewPrefs.playerNotes;
+  prefPortraitsEl.checked = viewPrefs.portraits;
+  prefPortraitsLabelEl.hidden = !PUZZLE?.art?.portraits;
 }
 
 prefColorPencilsEl.addEventListener("change", () => {
   viewPrefs.colorPencils = prefColorPencilsEl.checked;
+  applyViewPrefs();
+  saveViewPrefs();
+});
+prefPortraitsEl.addEventListener("change", () => {
+  viewPrefs.portraits = prefPortraitsEl.checked;
   applyViewPrefs();
   saveViewPrefs();
 });
@@ -2531,6 +2559,7 @@ function exportPuzzleJSON() {
     objects: PUZZLE.objects,
   };
   if (PUZZLE.customObjectTypes?.length) ordered.customObjectTypes = PUZZLE.customObjectTypes;
+  if (PUZZLE.art) ordered.art = PUZZLE.art;
   return ordered;
 }
 
@@ -2600,6 +2629,7 @@ function initPuzzle(data) {
   renderStatic();
   renderMarks();
   applyHighlights();
+  applyViewPrefs(); // re-evaluate portrait-checkbox visibility for the newly loaded puzzle
   updateLayoutMode(); // depends on renderStatic() having produced a measurable .cell
 }
 

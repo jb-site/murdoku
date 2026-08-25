@@ -1,5 +1,88 @@
 # Plan: source artwork in Murdoku (background board art + suspect portraits)
 
+## Progress (updated 2026-08-25)
+
+**Done — sequencing steps 1 and 2, shipped:**
+
+1. `tools/extract_art.py` exists, portraits path only (`--board` is a stub that exits with
+   "not implemented yet"). CLI: `python3 tools/extract_art.py <puzzle-id> --portraits
+   [--extra-box LETTER=x0,y0,x1,y1 ...] --letters A,B,C,...`. Renders the source PDF at
+   200dpi, auto-detects near-white polaroid cards by connected-component area/aspect,
+   accepts `--extra-box` for cards the detector misses (needed for The Hiking Trip's
+   Vincenza — her card is pink/highlighted as the victim, not white), sorts all boxes into
+   reading order (row-cluster by y, then x), matches them positionally against `--letters`,
+   exports padded PNGs to `puzzles/art/<id>/<LETTER>.png` (400px wide, ~15% margin per the
+   plan's padding requirement), and text-splices the resulting `art.portraits` block onto
+   the end of the puzzle JSON — a raw string splice, not a `json.dump` round-trip, so puzzles
+   using compact array formatting don't get fully reformatted into noisy diffs.
+   Also writes `puzzles/art/<id>/contact-sheet.png` (detected boxes overlaid with their
+   assigned letters) for visually checking the mapping before trusting it.
+2. Feature 2 (suspect portraits in the clue list) is built and working end to end on
+   The Hiking Trip, all 12 suspects. `buildClueList()` (app.js) prepends a crop-positioned
+   `<img class="clue-portrait">` before the suspect chip when `PUZZLE.art?.portraits?.[suspect]`
+   exists; CSS-only hover (`scale(5)`, `transform-origin: top left`) enlarges it to ~200px
+   since that's the entire point of the feature (checking for a cap/glasses at 40px is
+   impossible). New `viewPrefs.portraits` toggle ("Suspect portraits" checkbox), hidden via
+   `[hidden]` when the loaded puzzle has no `art.portraits` — re-evaluated at the end of
+   `initPuzzle()` (`applyViewPrefs()` now runs there too, not just at boot).
+   `exportPuzzleJSON()` round-trips `PUZZLE.art` so edit mode doesn't silently drop it.
+
+**Bugs found and fixed during this pass (both are traps worth remembering):**
+- `.view-options label[hidden]` needed an explicit `display: none` rule — same issue
+  CLAUDE.md already documents for `.editor-bar[hidden]`: the author `display: flex` on
+  `.view-options label` beats the UA `[hidden]` stylesheet rule, so toggling the `hidden`
+  property alone did nothing without it.
+- Portrait `src` values in the JSON are relative to `puzzles/` (matching the plan's own
+  `"art/the-zoo/A.png"` example), but `index.html`/`app.js` run from the repo root — image
+  tags need `puzzles/${portrait.src}`, not `portrait.src` directly. Got this wrong on the
+  first pass (images 404'd silently, rendered as a small broken-image glyph that was easy to
+  mistake for "working but ugly" in a screenshot — check network/console, not just the
+  screenshot, if this trips again for board art).
+
+**Verified in-browser** (headless Chrome via `Google Chrome for Testing`, since the
+Playwright MCP browser profile was locked by another session — see Environment note below):
+portraits render correctly cropped and self-labelled for all 12 Hiking Trip suspects, hover
+enlarges to ~200px, the checkbox is hidden on puzzles without `art` (e.g. Netflix and Kill)
+and shown on Hiking Trip, and the `art` block round-trips through the JSON diff cleanly
+(114 insertions, 0 reformatting noise).
+
+**Not started:** steps 3–6 (board art extraction, the go/no-go legibility checkpoint, the
+Art tab, remaining 11 puzzles). See "Recommendation and sequencing" below — nothing about
+that plan changed, this is a status update, not a re-plan.
+
+### Next steps for the following session
+
+1. **Step 3**: implement `--board` in `tools/extract_art.py` (currently a stub). Bbox
+   auto-detection logic is already validated during planning (see "Findings that shape the
+   plan" — exact on bordered grids, off by a partial cell on Hiking Trip's borderless one),
+   so this is mostly wiring: detect/accept `--bbox` override, pad, downscale to `cols * 80`px,
+   write `board.png` + `art.board`/`art.boardCrop`/`art.calibratedFor` into the JSON using the
+   same text-splice `patch_art_block()` helper already written (extend it or generalize it —
+   it currently take a single `key`/`value` pair, which already fits `board`/`boardCrop`/
+   `calibratedFor` as three separate calls, or bundle them into one dict and call once).
+2. **Step 4 — the go/no-go gate, do this before anything else in feature 1.** Get ONE puzzle
+   (suggest The Zoo or Netflix and Kill — both had exact bbox detection during planning, so
+   no calibration fighting) rendering in art mode with real marks on it (a few definite
+   letters, X marks, pencil marks) and screenshot it for the user. Whether light-on-dark marks
+   read over pastel artwork is an aesthetic call only the user can make — do not build the Art
+   tab or script the remaining puzzles first. Feature 1 is explicitly abandonable here.
+3. If step 4 gets a go: Art tab (board crop nudge, then portrait crop nudge — see "Crop
+   overriding in the app" section below for the gesture-plumbing detail about
+   `onEditPointerDown()`'s early return), then script + verify the remaining 11 puzzles.
+
+### Environment note for next session
+The Playwright MCP browser (profile `~/Library/Caches/ms-playwright-mcp/mcp-chrome-886e7bd`)
+was locked by another concurrent session throughout this one, so verification used a second,
+independent Chrome instance directly: `~/Library/Caches/ms-playwright/chromium-1200/chrome-mac-arm64/Google
+Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing --headless --disable-gpu
+--no-sandbox --window-size=W,H --screenshot=out.png --virtual-time-budget=6000 <url>`. To land
+on a specific puzzle without clicking the `<select>` (headless `--screenshot` can't script
+interaction), a throwaway `_seed.html` at the site root set `localStorage['murdoku:lastPuzzle']`
+then redirected to `index.html` — delete it after use, it's not part of the app. If the
+Playwright MCP browser is free next session, prefer it — it can actually click/hover, which
+matters for verifying the portrait hover-enlarge interaction and, later, Art-tab dragging.
+
+
 Planning doc for a Sonnet implementation session. Written against `app.js` @ cc79e00.
 Read `CLAUDE.md` first for architecture. **Both features are strictly optional and off by
 default; the existing grid-only rendering stays the default and stays fully intact.**

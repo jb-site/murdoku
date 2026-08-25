@@ -141,6 +141,7 @@ body.resizing { cursor: col-resize; }
   color: var(--muted);
 }
 .view-options label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.view-options label[hidden] { display: none; } /* author display:flex above would otherwise beat the UA [hidden] rule */
 
 .palette-sep {
   width: 1px;
@@ -546,6 +547,33 @@ body:not(.color-pencils) .pencil-grid span.pencil-highlighted {
 .clue-row.selected { border-color: var(--accent); background: var(--accent-soft); }
 .clue-row.no-suspect { cursor: default; padding-left: 44px; }
 .clue-row.no-suspect:hover { background: transparent; }
+
+.clue-portrait-wrap {
+  display: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  background: #2f3239;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+body.show-portraits .clue-portrait-wrap { display: block; }
+.clue-portrait-wrap:hover {
+  transform: scale(5);
+  transform-origin: top left;
+  z-index: 20;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+.clue-portrait {
+  position: absolute;
+  width: calc(100% / var(--pc-w, 1));
+  height: calc(100% / var(--pc-h, 1));
+  left: calc(-100% * var(--pc-x, 0) / var(--pc-w, 1));
+  top: calc(-100% * var(--pc-y, 0) / var(--pc-h, 1));
+  max-width: none;
+}
 
 /* --- Player panel (room guess + notes, toggleable) --- */
 
