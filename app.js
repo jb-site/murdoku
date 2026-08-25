@@ -810,7 +810,11 @@ document.addEventListener("keydown", (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const tag = document.activeElement?.tagName;
   if (tag === "SELECT" || tag === "INPUT" || tag === "TEXTAREA") return;
-  if (!PUZZLE || EDIT) return;
+  if (!PUZZLE) return;
+  if (EDIT) {
+    if (EDIT.tool === "art") onArtKey(e);
+    return;
+  }
 
   if (e.key.toLowerCase() === "x") {
     selectItem("#x");
@@ -1110,18 +1114,30 @@ function computeRoomAnchors() {
 // custom properties from art.boardCrop — see .layer-art/.layer-art img in style.css.
 // Not a CSS grid like the other layers; no squareness assumption anywhere here.
 function renderArtLayer() {
-  layerArtEl.innerHTML = "";
   const board = PUZZLE.art?.board;
-  if (!board) return;
-  const crop = PUZZLE.art.boardCrop || { x: 0, y: 0, w: 1, h: 1 };
-  const img = document.createElement("img");
-  img.src = `puzzles/${board}`;
-  img.alt = "";
+  if (!board) { layerArtEl.innerHTML = ""; return; }
+  const src = `puzzles/${board}`;
+  // Reuse the existing img when the source hasn't changed. The Art tab's pan/zoom
+  // drives a full scheduleEditRerender() per frame; tearing the img down and
+  // recreating it each time would flicker for the length of the drag.
+  let img = layerArtEl.querySelector("img");
+  if (!img || img.getAttribute("src") !== src) {
+    layerArtEl.innerHTML = "";
+    img = document.createElement("img");
+    img.setAttribute("src", src);
+    img.alt = "";
+    layerArtEl.appendChild(img);
+  }
+  const crop = artCrop();
   img.style.setProperty("--art-x", crop.x);
   img.style.setProperty("--art-y", crop.y);
   img.style.setProperty("--art-w", crop.w);
   img.style.setProperty("--art-h", crop.h);
-  layerArtEl.appendChild(img);
+}
+
+const IDENTITY_CROP = { x: 0, y: 0, w: 1, h: 1 };
+function artCrop() {
+  return PUZZLE.art?.boardCrop || IDENTITY_CROP;
 }
 
 // Builds the three static layers (cells, objects, labels) and attaches interaction
@@ -1967,7 +1983,13 @@ function applyViewPrefs() {
   // Same availability-gating as portraits, for the same reason (art.board is optional
   // per puzzle; only one puzzle has it so far).
   const hasBoard = !!PUZZLE?.art?.board;
-  document.body.classList.toggle("art-mode", viewPrefs.artMode && hasBoard);
+  // The Art tab forces art mode on regardless of the player's preference — the whole
+  // point is nudging the crop against the live board. `art-calibrate` is the same mode
+  // with the room tints left in at half opacity instead of going transparent, so any
+  // misalignment against the artwork's own cell boundaries is obvious.
+  const calibrating = !!(EDIT && EDIT.tool === "art" && hasBoard);
+  document.body.classList.toggle("art-mode", calibrating || (viewPrefs.artMode && hasBoard));
+  document.body.classList.toggle("art-calibrate", calibrating);
   prefColorPencilsEl.checked = viewPrefs.colorPencils;
   prefPlayerNotesEl.checked = viewPrefs.playerNotes;
   prefPortraitsEl.checked = viewPrefs.portraits;
@@ -2048,7 +2070,12 @@ function blankPuzzle() {
 }
 
 function enterEditMode(sourcePuzzle) {
-  EDIT = { stash: { puzzle: PUZZLE, objectAt, grid, history, selection }, tool: "rooms", roomPaint: null, objPaint: null, drag: null, dirty: false };
+  // artBase is the "Reset" target for the Art tab: the boardCrop as extracted by
+  // tools/extract_art.py, captured before any nudging. Cloned so later mutation of
+  // PUZZLE.art.boardCrop can't reach back into it.
+  const baseCrop = (sourcePuzzle ?? PUZZLE)?.art?.boardCrop;
+  EDIT = { stash: { puzzle: PUZZLE, objectAt, grid, history, selection }, tool: "rooms", roomPaint: null, objPaint: null, drag: null, dirty: false,
+    artBase: baseCrop ? { ...baseCrop } : { x: 0, y: 0, w: 1, h: 1 } };
   PUZZLE = normalizePuzzle(structuredClone(sourcePuzzle ?? PUZZLE));
   objectAt = buildObjectIndex(PUZZLE);
   grid = freshGrid();
@@ -2221,14 +2248,19 @@ editorTabsEl.querySelectorAll(".edit-tab").forEach((btn) => {
 function setEditTab(tab) {
   EDIT.tool = tab;
   editorTabsEl.querySelectorAll(".edit-tab").forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
-  editorDetailsEl.hidden = tab !== "details";
-  editorPaletteEl.hidden = tab === "details";
+  // Both the Details and Art panels are column layouts and share .editor-details;
+  // only Rooms/Objects use the chip-row palette.
+  const panelTab = tab === "details" || tab === "art";
+  editorDetailsEl.hidden = !panelTab;
+  editorPaletteEl.hidden = panelTab;
   buildEditorPalette();
+  applyViewPrefs(); // entering/leaving the Art tab flips forced art mode
 }
 
 function buildEditorPalette() {
   if (EDIT.tool === "rooms") buildRoomPalette();
   else if (EDIT.tool === "objects") buildObjectPalette();
+  else if (EDIT.tool === "art") buildArtPanel();
   else buildDetailsPanel();
 }
 
@@ -2415,20 +2447,194 @@ function buildDetailsPanel() {
   });
 }
 
+// --- Art tab (board crop calibration) --------------------------------------
+//
+// Nudges PUZZLE.art.boardCrop — a normalized sub-rect of the exported board PNG —
+// against the live grid, which is the preview. Wired exactly like buildDetailsPanel():
+// mutate -> scheduleEditRerender() -> EDIT.dirty -> scheduleDraftSave(). The art block
+// rides along in enterEditMode()'s structuredClone, so there is no extra plumbing.
+//
+// The primary output is the "Copy boardCrop" button, NOT the whole-puzzle JSON download:
+// the author calibrates all 12 puzzles in one sitting and pastes four numbers back each
+// time. Portrait crops are deliberately out of scope (see PLAN-artwork.md).
+
+const artInputEls = {};
+
+function buildArtPanel() {
+  editorDetailsEl.innerHTML = "";
+  artInputEls.x = artInputEls.y = artInputEls.w = artInputEls.h = null;
+
+  if (!PUZZLE.art?.board) {
+    const msg = document.createElement("p");
+    msg.className = "hint";
+    msg.style.textAlign = "left";
+    msg.textContent = 'This puzzle has no board art. Run `python3 tools/extract_art.py ' +
+      (PUZZLE.id || "<puzzle-id>") + ' --board` to generate puzzles/art/<id>/board.png and an ' +
+      '"art" block in the puzzle JSON, then reload the puzzle and come back here to calibrate it.';
+    editorDetailsEl.appendChild(msg);
+    return;
+  }
+
+  const help = document.createElement("p");
+  help.className = "hint";
+  help.style.textAlign = "left";
+  help.style.margin = "0";
+  help.textContent = "Drag on the grid to pan the artwork. Arrow keys nudge (hold Shift for a coarse step). " +
+    "Zoom scales about the centre of the visible board. Room tints are shown at half opacity so " +
+    "misalignment against the art's own cell boundaries is obvious.";
+  editorDetailsEl.appendChild(help);
+
+  const controls = document.createElement("div");
+  controls.className = "editor-row art-controls";
+  controls.innerHTML = `
+    <button type="button" class="tool-btn" data-zoom="0.99">Zoom −</button>
+    <button type="button" class="tool-btn" data-zoom="1.01">Zoom +</button>
+    <button type="button" class="tool-btn" data-zoom="0.95">− −</button>
+    <button type="button" class="tool-btn" data-zoom="1.05">+ +</button>
+    <button type="button" class="tool-btn" id="artResetBtn" title="Restore the crop as extracted by tools/extract_art.py">↺ Reset</button>
+    <button type="button" class="tool-btn" id="artCopyBtn">📋 Copy boardCrop</button>
+    <span class="art-copy-note" id="artCopyNote"></span>
+  `;
+  editorDetailsEl.appendChild(controls);
+  controls.querySelectorAll("[data-zoom]").forEach((btn) => {
+    btn.addEventListener("click", () => zoomArt(+btn.dataset.zoom));
+  });
+  controls.querySelector("#artResetBtn").addEventListener("click", () => {
+    setArtCrop(EDIT.artBase);
+    buildArtPanel();
+  });
+  controls.querySelector("#artCopyBtn").addEventListener("click", copyBoardCrop);
+
+  const nums = document.createElement("div");
+  nums.className = "details-row art-numbers";
+  nums.innerHTML = ["x", "y", "w", "h"].map((k) =>
+    `<label>${k}<input type="number" step="0.001" data-crop="${k}"></label>`).join("");
+  editorDetailsEl.appendChild(nums);
+  nums.querySelectorAll("[data-crop]").forEach((input) => {
+    const key = input.dataset.crop;
+    artInputEls[key] = input;
+    input.addEventListener("input", () => {
+      const v = parseFloat(input.value);
+      if (!Number.isFinite(v)) return;
+      setArtCrop({ ...artCrop(), [key]: v }, input);
+    });
+  });
+
+  // No "calibrated for NxM" note here on purpose: the panel isn't rebuilt on a resize,
+  // so it would go stale exactly when it mattered. validateDraft() reports the mismatch
+  // (as a warning, never an error) and re-runs on every dimension change.
+
+  syncArtInputs();
+}
+
+function syncArtInputs(except) {
+  const crop = artCrop();
+  ["x", "y", "w", "h"].forEach((k) => {
+    const el = artInputEls[k];
+    if (el && el !== except) el.value = round4(crop[k]);
+  });
+}
+
+function round4(n) {
+  return Math.round(n * 10000) / 10000;
+}
+
+// The single write path for the crop. `except` is the input currently being typed into,
+// which must not have its own value rewritten out from under the caret.
+function setArtCrop(crop, except) {
+  if (!PUZZLE.art) return;
+  PUZZLE.art.boardCrop = {
+    x: round4(crop.x),
+    y: round4(crop.y),
+    w: round4(Math.max(crop.w, 0.01)),
+    h: round4(Math.max(crop.h, 0.01)),
+  };
+  EDIT.dirty = true;
+  syncArtInputs(except);
+  scheduleEditRerender();
+  scheduleDraftSave();
+}
+
+// Zoom scales w/h about the CENTRE of the current crop, so the middle of the visible
+// board stays put. Scaling about the top-left corner (i.e. leaving x/y alone) renders
+// fine but is useless for calibration — every zoom step would also pan.
+// factor > 1 = zoom in = a SMALLER window onto the source = bigger apparent artwork.
+function zoomArt(factor) {
+  const crop = artCrop();
+  const w = crop.w / factor;
+  const h = crop.h / factor;
+  setArtCrop({ x: crop.x + (crop.w - w) / 2, y: crop.y + (crop.h - h) / 2, w, h });
+}
+
+// Screen-pixel drag delta -> normalized crop delta.
+//
+// A source point u maps to screen x = W * (u - crop.x) / crop.w, where W is the rendered
+// width of the cell area (layer-art's box). To make the artwork follow the pointer by dx,
+// the same u must land dx further right, which needs crop.x -= dx * crop.w / W. So the
+// conversion is BOTH scaled by the current crop size (a zoomed-in crop moves less per
+// pixel) and sign-inverted (dragging right decreases x).
+function panArt(dx, dy) {
+  const W = layerArtEl.clientWidth || 1;
+  const H = layerArtEl.clientHeight || 1;
+  const crop = artCrop();
+  setArtCrop({ ...crop, x: crop.x - (dx * crop.w) / W, y: crop.y - (dy * crop.h) / H });
+}
+
+// Fine nudge. One step is 1/8 of a cell (Shift: one whole cell) in screen terms, which
+// is the scale sub-cell misalignment actually shows up at.
+function onArtKey(e) {
+  if (!PUZZLE.art?.board) return;
+  const dirs = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  const dir = dirs[e.key];
+  if (!dir) return;
+  e.preventDefault();
+  const cellW = (layerArtEl.clientWidth || 1) / Math.max(PUZZLE.cols, 1);
+  const cellH = (layerArtEl.clientHeight || 1) / Math.max(PUZZLE.rows, 1);
+  const step = e.shiftKey ? 1 : 1 / 8;
+  panArt(dir[0] * cellW * step, dir[1] * cellH * step);
+}
+
+function copyBoardCrop() {
+  const crop = artCrop();
+  const text = `"boardCrop": { "x": ${round4(crop.x)}, "y": ${round4(crop.y)}, "w": ${round4(crop.w)}, "h": ${round4(crop.h)} },`;
+  const note = document.getElementById("artCopyNote");
+  const done = (ok) => { if (note) note.textContent = ok ? "Copied \u2713" : text; };
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(text).then(() => done(true), () => done(false));
+  } else {
+    done(false); // no clipboard API (or an insecure origin) — show it for manual copying
+  }
+}
+
 // --- Edit-mode gestures (room paint / object rectangle place) --------------
 
 function onEditPointerDown(e) {
   if (e.button !== 0) return;
-  const hit = cellFromEvent(e);
-  if (!hit) return;
-  e.preventDefault();
-  layerCellsEl.setPointerCapture(e.pointerId);
+
+  // The art branch must see the raw pointer, not a cell hit: panning is in screen
+  // pixels, and it has to work over void cells, where cellFromEvent() returns null by
+  // design. So the cell lookup lives inside the rooms/objects branches, not above them.
+  if (EDIT.tool === "art") {
+    if (!PUZZLE.art?.board) return;
+    e.preventDefault();
+    layerCellsEl.setPointerCapture(e.pointerId);
+    EDIT.drag = { pointerId: e.pointerId, kind: "art", px: e.clientX, py: e.clientY };
+    return;
+  }
 
   if (EDIT.tool === "rooms") {
+    const hit = cellFromEvent(e);
+    if (!hit) return;
+    e.preventDefault();
+    layerCellsEl.setPointerCapture(e.pointerId);
     if (!EDIT.roomPaint) { setStatus("Pick a room (or 'No room') first."); return; }
     EDIT.drag = { pointerId: e.pointerId, kind: "room" };
     paintRoom(hit.r, hit.c);
   } else if (EDIT.tool === "objects") {
+    const hit = cellFromEvent(e);
+    if (!hit) return;
+    e.preventDefault();
+    layerCellsEl.setPointerCapture(e.pointerId);
     if (!EDIT.objPaint) { setStatus("Pick an object type (or Erase) first."); return; }
     EDIT.drag = { pointerId: e.pointerId, kind: "object", r0: hit.r, c0: hit.c, r1: hit.r, c1: hit.c };
     updateObjectPreview();
@@ -2437,6 +2643,14 @@ function onEditPointerDown(e) {
 
 function onEditPointerMove(e) {
   if (!EDIT.drag || EDIT.drag.pointerId !== e.pointerId) return;
+
+  if (EDIT.drag.kind === "art") {
+    panArt(e.clientX - EDIT.drag.px, e.clientY - EDIT.drag.py);
+    EDIT.drag.px = e.clientX;
+    EDIT.drag.py = e.clientY;
+    return;
+  }
+
   const hit = cellFromEvent(e);
   if (!hit) return;
 
@@ -2561,6 +2775,16 @@ function validateDraft() {
     }
   }
   if (voidCount) warnings.push(`${voidCount} cell(s) have no room assigned yet.`);
+
+  // A dimension change doesn't mathematically invalidate boardCrop, but semantically
+  // does — so warn, never error. A resize that only trims void margin off the edge of
+  // the bounding box often needs no recalibration at all, and blocking export on it
+  // would be wrong.
+  const cal = PUZZLE.art?.calibratedFor;
+  if (cal && (cal.rows !== PUZZLE.rows || cal.cols !== PUZZLE.cols)) {
+    warnings.push(`Board art was calibrated for a ${cal.rows}x${cal.cols} grid, but this puzzle is now ${PUZZLE.rows}x${PUZZLE.cols} — check the alignment in the Art tab.`);
+  }
+
   Object.keys(PUZZLE.rooms).forEach((id) => {
     if (!PUZZLE.roomGrid.some((row) => row.includes(id))) warnings.push(`Room "${PUZZLE.rooms[id].name}" has no cells.`);
   });

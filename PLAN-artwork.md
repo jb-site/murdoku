@@ -609,3 +609,36 @@ Two ergonomic requirements that only matter at 12-puzzle scale:
 
 **Portrait crops stay out of scope.** The plan's Art tab section describes a portrait-crop
 strip too; portraits already look right, so build the board half only.
+
+## Done — void scrim fix + the board half of the Art tab (2026-08-25)
+
+- **Void scrim fix** shipped. The art-mode refs scrim selector now covers `.void-cell`
+  alongside `.cell:not(.ref-room)`. Verified only at the computed-style level (force
+  `body.art-mode` + `.grid.refs-active` on The Hiking Trip: voids report
+  `rgba(0,0,0,0.45)`, same as the scrimmed cells) — it cannot be seen end to end until
+  The Hiking Trip gets board art, since it is the only puzzle with voids and Netflix
+  and Kill, the only puzzle with board art, has none.
+- **Art tab** built, board crop only. Fourth tab beside Rooms/Objects/Details; renders
+  into `editorDetails` (the column layout) rather than the chip-row palette. Forces art
+  mode on via a new `art-calibrate` body class — same immersive rendering but with the
+  room tints and real room borders left in at 50% opacity, so misalignment against the
+  artwork's own cell boundaries is obvious. Drag to pan, arrow keys to nudge (1/8 cell,
+  Shift for a whole cell), four zoom buttons (±1%, ±5%) scaling about the crop centre,
+  raw x/y/w/h number inputs, Reset to the extracted values, and **Copy boardCrop** —
+  the primary output, putting `"boardCrop": { ... },` on the clipboard so 12 puzzles
+  can be calibrated and pasted back in one batch.
+- `onEditPointerDown()`/`onEditPointerMove()`'s `cellFromEvent()` early return moved down
+  into the rooms/objects branches, per the plan's gesture-plumbing note. Room painting
+  and object place/erase re-verified after the change.
+- `validateDraft()` warns (never errors) when `art.calibratedFor` disagrees with the
+  current rows/cols.
+- Two incidental fixes: `.editor-palette[hidden]`/`.editor-details[hidden]` needed an
+  explicit `display: none` (the same author-`display` vs UA-`[hidden]` trap already
+  logged twice above — the room chips were showing under the Details panel too, not
+  just under Art), and `renderArtLayer()` now reuses the existing `<img>` when the src
+  is unchanged, since the Art tab drives a full re-render per drag frame.
+- **Gotcha for the calibration pass:** `python3 -m http.server` sends no cache headers,
+  and Chrome will heuristically serve a stale `puzzles/<id>.json` from disk cache without
+  revalidating — a freshly extracted `art` block can appear to be missing entirely. If a
+  puzzle with board art shows "This puzzle has no board art", hard-reload
+  (Cmd+Shift+R) before believing it.

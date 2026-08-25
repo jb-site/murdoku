@@ -219,6 +219,10 @@ body.resizing { cursor: col-resize; }
 .edit-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
 .editor-palette { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+/* The author `display: flex`/`display: block` below beats the UA stylesheet's [hidden]
+   rule, so toggling the hidden property alone leaves the panel on screen. Same trap as
+   .editor-bar[hidden] and .view-options label[hidden]. */
+.editor-palette[hidden], .editor-details[hidden] { display: none; }
 
 .room-chip {
   border-radius: 10px;
@@ -256,6 +260,17 @@ body.resizing { cursor: col-resize; }
 .editor-details .details-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .editor-details .details-row label { display: flex; flex-direction: column; gap: 2px; font-size: 0.8rem; color: var(--muted); flex: 1; }
 .editor-details .json-error { color: var(--x-color); font-size: 0.8rem; }
+.editor-details .art-numbers label { max-width: 120px; }
+.editor-details .art-numbers input[type="number"] {
+  background: #23252c;
+  border: 1px solid #3a3d46;
+  border-radius: 6px;
+  color: var(--text);
+  padding: 4px 6px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+}
+.art-copy-note { color: var(--muted); font-size: 0.8rem; font-family: ui-monospace, monospace; }
 
 .editor-validation { font-size: 0.82rem; }
 .editor-validation .valid { color: #7ed08c; }
@@ -553,7 +568,12 @@ body.art-mode .layer-labels {
 body.art-mode .object-cell .object-art {
   display: none;
 }
-body.art-mode .cell {
+/* :not(.art-calibrate) — the editor's Art tab wants the room tints and the real room
+   borders LEFT IN (at half opacity, below) so misalignment against the artwork's own
+   cell boundaries is obvious. Both are inline per-cell styles, so once !important has
+   overridden them there is no way to restore the value in CSS: the calibrate case has
+   to opt out of the override rather than undo it. */
+body.art-mode:not(.art-calibrate) .cell {
   background: transparent !important;
   border-color: transparent !important;
 }
@@ -562,8 +582,18 @@ body.art-mode .void-cell {
 }
 /* Faint 1px cell grid so boundaries stay legible where the source art's own lines
    are subtle. Decided at the PLAN-artwork.md step 4 legibility checkpoint. */
-body.art-mode .cell {
+body.art-mode:not(.art-calibrate) .cell {
   border-color: rgba(255, 255, 255, 0.22) !important;
+}
+body.art-mode.art-calibrate .layer-cells .cell {
+  opacity: 0.5;
+}
+body.art-mode.art-calibrate .layer-cells,
+body.art-mode.art-calibrate .layer-cells .cell {
+  cursor: grab;
+}
+body.art-mode.art-calibrate .layer-cells:active {
+  cursor: grabbing;
 }
 
 /* Halo: dark text-shadow outline on marks, no scrim — chosen at the same checkpoint
