@@ -823,7 +823,12 @@ document.addEventListener("keydown", (e) => {
 
 function buildClueList() {
   clueListEl.innerHTML = "";
-  PUZZLE.clues.forEach((clue) => {
+  // Display order only — PUZZLE.clues keeps the source's own order, which the import
+  // process treats as verbatim. General rules ("there are two empty rows...") read as
+  // preamble to the per-suspect clues, so they're floated to the top. Array.sort is
+  // stable, so each group keeps its original relative order.
+  const ordered = [...PUZZLE.clues].sort((a, b) => (a.suspect ? 1 : 0) - (b.suspect ? 1 : 0));
+  ordered.forEach((clue) => {
     const li = document.createElement("li");
     li.className = "clue-row" + (clue.suspect ? "" : " no-suspect");
     if (clue.suspect) {
@@ -848,6 +853,15 @@ function buildClueList() {
         img.style.setProperty("--pc-w", crop.w);
         img.style.setProperty("--pc-h", crop.h);
         wrap.appendChild(img);
+        // Click, not hover, to enlarge — a hover trigger fires constantly while reading
+        // down the clue list. stopPropagation keeps the row's own click (which selects
+        // the suspect) from also firing, so the two gestures stay distinct.
+        wrap.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const wasZoomed = wrap.classList.contains("zoomed");
+          clearPortraitZoom();
+          if (!wasZoomed) wrap.classList.add("zoomed");
+        });
         li.appendChild(wrap);
       }
       const chip = document.createElement("span");
@@ -884,6 +898,15 @@ function buildClueList() {
     clueListEl.appendChild(li);
   });
 }
+
+function clearPortraitZoom() {
+  clueListEl.querySelectorAll(".clue-portrait-wrap.zoomed").forEach((el) => el.classList.remove("zoomed"));
+}
+
+// Attached once at module level, not per-clue in buildClueList() — that reruns on every
+// puzzle switch and would stack duplicate document listeners.
+document.addEventListener("click", clearPortraitZoom);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") clearPortraitZoom(); });
 
 // --- Legend --------------------------------------------------------------
 
@@ -1878,7 +1901,11 @@ function saveViewPrefs() {
 function applyViewPrefs() {
   document.body.classList.toggle("color-pencils", viewPrefs.colorPencils);
   document.body.classList.toggle("show-player-notes", viewPrefs.playerNotes);
-  document.body.classList.toggle("show-portraits", viewPrefs.portraits);
+  // Gated on availability as well as the preference: the class also drives the
+  // .no-suspect indent, which must not shift on a puzzle that has no portraits.
+  // Also covers Edit > New > Apply, which leaves PUZZLE.art undefined.
+  const hasPortraits = !!PUZZLE?.art?.portraits;
+  document.body.classList.toggle("show-portraits", viewPrefs.portraits && hasPortraits);
   prefColorPencilsEl.checked = viewPrefs.colorPencils;
   prefPlayerNotesEl.checked = viewPrefs.playerNotes;
   prefPortraitsEl.checked = viewPrefs.portraits;
@@ -2005,6 +2032,7 @@ function exitEditMode(mode) {
   updateHint();
   updateUndoButton();
   refreshPuzzleMeta();
+  applyViewPrefs(); // PUZZLE.art may differ from the pre-edit puzzle (e.g. Edit > New)
   if (mode === "apply") sanitizeRestoredGrid();
   renderStatic();
   renderMarks();

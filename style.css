@@ -546,6 +546,9 @@ body:not(.color-pencils) .pencil-grid span.pencil-highlighted {
 .clue-row:hover { background: #2f3239; }
 .clue-row.selected { border-color: var(--accent); background: var(--accent-soft); }
 .clue-row.no-suspect { cursor: default; padding-left: 44px; }
+/* Portraits add 40px + the row's 10px flex gap ahead of the chip, so the indent that
+   lines a suspect-less clue up with the clue text has to grow to match. */
+body.show-portraits .clue-row.no-suspect { padding-left: 94px; }
 .clue-row.no-suspect:hover { background: transparent; }
 
 .clue-portrait-wrap {
@@ -560,11 +563,13 @@ body:not(.color-pencils) .pencil-grid span.pencil-highlighted {
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 body.show-portraits .clue-portrait-wrap { display: block; }
-.clue-portrait-wrap:hover {
+.clue-portrait-wrap { cursor: zoom-in; }
+.clue-portrait-wrap.zoomed {
   transform: scale(5);
   transform-origin: top left;
   z-index: 20;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  cursor: zoom-out;
 }
 .clue-portrait {
   position: absolute;
