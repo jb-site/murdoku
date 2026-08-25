@@ -586,3 +586,26 @@ Alignment must be checked **per puzzle, by eye** — a crop that is off by a fra
 cell still renders, it just puts every mark slightly wrong relative to the art. The check:
 turn art mode on and confirm the app's faint 1px grid lines sit on the artwork's own cell
 boundaries, and that room boundaries in the art coincide with where `roomGrid` changes room.
+
+
+## Revised sequencing (decided 2026-08-25)
+
+Agent-driven per-puzzle alignment verification is the wrong division of labour: judging
+sub-cell misalignment 12 times is slow and unreliable for an agent, and fast and obvious for
+a human dragging it live. So **build the Art tab and let the author calibrate**, rather than
+having an agent eyeball screenshots.
+
+Order: extract all 12 unverified -> build the Art tab (board crop only) -> author calibrates.
+
+Two ergonomic requirements that only matter at 12-puzzle scale:
+
+1. **Squareness triage in the script.** Source cells are square (measured: 152.0x152.0 on
+   Netflix and Kill, 66.8x66.8 on The Zoo). Bad detection skews the ratio — The Hiking Trip
+   came out 70.5x63.8, a 0.905 aspect. Flag any puzzle whose detected cell aspect deviates
+   >3% from square, so the author knows which to scrutinise instead of checking all 12 blind.
+2. **"Copy boardCrop" button, not Download JSON.** Edit mode's only export today is a full
+   puzzle-JSON download the author hand-places in `puzzles/`. Twelve times, that is
+   unusable. Emit just the four numbers for copy/paste.
+
+**Portrait crops stay out of scope.** The plan's Art tab section describes a portrait-crop
+strip too; portraits already look right, so build the board half only.
