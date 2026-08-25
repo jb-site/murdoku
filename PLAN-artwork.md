@@ -481,6 +481,22 @@ elsewhere on the board survive, which is wrong — once A is placed, A cannot be
   indicator, not a disable.
 - Guard for edit mode: `buildPalette()` runs there too, and `grid` is a blank clone.
 
+**Done — all three fixes, 2026-08-25.** Verified in-browser (Playwright MCP) on Netflix and
+Kill, the only puzzle with `art.board`. Fix 3's diagnosis held up with one correction: the
+`.cell.ref-room` dashed outline was NOT invisible — it drew, just weakly, exactly as
+predicted for reason 2 (no scrim). Object refs (reason 1) were indeed completely dead —
+confirmed by hovering Austin/shelf and seeing nothing at all before the fix. Implemented the
+plan's approach as written: `.object-art` (not the whole `.layer-objects`) goes
+`display:none` in art mode, so `.object-cell` wrappers stay in flow and pick up a new
+`body.art-mode .object-cell.ref-object` outline+fill rule; the opacity-based dim was
+replaced with a real `rgba(0,0,0,0.45)` scrim scoped to `body.art-mode`, plus a teal fill on
+`.cell.ref-room`. Screenshotted marks (definite letter, X, pencil) sitting inside the
+scrimmed/highlighted kitchen room — all stayed legible with the existing halo. Confirmed
+non-art-mode pixel-identical: opacity dim, dashed outline, and object drop-shadow all still
+behave exactly as before (checked computed styles, not just a screenshot). Dropped the
+optional room-label-pill idea — the teal wash + scrim already made the spotlight unambiguous
+without it, and the clue text itself names the room.
+
 ## Fix 3 — clue-ref highlighting is invisible in art mode  (MOST IMPORTANT)
 
 ### Diagnosis

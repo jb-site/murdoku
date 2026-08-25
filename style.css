@@ -182,6 +182,14 @@ body.resizing { cursor: col-resize; }
   flex-shrink: 0;
 }
 
+/* Status indicator for a suspect who's been placed on the board — struck through, not
+   disabled. Stays clickable/selectable, so no pointer-events/opacity change on the element
+   itself beyond the label styling. */
+.suspect-chip.placed {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
 /* --- Puzzle editor mode --- */
 
 .editor-bar {
@@ -462,6 +470,9 @@ body.edit-mode .players {
 }
 .mark.definite { color: var(--sc, var(--accent)); }
 .mark.crossed { color: var(--x-color); }
+/* The X reads as too faint next to a definite letter at the shared 1.4rem base size —
+   bump only the X glyph itself, not .mark's base size (that would also enlarge letters). */
+.mark.crossed .cell-main { font-size: 1.9rem; }
 .mark.highlighted {
   background: rgba(var(--hl-rgb, 255, 209, 102), 0.16);
   border-radius: 3px;
@@ -531,8 +542,15 @@ body:not(.color-pencils) .pencil-grid span.pencil-highlighted {
 
 /* Everything the app draws over the source art goes transparent; cell background/
    border are set inline per-cell in renderStatic(), so overriding needs !important. */
-body.art-mode .layer-objects,
 body.art-mode .layer-labels {
+  display: none;
+}
+/* Room-name pills are hidden above, but the .object-cell wrappers stay in the flow —
+   only the drawn SVG (.object-art) goes away. The wrappers already carry the correct
+   multi-cell grid spans and already receive .ref-object from applyHighlights(), so a
+   clue-ref highlight on an object still has something to attach to (see below). The
+   layer itself is pointer-events:none, so nothing here becomes clickable. */
+body.art-mode .object-cell .object-art {
   display: none;
 }
 body.art-mode .cell {
@@ -556,6 +574,28 @@ body.art-mode .mark.crossed .cell-main {
 }
 body.art-mode .pencil-grid span {
   text-shadow: 0 0 2px #000, 0 1px 1px #000;
+}
+
+/* --- Clue-ref highlighting over art mode ---
+   Non-art-mode gets its spotlight for free: dimming .cell opacity dims the room-tint
+   background that lives ON that layer. In art mode the artwork lives on layer-art, a
+   layer underneath and untouched by .cell's opacity, so the same rule dims nothing.
+   Give art mode its own real scrim + a positive fill on the ref'd room, instead of
+   relying on the opacity rule above (left untouched for non-art-mode). */
+body.art-mode .grid.refs-active .layer-cells .cell:not(.ref-room) {
+  background: rgba(0, 0, 0, 0.45) !important;
+}
+body.art-mode .cell.ref-room {
+  background: rgba(77, 214, 193, 0.22) !important;
+}
+/* Object refs were completely dead in art mode (the whole objects layer was display:none,
+   so .object-cell.ref-object's SVG-drop-shadow rule had nothing to draw on). Now that the
+   wrapper stays in the flow with just its SVG hidden, give it its own outline + fill. */
+body.art-mode .object-cell.ref-object {
+  outline: 2px dashed var(--ref);
+  outline-offset: -3px;
+  background: rgba(77, 214, 193, 0.22);
+  border-radius: 4px;
 }
 
 .status-line {

@@ -1279,6 +1279,29 @@ function renderMarks() {
       }
     }
   }
+  updatePlacedStates();
+}
+
+// Suspects with a definite placement somewhere on the board right now. Derived from `grid`
+// rather than tracked separately, so undo / file load / localStorage restore / Clear all stay
+// correct for free — the only place this needs calling is the end of renderMarks().
+function getPlacedLetters() {
+  const placed = new Set();
+  for (let r = 0; r < PUZZLE.rows; r++) {
+    for (let c = 0; c < PUZZLE.cols; c++) {
+      if (grid[r][c].definite) placed.add(grid[r][c].definite);
+    }
+  }
+  return placed;
+}
+
+// Strikes through a placed suspect's chip (palette + clue list) as a status indicator — the
+// chip stays clickable/selectable, this is not a disabled state.
+function updatePlacedStates() {
+  const placed = getPlacedLetters();
+  document.querySelectorAll(".suspect-chip[data-item]").forEach((el) => {
+    el.classList.toggle("placed", placed.has(el.dataset.item));
+  });
 }
 
 function findClueForSuspect(letter) {
@@ -1623,6 +1646,15 @@ function placeDefinitely(r, c, letter) {
     if (!other.definite) {
       other.x = true;
       other.pencil.clear();
+    }
+  }
+  // Once a suspect is placed they cannot be anywhere else on the board, so sweep every
+  // remaining cell and drop them from its pencil candidates. Only their own pencil marks —
+  // other suspects' pencils and existing X flags are untouched.
+  for (let rr = 0; rr < PUZZLE.rows; rr++) {
+    for (let cc = 0; cc < PUZZLE.cols; cc++) {
+      if (rr === r && cc === c) continue;
+      grid[rr][cc].pencil.delete(letter);
     }
   }
 }
