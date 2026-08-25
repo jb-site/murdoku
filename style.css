@@ -506,6 +506,58 @@ body:not(.color-pencils) .pencil-grid span.pencil-highlighted {
 .grid.refs-active .layer-cells .cell:not(.ref-room) { opacity: 0.55; }
 .grid.refs-active .layer-objects .object-cell:not(.ref-object) { opacity: 0.35; }
 
+/* --- Immersive board art (layer-art / art-mode) ---
+   layer-art is NOT a CSS grid like the other four layers — one absolutely-positioned
+   img covering just the cell area, stretched independently per axis via --art-x/y/w/h
+   (set from art.boardCrop in renderArtLayer()). No squareness assumption: a source
+   whose cells aren't perfectly square still lines up, because width/height are set
+   explicitly rather than left to the image's native aspect ratio. */
+.layer-art {
+  position: absolute;
+  left: var(--hdr-size);
+  top: var(--hdr-size);
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.layer-art img {
+  position: absolute;
+  width: calc(100% / var(--art-w, 1));
+  height: calc(100% / var(--art-h, 1));
+  left: calc(-100% * var(--art-x, 0) / var(--art-w, 1));
+  top: calc(-100% * var(--art-y, 0) / var(--art-h, 1));
+}
+
+/* Everything the app draws over the source art goes transparent; cell background/
+   border are set inline per-cell in renderStatic(), so overriding needs !important. */
+body.art-mode .layer-objects,
+body.art-mode .layer-labels {
+  display: none;
+}
+body.art-mode .cell {
+  background: transparent !important;
+  border-color: transparent !important;
+}
+body.art-mode .void-cell {
+  background: transparent !important;
+}
+/* Faint 1px cell grid so boundaries stay legible where the source art's own lines
+   are subtle. Decided at the PLAN-artwork.md step 4 legibility checkpoint. */
+body.art-mode .cell {
+  border-color: rgba(255, 255, 255, 0.22) !important;
+}
+
+/* Halo: dark text-shadow outline on marks, no scrim — chosen at the same checkpoint
+   over scrim (too much visual noise) and dim (costs the art's vibrancy). */
+body.art-mode .mark.definite .cell-main,
+body.art-mode .mark.crossed .cell-main {
+  text-shadow: 0 0 3px #000, 0 0 3px #000, 0 1px 2px #000;
+}
+body.art-mode .pencil-grid span {
+  text-shadow: 0 0 2px #000, 0 1px 1px #000;
+}
+
 .status-line {
   min-height: 1.1em;
   color: var(--muted);

@@ -36,6 +36,12 @@ PORTRAIT_ASPECT_RANGE = (0.55, 1.05)  # width / height
 ROW_CLUSTER_TOLERANCE_PX = 60  # boxes within this many px of y0 are "the same row"
 PORTRAIT_TARGET_W = 400
 
+BOARD_DARK_THRESHOLD = 128  # grayscale value below which a pixel counts as "dark" (grid line)
+BOARD_SEARCH_X_FRACTION = 0.45  # only look right of this fraction of page width for the board
+BOARD_RUN_FRACTION = 0.3  # a row/col counts as a border line if its longest dark run exceeds
+                           # this fraction of the search region's width/height
+BOARD_TARGET_CELL_W = 80  # downscaled board.png is roughly cols * this many px wide
+
 
 def render_page(puzzle_id, dpi):
     pdf = SOURCE_DIR / f"{puzzle_id}-color.pdf"
@@ -84,6 +90,45 @@ def detect_portrait_boxes(arr):
 
 def parse_box(spec):
     x0, y0, x1, y1 = (int(v) for v in spec.split(","))
+    return (x0, y0, x1, y1)
+
+
+def _max_run_length_1d(mask):
+    """Longest run of True values in a 1-D boolean array."""
+    if not mask.any():
+        return 0
+    padded = np.concatenate(([0], mask.astype(int), [0]))
+    diff = np.diff(padded)
+    starts = np.where(diff == 1)[0]
+    ends = np.where(diff == -1)[0]
+    return int((ends - starts).max())
+
+
+def detect_board_bbox(arr):
+    """Auto-detect the board's grid bbox: threshold dark pixels (grid lines), then
+    find the outermost rows/cols in the right ~55% of the page whose longest
+    contiguous dark run is long enough to be a border line. Exact on bordered
+    grids (see PLAN-artwork.md); use --bbox to override when it isn't."""
+    img_h, img_w = arr.shape[:2]
+    gray = arr.mean(axis=2)
+    dark = gray < BOARD_DARK_THRESHOLD
+
+    x_start = int(img_w * BOARD_SEARCH_X_FRACTION)
+    region = dark[:, x_start:]
+    region_w = region.shape[1]
+
+    row_runs = np.array([_max_run_length_1d(region[y]) for y in range(img_h)])
+    candidate_rows = np.where(row_runs > region_w * BOARD_RUN_FRACTION)[0]
+    if len(candidate_rows) == 0:
+        sys.exit("Board bbox auto-detection found no horizontal border lines; use --bbox")
+    y0, y1 = int(candidate_rows.min()), int(candidate_rows.max()) + 1
+
+    col_runs = np.array([_max_run_length_1d(region[:, x]) for x in range(region_w)])
+    candidate_cols = np.where(col_runs > img_h * BOARD_RUN_FRACTION)[0]
+    if len(candidate_cols) == 0:
+        sys.exit("Board bbox auto-detection found no vertical border lines; use --bbox")
+    x0, x1 = int(candidate_cols.min()) + x_start, int(candidate_cols.max()) + x_start + 1
+
     return (x0, y0, x1, y1)
 
 
@@ -144,12 +189,14 @@ def load_puzzle_json(puzzle_id):
         return path, json.load(f)
 
 
-def patch_art_block(path, data, key, value):
-    """Text-level splice of an `art.<key>` block onto the end of the file, so
+def patch_art_block(path, data, updates):
+    """Text-level splice of the `art` block onto the end of the file, so
     puzzles authored with compact array formatting don't get fully
-    reformatted by a round-trip through json.dump (huge, noisy diffs)."""
+    reformatted by a round-trip through json.dump (huge, noisy diffs).
+    `updates` is a dict merged into the existing `art` object (one or more
+    keys at once, e.g. board + boardCrop + calibratedFor)."""
     art = data.get("art", {})
-    art[key] = value
+    art.update(updates)
     art_json = json.dumps(art, indent=2)
     art_json = "\n".join("  " + line if line.strip() else line for line in art_json.splitlines())
 
@@ -231,14 +278,45 @@ def do_portraits(args, page_path):
         portraits[letter] = entry
         print(f"  {letter} -> {dest}")
 
-    patch_art_block(puzzle_path, data, "portraits", portraits)
+    patch_art_block(puzzle_path, data, {"portraits": portraits})
     print(f"Patched art.portraits into {puzzle_path}")
+
+
+def do_board(args, page_path):
+    puzzle_path, data = load_puzzle_json(args.puzzle_id)
+    rows, cols = data["rows"], data["cols"]
+
+    img = Image.open(page_path).convert("RGB")
+    arr = np.array(img)
+    img_h, img_w = arr.shape[:2]
+
+    box = parse_box(args.bbox) if args.bbox else detect_board_bbox(arr)
+    print(f"  board bbox: {box}")
+
+    expanded, crop = pad_box(box, args.pad, img_w, img_h)
+    crop_img = img.crop(tuple(round(v) for v in expanded))
+    target_w = cols * BOARD_TARGET_CELL_W
+    scale = target_w / crop_img.width
+    crop_img = crop_img.resize((target_w, round(crop_img.height * scale)), Image.LANCZOS)
+
+    out_dir = ART_DIR / args.puzzle_id
+    out_dir.mkdir(parents=True, exist_ok=True)
+    dest = out_dir / "board.png"
+    crop_img.save(dest)
+    print(f"  board -> {dest} ({crop_img.width}x{crop_img.height}px)")
+
+    patch_art_block(puzzle_path, data, {
+        "board": f"art/{args.puzzle_id}/board.png",
+        "boardCrop": crop,
+        "calibratedFor": {"rows": rows, "cols": cols},
+    })
+    print(f"Patched art.board/boardCrop/calibratedFor into {puzzle_path}")
 
 
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("puzzle_id")
-    p.add_argument("--board", action="store_true", help="not yet implemented")
+    p.add_argument("--board", action="store_true")
     p.add_argument("--portraits", action="store_true")
     p.add_argument("--bbox", help="x0,y0,x1,y1 board bbox override (--board only)")
     p.add_argument("--pad", type=float, default=0.15)
@@ -248,13 +326,14 @@ def main():
                     help="LETTER=x0,y0,x1,y1 for a card the auto-detector missed (repeatable)")
     args = p.parse_args()
 
-    if args.board:
-        sys.exit("--board is not implemented yet (see PLAN-artwork.md step 3)")
-    if not args.portraits:
-        sys.exit("Nothing to do: pass --portraits (or --board, once implemented)")
+    if not args.board and not args.portraits:
+        sys.exit("Nothing to do: pass --portraits and/or --board")
 
     page_path = render_page(args.puzzle_id, args.dpi)
-    do_portraits(args, page_path)
+    if args.board:
+        do_board(args, page_path)
+    if args.portraits:
+        do_portraits(args, page_path)
 
 
 if __name__ == "__main__":

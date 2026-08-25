@@ -704,6 +704,7 @@ function buildObjectIndex(data, errors) {
 // --- DOM setup -------------------------------------------------------------
 
 const gridEl = document.getElementById("grid");
+const layerArtEl = document.getElementById("layerArt");
 const layerCellsEl = document.getElementById("layerCells");
 const layerObjectsEl = document.getElementById("layerObjects");
 const layerLabelsEl = document.getElementById("layerLabels");
@@ -730,6 +731,8 @@ const prefColorPencilsEl = document.getElementById("prefColorPencils");
 const prefPlayerNotesEl = document.getElementById("prefPlayerNotes");
 const prefPortraitsEl = document.getElementById("prefPortraits");
 const prefPortraitsLabelEl = document.getElementById("prefPortraitsLabel");
+const prefArtModeEl = document.getElementById("prefArtMode");
+const prefArtModeLabelEl = document.getElementById("prefArtModeLabel");
 const playerPanelEl = document.getElementById("playerPanel");
 
 clearBtn.addEventListener("click", () => {
@@ -1102,10 +1105,30 @@ function computeRoomAnchors() {
   return anchors;
 }
 
+// Immersive board art (layer-art, art-mode): a single absolutely-positioned img
+// covering just the cell area (not the header gutter), stretched per-axis via CSS
+// custom properties from art.boardCrop — see .layer-art/.layer-art img in style.css.
+// Not a CSS grid like the other layers; no squareness assumption anywhere here.
+function renderArtLayer() {
+  layerArtEl.innerHTML = "";
+  const board = PUZZLE.art?.board;
+  if (!board) return;
+  const crop = PUZZLE.art.boardCrop || { x: 0, y: 0, w: 1, h: 1 };
+  const img = document.createElement("img");
+  img.src = `puzzles/${board}`;
+  img.alt = "";
+  img.style.setProperty("--art-x", crop.x);
+  img.style.setProperty("--art-y", crop.y);
+  img.style.setProperty("--art-w", crop.w);
+  img.style.setProperty("--art-h", crop.h);
+  layerArtEl.appendChild(img);
+}
+
 // Builds the three static layers (cells, objects, labels) and attaches interaction
 // listeners once. Called only when a puzzle is (re)loaded — never on every render,
 // so an in-progress long-press/drag gesture never has its DOM pulled out from under it.
 function renderStatic() {
+  renderArtLayer();
   [layerCellsEl, layerObjectsEl, layerLabelsEl, layerMarksEl, layerHeadersEl].forEach(setLayerTemplate);
 
   // Cap how wide (and, via aspect-ratio:1 cells, how tall) the grid can render.
@@ -1872,7 +1895,7 @@ function saveSplitPref() {
 
 // --- View preferences (display toggles, puzzle-independent) ----------------
 
-let viewPrefs = { colorPencils: true, playerNotes: false, portraits: true };
+let viewPrefs = { colorPencils: true, playerNotes: false, portraits: true, artMode: false };
 
 function loadViewPrefs() {
   try {
@@ -1883,6 +1906,9 @@ function loadViewPrefs() {
         colorPencils: typeof parsed.colorPencils === "boolean" ? parsed.colorPencils : true,
         playerNotes: typeof parsed.playerNotes === "boolean" ? parsed.playerNotes : false,
         portraits: typeof parsed.portraits === "boolean" ? parsed.portraits : true,
+        // Opt-in, unlike portraits: a bigger visual change, and only one puzzle has
+        // art.board so far — defaulting it on would surprise players on every other puzzle.
+        artMode: typeof parsed.artMode === "boolean" ? parsed.artMode : false,
       };
     }
   } catch (err) {
@@ -1906,10 +1932,16 @@ function applyViewPrefs() {
   // Also covers Edit > New > Apply, which leaves PUZZLE.art undefined.
   const hasPortraits = !!PUZZLE?.art?.portraits;
   document.body.classList.toggle("show-portraits", viewPrefs.portraits && hasPortraits);
+  // Same availability-gating as portraits, for the same reason (art.board is optional
+  // per puzzle; only one puzzle has it so far).
+  const hasBoard = !!PUZZLE?.art?.board;
+  document.body.classList.toggle("art-mode", viewPrefs.artMode && hasBoard);
   prefColorPencilsEl.checked = viewPrefs.colorPencils;
   prefPlayerNotesEl.checked = viewPrefs.playerNotes;
   prefPortraitsEl.checked = viewPrefs.portraits;
   prefPortraitsLabelEl.hidden = !PUZZLE?.art?.portraits;
+  prefArtModeEl.checked = viewPrefs.artMode;
+  prefArtModeLabelEl.hidden = !hasBoard;
 }
 
 prefColorPencilsEl.addEventListener("change", () => {
@@ -1919,6 +1951,11 @@ prefColorPencilsEl.addEventListener("change", () => {
 });
 prefPortraitsEl.addEventListener("change", () => {
   viewPrefs.portraits = prefPortraitsEl.checked;
+  applyViewPrefs();
+  saveViewPrefs();
+});
+prefArtModeEl.addEventListener("change", () => {
+  viewPrefs.artMode = prefArtModeEl.checked;
   applyViewPrefs();
   saveViewPrefs();
 });

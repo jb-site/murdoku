@@ -34,6 +34,7 @@
       <label><input type="checkbox" id="prefColorPencils"> Colour pencil marks</label>
       <label><input type="checkbox" id="prefPlayerNotes"> Player notes</label>
       <label id="prefPortraitsLabel" hidden><input type="checkbox" id="prefPortraits"> Suspect portraits</label>
+      <label id="prefArtModeLabel" hidden><input type="checkbox" id="prefArtMode"> Board art</label>
     </div>
   </section>
 
@@ -72,6 +73,7 @@
   <div class="workspace" id="workspace">
     <section class="grid-wrap">
       <div id="grid" class="grid">
+        <div id="layerArt" class="grid-layer layer-art"></div>
         <div id="layerCells" class="grid-layer layer-cells"></div>
         <div id="layerObjects" class="grid-layer layer-objects"></div>
         <div id="layerLabels" class="grid-layer layer-labels"></div>

@@ -46,9 +46,43 @@ enlarges to ~200px, the checkbox is hidden on puzzles without `art` (e.g. Netfli
 and shown on Hiking Trip, and the `art` block round-trips through the JSON diff cleanly
 (114 insertions, 0 reformatting noise).
 
-**Not started:** steps 3–6 (board art extraction, the go/no-go legibility checkpoint, the
-Art tab, remaining 11 puzzles). See "Recommendation and sequencing" below — nothing about
-that plan changed, this is a status update, not a re-plan.
+**Done — steps 3 and 4:**
+
+3. `--board` implemented in `tools/extract_art.py`: auto-detects the grid bbox (dark-pixel
+   border-line runs in the right ~55% of the page — same technique validated during
+   planning), pads 15% (clamped at page edges, so a board flush against the source page
+   edge gets less padding on that side — expected, not a bug), downscales to `cols*80`px,
+   writes `board.png` + `art.board`/`boardCrop`/`calibratedFor`. `patch_art_block()` is now
+   `(path, data, updates_dict)` instead of a single key/value pair, so board's three keys
+   patch in one call; `do_portraits()` updated to the new signature. Ran once, on Netflix
+   and Kill: bbox came out 914×914px (912×912 found during planning — within rounding),
+   confirming auto-detection is exact on bordered grids as expected.
+4. Legibility checkpoint — done and resolved. Built `layer-art` (new first child of
+   `#grid`, `renderArtLayer()` in `app.js`, CSS per the plan) and the `body.art-mode`
+   switch (`.cell`/`.void-cell` transparent, `.layer-objects`/`.layer-labels` hidden). No
+   Art tab, no toggle UI — verified with a throwaway `_seed.html` (localStorage progress
+   seed) + a temporary `?artdebug=` URL hook in `app.js`, both since deleted. Screenshotted
+   plain / halo / scrim / dim variants on Netflix and Kill with real definite letters, X
+   marks and pencil marks, all with the grid-lines sub-toggle on. **User decision: halo,
+   with grid lines on by default.** Both are now baked into `style.css` as the unconditional
+   `body.art-mode` rules (no more modifier classes) — scrim/dim variant CSS was removed,
+   not kept dead. Plain was already close to acceptable; halo's dark text-shadow gave a bit
+   more separation for a few lines of CSS. Scrim was visibly the most reliable but
+   reintroduced exactly the visual noise immersive mode exists to remove; dim cost the
+   artwork's vibrancy for a similar gain to halo.
+
+**Done — player-facing toggle (not explicitly in the original step numbering, but needed
+so art-mode is reachable without devtools):** a "Board art" checkbox next to "Suspect
+portraits" in the toolbar, same pattern exactly — `viewPrefs.artMode` (default `false`,
+unlike portraits' default `true`: it's a bigger visual change and only one puzzle has
+`art.board` so far, so defaulting it on would surprise players everywhere else),
+`localStorage`-persisted, gated on `PUZZLE.art?.board` and hidden via `[hidden]` when
+absent (`prefArtModeLabelEl`, mirrors `prefPortraitsLabelEl`). Verified in-browser: shows
+and works on Netflix and Kill, stays hidden on The Zoo (no board art yet).
+
+**Not started:** the Art tab (board crop nudge, then portrait crop nudge — original step 5)
+and scripting board art for the remaining 11 puzzles (step 6). Stopping here at the user's
+request — do not start either without checking in again.
 
 ### Next steps for the following session
 

@@ -56,5 +56,18 @@
     { "type": "table", "cells": [[5, 0], [5, 1]] },
     { "type": "shelf", "cells": [[5, 2]] },
     { "type": "plant", "cells": [[5, 5]] }
-  ]
+  ],
+  "art": {
+    "board": "art/netflix-and-kill/board.png",
+    "boardCrop": {
+      "x": 0.122,
+      "y": 0.1154,
+      "w": 0.8131,
+      "h": 0.7692
+    },
+    "calibratedFor": {
+      "rows": 6,
+      "cols": 6
+    }
+  }
 }
