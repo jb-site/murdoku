@@ -99,12 +99,7 @@
   ],
   "art": {
     "board": "art/the-courtroom/board.png",
-    "boardCrop": {
-      "x": 0.2,
-      "y": 0.0,
-      "w": 0.8,
-      "h": 1.0
-    },
+    "boardCrop": { "x": 0.2957, "y": 0.3144, "w": 0.6394, "h": 0.558 },
     "calibratedFor": {
       "rows": 9,
       "cols": 9

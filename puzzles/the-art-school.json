@@ -99,10 +99,10 @@
   "art": {
     "board": "art/the-art-school/board.png",
     "boardCrop": {
-      "x": 0.1667,
-      "y": 0.17,
-      "w": 0.6667,
-      "h": 0.6801
+      "x": 0.3517,
+      "y": 0.3324,
+      "w": 0.3908,
+      "h": 0.5471
     },
     "calibratedFor": {
       "rows": 9,

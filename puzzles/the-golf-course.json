@@ -1718,12 +1718,7 @@
  ],
   "art": {
     "board": "art/the-golf-course/board.png",
-    "boardCrop": {
-      "x": 0.1959,
-      "y": 0.1766,
-      "w": 0.7835,
-      "h": 0.7066
-    },
+    "boardCrop": { "x": 0.2025, "y": 0.1324, "w": 0.7693, "h": 0.744 },
     "calibratedFor": {
       "rows": 16,
       "cols": 16
