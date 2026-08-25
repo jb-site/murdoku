@@ -575,6 +575,15 @@ body.art-mode .mark.crossed .cell-main {
 body.art-mode .pencil-grid span {
   text-shadow: 0 0 2px #000, 0 1px 1px #000;
 }
+/* The selected suspect's own pencil marks are the ones that most need to stay readable,
+   but body.color-pencils' highlight rule REPLACES the halo above with a coloured glow
+   (3 classes to 2, so it wins on specificity) — over pale artwork that left them nearly
+   invisible. Re-state both here: dark halo listed first so it paints on top of the glow,
+   keeping a crisp outline with the player-colour bloom behind it. Same specificity as the
+   colour rule, but later in the file, so this wins. */
+body.art-mode .pencil-grid span.pencil-highlighted {
+  text-shadow: 0 0 2px #000, 0 1px 1px #000, 0 0 6px rgba(var(--sc-rgb, 255, 209, 102), 0.85);
+}
 
 /* --- Clue-ref highlighting over art mode ---
    Non-art-mode gets its spotlight for free: dimming .cell opacity dims the room-tint

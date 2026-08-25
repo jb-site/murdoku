@@ -554,3 +554,35 @@ next to the existing room/object loops. Try it; drop it if it looks cluttered.
 Netflix and Kill is the only puzzle with `art.board`. Test with art mode both on and off,
 hovering a clue that references a room (e.g. Dean/Kitchen) and one that references an object
 (e.g. Austin/shelf, Enid/TV), and confirm the non-art rendering is completely unchanged.
+
+
+---
+
+# Next up: board art across the remaining puzzles
+
+Board art currently exists for **Netflix and Kill only**. `tools/extract_art.py --board`
+works. The Art tab (in-app crop nudging) is still NOT built, and is still out of scope —
+without it, the only way to correct a bad crop is re-running the script with `--bbox`.
+
+## Known bug to fix first: voids are not scrimmed
+
+`body.art-mode .grid.refs-active .layer-cells .cell:not(.ref-room)` applies the clue-ref
+scrim to `.cell` elements only. Void cells are deliberately **not** `.cell` (see CLAUDE.md),
+and `body.art-mode .void-cell` sets `background: transparent !important`. So with refs
+active in art mode, every real cell outside the referenced room darkens while void areas
+stay at full brightness — bright holes punched through the scrim.
+
+Invisible today: Netflix and Kill has no voids, and it is the only puzzle with board art.
+**The Hiking Trip is the only puzzle in the set that has voids (10 of them)**, so this bites
+the moment it gets board art. Fix the rule to cover `.void-cell` too before extracting there.
+
+## Per-puzzle alignment is the real work
+
+Verified during planning: detection is exact on bordered grids (Netflix and Kill, The Zoo)
+and lands a partial cell off on The Hiking Trip, which has no hard border and scenery
+bleeding past the board. Expect most puzzles to be fine and a minority to need `--bbox`.
+
+Alignment must be checked **per puzzle, by eye** — a crop that is off by a fraction of a
+cell still renders, it just puts every mark slightly wrong relative to the art. The check:
+turn art mode on and confirm the app's faint 1px grid lines sit on the artwork's own cell
+boundaries, and that room boundaries in the art coincide with where `roomGrid` changes room.
