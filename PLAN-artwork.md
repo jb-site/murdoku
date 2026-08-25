@@ -306,18 +306,33 @@ trims void margin often needs no recalibration, and blocking export on it would 
 **Feature 2 is a correctness fix, not polish.** Build it first and build it definitely.
 ~55 lines of app code, no risky subsystem, no calibration, no edit-mode work required.
 
-**Feature 1 is a separable second commit, and should be abandonable.** The calibration
-problem that looked scary is genuinely easy here. The risk moved rather than disappeared:
-it is now mark legibility over busy pastel artwork, which cannot be fully evaluated until
-it is built.
+**Feature 1 is wanted. Confirmed by the user 2026-08-25, after feature 2 shipped.**
+Earlier drafts of this plan called it "abandonable" on the grounds that the payoff might not
+justify the risk. That is no longer the framing: the immersive board art is the feature the
+user actually cares about, and portraits landing has not reduced that.
+
+The calibration problem that looked scary is genuinely easy here. The risk moved rather than
+disappeared: it is now mark legibility over busy pastel artwork, which cannot be evaluated
+until it is built. **That is a checkpoint, not an exit.** See step 4 below.
 
 Sequence so that risk surfaces early:
 
 1. `tools/extract_art.py` — portraits path only.
 2. Feature 2 end to end on The Hiking Trip. Ship it.
 3. `extract_art.py` — board path.
-4. **One puzzle rendering in art mode with real marks on it**, before building the Art tab or
-   scripting the other eleven. If it reads badly, ~1 hour spent and you stop.
+4. **Legibility checkpoint — one puzzle rendering in art mode with real marks on it**,
+   before building the Art tab or scripting the other eleven. Come back to the user with
+   screenshots. This exists to decide *how* the marks are made readable, not *whether* to
+   continue. If the plain rendering reads badly, do not stop and do not pick a fix
+   unilaterally — implement two or three of the mitigations below and screenshot each, so
+   the user chooses from real options:
+   - **halo** — dark `text-shadow` outline on marks, no scrim. Cheapest; may be enough alone.
+   - **scrim** — translucent rounded rect behind cells that have content. Most reliable,
+     but reintroduces exactly the visual noise immersive mode exists to remove.
+   - **dim** — uniform dark overlay or `filter: brightness(.6)` on the art layer so light
+     marks pop everywhere. Keeps the artwork whole; costs its vibrancy.
+
+   Also settle at this checkpoint whether the faint 1px cell grid line stays on by default.
 5. Art tab (board crop, then portrait crops).
 6. Remaining puzzles.
 
@@ -333,8 +348,13 @@ Sequence so that risk surfaces early:
 
 # Kickoff notes for the implementing session
 
-You are starting cold — none of this exists yet. No puzzle has an `art` block, and
-`tools/` does not exist. Read `CLAUDE.md`, then `app.js`, before starting.
+Read `CLAUDE.md`, then `app.js`, before starting.
+
+**Steps 1 and 2 are DONE and shipped** (commits `f99c4af`, `9d01dcd`). `tools/extract_art.py`
+exists with a working portraits path; The Hiking Trip has an `art.portraits` block and 12
+portrait PNGs under `puzzles/art/the-hiking-trip/`; the clue list renders click-to-enlarge
+portraits. No puzzle has an `art.board` block yet and `extract_art.py` has no `--board` path
+yet — that is step 3, where you pick up.
 
 ### Environment
 - System `python3` has Pillow 12.3.0 and numpy 2.4.3. The repo's `venv/` is not needed.
@@ -358,16 +378,17 @@ You are starting cold — none of this exists yet. No puzzle has an `art` block,
   the names, so reading the contact sheet and mapping name -> letter via the puzzle's
   `names` block is straightforward.
 
-### Stop and check in with the user at step 4
-Step 4 of the sequencing (one puzzle in art mode with real marks on it) is a **go/no-go
-gate, not a task to push through.** Whether light-on-dark marks read acceptably over pastel
-artwork is an aesthetic call the user has to make. Get one puzzle rendering, screenshot it
-with a few definite letters, X marks and pencil marks placed, and show them before building
-the Art tab or scripting the remaining puzzles. Feature 1 is explicitly designed to be
-abandonable at that point.
+### Check in with the user at step 4 (do not stop, do not decide alone)
+Whether light-on-dark marks read acceptably over pastel artwork is an aesthetic call the
+user has to make, and it is the one thing in this plan that cannot be settled by reasoning.
+Get one puzzle rendering, place a few definite letters, X marks and pencil marks, and
+screenshot it — plus a screenshot per mitigation variant if the plain version reads badly.
+Then ask. Do not carry on into the Art tab or the remaining puzzles until they have picked,
+because the mitigation choice affects what the Art tab has to preview.
+
+**The user wants this feature.** Your job at the checkpoint is to present real options with
+evidence, not to recommend dropping it.
 
 ### Start here
-Steps 1 and 2 of the sequencing (portraits script, then portraits in the clue list) are
-self-contained, carry no design risk, and fix a real bug: The Hiking Trip cannot currently
-be solved in the app because two of its clues depend on appearance information that exists
-nowhere in the JSON. Ship that before touching feature 1.
+Step 3: add the `--board` path to `tools/extract_art.py`. Then step 4, the legibility
+checkpoint. Do not go past step 4 without checking in.
