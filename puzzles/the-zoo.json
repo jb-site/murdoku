@@ -197,5 +197,18 @@
     { "type": "chair", "cells": [[15,13]] },
     { "type": "table", "cells": [[12,13],[12,14]] },
     { "type": "table", "cells": [[14,13]] }
-  ]
+  ],
+  "art": {
+    "board": "art/the-zoo/board.png",
+    "boardCrop": {
+      "x": 0.1965,
+      "y": 0.1779,
+      "w": 0.7859,
+      "h": 0.7117
+    },
+    "calibratedFor": {
+      "rows": 16,
+      "cols": 16
+    }
+  }
 }

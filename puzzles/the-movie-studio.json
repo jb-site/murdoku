@@ -169,5 +169,18 @@
     { "type": "table", "cells": [[15, 6]] },
     { "type": "camera", "cells": [[15, 8]] },
     { "type": "tv", "cells": [[15, 11]] }
-  ]
+  ],
+  "art": {
+    "board": "art/the-movie-studio/board.png",
+    "boardCrop": {
+      "x": 0.2,
+      "y": 0.0,
+      "w": 0.8,
+      "h": 1.0
+    },
+    "calibratedFor": {
+      "rows": 16,
+      "cols": 16
+    }
+  }
 }

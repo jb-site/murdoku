@@ -41,6 +41,7 @@ BOARD_SEARCH_X_FRACTION = 0.45  # only look right of this fraction of page width
 BOARD_RUN_FRACTION = 0.3  # a row/col counts as a border line if its longest dark run exceeds
                            # this fraction of the search region's width/height
 BOARD_TARGET_CELL_W = 80  # downscaled board.png is roughly cols * this many px wide
+BOARD_ASPECT_TOLERANCE = 0.03  # flag detected cell width/height ratios more than this off square
 
 
 def render_page(puzzle_id, dpi):
@@ -292,6 +293,17 @@ def do_board(args, page_path):
 
     box = parse_box(args.bbox) if args.bbox else detect_board_bbox(arr)
     print(f"  board bbox: {box}")
+
+    bx0, by0, bx1, by1 = box
+    span_w, span_h = bx1 - bx0, by1 - by0
+    cell_w, cell_h = span_w / cols, span_h / rows
+    aspect = cell_w / cell_h if cell_h else float("inf")
+    print(f"  detected span: {span_w}x{span_h}px, implied cell size: {cell_w:.1f}x{cell_h:.1f}px "
+          f"(aspect {aspect:.3f})")
+    if abs(aspect - 1) > BOARD_ASPECT_TOLERANCE:
+        print(f"  WARNING: {args.puzzle_id} cell aspect {aspect:.3f} deviates >"
+              f"{BOARD_ASPECT_TOLERANCE:.0%} from square — bbox auto-detection may be off. "
+              f"Flagging for manual review; writing output anyway.")
 
     expanded, crop = pad_box(box, args.pad, img_w, img_h)
     crop_img = img.crop(tuple(round(v) for v in expanded))

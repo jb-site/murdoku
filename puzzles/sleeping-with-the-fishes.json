@@ -81,5 +81,18 @@
     { "type": "shelf", "cells": [[8, 8]] },
     { "type": "crate", "cells": [[8, 9]] },
     { "type": "shelf", "cells": [[8, 10]] }
-  ]
+  ],
+  "art": {
+    "board": "art/sleeping-with-the-fishes/board.png",
+    "boardCrop": {
+      "x": 0.2,
+      "y": 0.0,
+      "w": 0.8,
+      "h": 1.0
+    },
+    "calibratedFor": {
+      "rows": 9,
+      "cols": 11
+    }
+  }
 }

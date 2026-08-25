@@ -152,5 +152,18 @@
 
     { "type": "cactus", "cells": [[11, 1]] },
     { "type": "path", "cells": [[11, 6]] }
-  ]
+  ],
+  "art": {
+    "board": "art/the-botanical-garden/board.png",
+    "boardCrop": {
+      "x": 0.2,
+      "y": 0.0,
+      "w": 0.8,
+      "h": 1.0
+    },
+    "calibratedFor": {
+      "rows": 12,
+      "cols": 12
+    }
+  }
 }
