@@ -745,6 +745,7 @@ const prefPortraitsLabelEl = document.getElementById("prefPortraitsLabel");
 const prefArtModeEl = document.getElementById("prefArtMode");
 const prefArtModeLabelEl = document.getElementById("prefArtModeLabel");
 const editArtModeEl = document.getElementById("editArtMode");
+const artOverlayEl = document.getElementById("artOverlay");
 const editorArtViewEl = document.getElementById("editorArtView");
 const editorOpacityRowEl = document.getElementById("editorOpacityRow");
 const playerPanelEl = document.getElementById("playerPanel");
@@ -2363,6 +2364,29 @@ function saveEditorLayerView() {
   }
 }
 
+// "Art on top" (edit mode only): lifts layer-art above the tint/object/label/mark layers
+// (see body.edit-mode.art-overlay in style.css) so misaligned room boundaries stand out
+// against the source photo. Off by default for every fresh install — this is an
+// authoring aid the player never sees and most authors won't need most of the time — but
+// persisted once chosen so it survives a reload, same treatment as the opacity sets above.
+let artOverlay = false;
+
+function loadArtOverlay() {
+  try {
+    artOverlay = localStorage.getItem("murdoku:artOverlay") === "1";
+  } catch (err) {
+    console.warn("Couldn't load art-overlay preference:", err);
+  }
+}
+
+function saveArtOverlay() {
+  try {
+    localStorage.setItem("murdoku:artOverlay", artOverlay ? "1" : "0");
+  } catch (err) {
+    console.warn("Couldn't save art-overlay preference:", err);
+  }
+}
+
 // True while the Art tab (or the "Board art" checkbox on Rooms/Objects) is actively
 // showing the underlying photo — i.e. the same condition applyViewPrefs() uses to add
 // body.art-calibrate. Kept as its own helper (rather than only inline in
@@ -2484,6 +2508,14 @@ function applyViewPrefs() {
   editArtModeEl.disabled = onArtTab;
   editArtModeEl.title = onArtTab ? "Art is always shown while calibrating on the Art tab" : "";
   editorArtViewEl.hidden = !hasBoard;
+  // "Art on top": edit mode only (body.edit-mode is only ever present while EDIT is
+  // active — see enterEditMode()/exitEditMode()), and only visually meaningful once
+  // artwork is actually showing. Same `calibrating` gate as the Art slider just below,
+  // for the same reason: nothing to lift above the tints when there's no photo under it.
+  document.body.classList.toggle("art-overlay", calibrating && artOverlay);
+  artOverlayEl.checked = artOverlay;
+  artOverlayEl.disabled = !calibrating;
+  artOverlayEl.title = calibrating ? "" : "No artwork shown — turn on Board art to use this";
   // Refresh the CSS vars whenever the calibrating/non-calibrating context might have
   // changed (tab switch, Board art toggle) — isCalibrating() reads the same state this
   // function just derived `calibrating` from, so the two never disagree.
@@ -2510,6 +2542,20 @@ editArtModeEl.addEventListener("change", () => {
   viewPrefs.artMode = editArtModeEl.checked;
   applyViewPrefs();
   saveViewPrefs();
+});
+artOverlayEl.addEventListener("change", () => {
+  artOverlay = artOverlayEl.checked;
+  // Usability call: at high Art opacity the overlay would just be a solid photo hiding
+  // the board, which looks broken rather than useful. Nudge it down to a value that
+  // shows both layers the moment the author turns the overlay ON — but only ever nudge
+  // downward and only on enabling; a value they already lowered themselves, or the
+  // reverse (turning the overlay back off), is left untouched.
+  if (artOverlay && artCalibView.art > 0.8) {
+    artCalibView.art = 0.5;
+    saveArtCalibView();
+  }
+  saveArtOverlay();
+  applyViewPrefs();
 });
 prefPlayerNotesEl.addEventListener("change", () => {
   viewPrefs.playerNotes = prefPlayerNotesEl.checked;
@@ -4316,6 +4362,7 @@ async function boot() {
   applyViewPrefs();
   loadArtCalibView();
   loadEditorLayerView();
+  loadArtOverlay();
   applyArtCalibView();
   buildLegend();
 

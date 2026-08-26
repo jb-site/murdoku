@@ -680,6 +680,18 @@ body.edit-mode:not(.art-mode) .object-cell.blocking:not(.ref-object) .object-art
    EDIT.tool === "art"), NOT tied to .art-calibrate generally — .art-calibrate now also
    applies on the Rooms/Objects tabs (see applyViewPrefs() in app.js), where nothing
    would actually pan. */
+/* "Art on top" (edit mode only): lifts layer-art above layer-cells/objects/labels/marks
+   so a misaligned room boundary shows up against the photo instead of being hidden under
+   it. Every other layer here still has z-index:auto, so any positive value wins; layer-art
+   stays pointer-events:none and inset from the header track (see .layer-art above), so
+   this changes paint order only — painting, room/object clicks and the header buttons
+   are completely unaffected. Scoped to .edit-mode: art-overlay is only ever toggled from
+   the editor bar, but the selector states the edit-only guarantee explicitly rather than
+   relying on that alone. */
+body.edit-mode.art-overlay .layer-art {
+  z-index: 5;
+}
+
 body.art-tab .layer-cells,
 body.art-tab .layer-cells .cell {
   cursor: grab;
