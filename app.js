@@ -734,7 +734,8 @@ const prefPortraitsLabelEl = document.getElementById("prefPortraitsLabel");
 const prefArtModeEl = document.getElementById("prefArtMode");
 const prefArtModeLabelEl = document.getElementById("prefArtModeLabel");
 const editArtModeEl = document.getElementById("editArtMode");
-const editArtModeLabelEl = document.getElementById("editArtModeLabel");
+const editorArtViewEl = document.getElementById("editorArtView");
+const editorOpacityRowEl = document.getElementById("editorOpacityRow");
 const playerPanelEl = document.getElementById("playerPanel");
 const solveBtn = document.getElementById("solveBtn");
 const verdictBackdropEl = document.getElementById("verdictBackdrop");
@@ -2325,6 +2326,31 @@ function applyArtCalibView() {
   gridEl.style.setProperty("--calib-obj-opacity", artCalibView.objects);
 }
 
+// The three opacity sliders + reset button live in a single persistent editor-bar row
+// (#editorArtView, just below the tab strip) rather than being rebuilt per-tab inside
+// buildArtPanel() — they now apply on Rooms/Objects too (see applyViewPrefs()), so
+// there's exactly one set of these controls, wired once here at boot.
+function syncOpacityUI() {
+  ["art", "grid", "objects"].forEach((k) => {
+    editorOpacityRowEl.querySelector(`[data-op="${k}"]`).value = Math.round(artCalibView[k] * 100);
+    editorOpacityRowEl.querySelector(`[data-op-value="${k}"]`).textContent = `${Math.round(artCalibView[k] * 100)}%`;
+  });
+}
+editorOpacityRowEl.querySelectorAll("[data-op]").forEach((input) => {
+  input.addEventListener("input", () => {
+    artCalibView[input.dataset.op] = input.valueAsNumber / 100;
+    editorOpacityRowEl.querySelector(`[data-op-value="${input.dataset.op}"]`).textContent = `${input.valueAsNumber}%`;
+    applyArtCalibView();
+    saveArtCalibView();
+  });
+});
+document.getElementById("artOpResetBtn").addEventListener("click", () => {
+  artCalibView = { ...ART_CALIB_DEFAULTS };
+  syncOpacityUI();
+  applyArtCalibView();
+  saveArtCalibView();
+});
+
 function applyViewPrefs() {
   document.body.classList.toggle("color-pencils", viewPrefs.colorPencils);
   document.body.classList.toggle("show-player-notes", viewPrefs.playerNotes);
@@ -2338,11 +2364,21 @@ function applyViewPrefs() {
   const hasBoard = !!PUZZLE?.art?.board;
   // The Art tab forces art mode on regardless of the player's preference — the whole
   // point is nudging the crop against the live board. `art-calibrate` is the same mode
-  // with the room tints left in at half opacity instead of going transparent, so any
-  // misalignment against the artwork's own cell boundaries is obvious.
-  const calibrating = !!(EDIT && EDIT.tool === "art" && hasBoard);
+  // with the room tints left in (opacity-adjustable) instead of going transparent, and
+  // object art drawn on top of the photo instead of hidden, so misalignment against the
+  // artwork's own cell boundaries — or a wrongly-placed piece of furniture — is obvious.
+  // Also extended to the Rooms/Objects tabs (via the "Board art" checkbox in the editor
+  // bar) so an author can place rooms/objects against the live photo without leaving
+  // those tabs — `onArtTab` alone (forced-on, checkbox disabled) stays Art-tab-only.
+  const onArtTab = !!(EDIT && EDIT.tool === "art" && hasBoard);
+  const editorArt = !!(EDIT && hasBoard && viewPrefs.artMode);
+  const calibrating = onArtTab || editorArt;
   document.body.classList.toggle("art-mode", calibrating || (viewPrefs.artMode && hasBoard));
   document.body.classList.toggle("art-calibrate", calibrating);
+  // Pan/crop affordances (grab cursor, art-pick/art-crop tools) are Art-tab-only — the
+  // JS handlers behind them are gated on EDIT.tool === "art", so nothing would actually
+  // happen on Rooms/Objects even though .art-calibrate is now shared with them.
+  document.body.classList.toggle("art-tab", onArtTab);
   prefColorPencilsEl.checked = viewPrefs.colorPencils;
   prefPlayerNotesEl.checked = viewPrefs.playerNotes;
   prefPortraitsEl.checked = viewPrefs.portraits;
@@ -2356,9 +2392,13 @@ function applyViewPrefs() {
   // not hidden, with a title explaining why — hiding it would reflow the bar on every
   // tab switch.
   editArtModeEl.checked = viewPrefs.artMode;
-  editArtModeEl.disabled = calibrating;
-  editArtModeEl.title = calibrating ? "Art is always shown while calibrating on the Art tab" : "";
-  editArtModeLabelEl.hidden = !hasBoard;
+  // Disabled/titled off `onArtTab`, NOT `calibrating`: `calibrating` now also goes true
+  // the instant this very checkbox is ticked on Rooms/Objects, which would otherwise
+  // disable the control the moment it does what it's for.
+  editArtModeEl.disabled = onArtTab;
+  editArtModeEl.title = onArtTab ? "Art is always shown while calibrating on the Art tab" : "";
+  editorArtViewEl.hidden = !hasBoard;
+  syncOpacityUI();
 }
 
 prefColorPencilsEl.addEventListener("change", () => {
@@ -2581,6 +2621,7 @@ function loadDraftPuzzle(data) {
   applyHighlights();
   updateLayoutMode();
   buildEditorPalette();
+  applyViewPrefs(); // re-evaluate hasBoard-gated editor-bar controls (art.board may differ)
   validateDraft();
   scheduleDraftSave();
 }
@@ -2964,43 +3005,9 @@ function buildArtPanel() {
     <p class="art-copy-status" id="artCopyStatus"></p>
   `;
   editorDetailsEl.appendChild(saveInfo);
-
-  // Three independent opacity sliders so the Art tab can double as a transcription
-  // check: fade the photo and/or the room tints down while bringing the app's own
-  // object art up, to confirm the puzzle data has the right furniture in the right
-  // cells against the source. Pure view state — see the module comment at
-  // ART_CALIB_DEFAULTS — so it's never part of what Copy boardCrop emits.
-  const opacityRow = document.createElement("div");
-  opacityRow.className = "editor-row art-opacity-row";
-  opacityRow.innerHTML =
-    ["art", "grid", "objects"].map((k) =>
-      `<label>${k[0].toUpperCase()}${k.slice(1)}` +
-      `<input type="range" min="0" max="100" step="1" data-op="${k}">` +
-      `<span class="art-op-value" data-op-value="${k}"></span></label>`
-    ).join("") +
-    `<button type="button" class="tool-btn" id="artOpResetBtn" title="Reset to defaults (Art 100%, Grid 50%, Objects 100%)">↺ Reset opacities</button>`;
-  editorDetailsEl.appendChild(opacityRow);
-  const syncOpacityUI = () => {
-    ["art", "grid", "objects"].forEach((k) => {
-      opacityRow.querySelector(`[data-op="${k}"]`).value = Math.round(artCalibView[k] * 100);
-      opacityRow.querySelector(`[data-op-value="${k}"]`).textContent = `${Math.round(artCalibView[k] * 100)}%`;
-    });
-  };
-  opacityRow.querySelectorAll("[data-op]").forEach((input) => {
-    input.addEventListener("input", () => {
-      artCalibView[input.dataset.op] = input.valueAsNumber / 100;
-      opacityRow.querySelector(`[data-op-value="${input.dataset.op}"]`).textContent = `${input.valueAsNumber}%`;
-      applyArtCalibView();
-      saveArtCalibView();
-    });
-  });
-  opacityRow.querySelector("#artOpResetBtn").addEventListener("click", () => {
-    artCalibView = { ...ART_CALIB_DEFAULTS };
-    syncOpacityUI();
-    applyArtCalibView();
-    saveArtCalibView();
-  });
-  syncOpacityUI();
+  // Opacity sliders + reset button live in the persistent #editorArtView row just below
+  // the tab strip (wired once, near ART_CALIB_DEFAULTS above) — not rebuilt here, since
+  // they now apply on Rooms/Objects too, not just this tab.
 
   controls.querySelectorAll("[data-zoom]").forEach((btn) => {
     btn.addEventListener("click", () => zoomArt(+btn.dataset.zoom));

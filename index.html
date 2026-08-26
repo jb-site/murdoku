@@ -60,8 +60,15 @@
       <button class="tool-btn edit-tab" data-tab="objects">Objects</button>
       <button class="tool-btn edit-tab" data-tab="details">Details</button>
       <button class="tool-btn edit-tab" data-tab="art">Art</button>
-      <span class="editor-spacer"></span>
-      <label id="editArtModeLabel" hidden><input type="checkbox" id="editArtMode"> Board art</label>
+    </div>
+    <div class="editor-row" id="editorArtView" hidden>
+      <label id="editArtModeLabel"><input type="checkbox" id="editArtMode"> Board art</label>
+      <div class="editor-row art-opacity-row" id="editorOpacityRow">
+        <label>Art<input type="range" min="0" max="100" step="1" data-op="art"><span class="art-op-value" data-op-value="art"></span></label>
+        <label>Grid<input type="range" min="0" max="100" step="1" data-op="grid"><span class="art-op-value" data-op-value="grid"></span></label>
+        <label>Objects<input type="range" min="0" max="100" step="1" data-op="objects"><span class="art-op-value" data-op-value="objects"></span></label>
+      </div>
+      <button type="button" class="tool-btn" id="artOpResetBtn" title="Reset to defaults (Art 100%, Grid 50%, Objects 100%)">↺ Reset opacities</button>
     </div>
     <div class="editor-palette" id="editorPalette"></div>
     <div class="editor-details" id="editorDetails" hidden></div>
