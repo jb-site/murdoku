@@ -95,7 +95,16 @@ const OBJECT_TYPES = {
   },
   table: {
     label: "Table", emoji: "🍽️", occupiable: false,
-    art() { return twemojiArt("1f37d"); },
+    art() {
+      return svgObject("#c9975a", "#8a6534", "#40290f", `
+        <rect x="8" y="8" width="84" height="84" rx="6" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="20" y="20" width="60" height="60" rx="3" fill="none" stroke="var(--obj-fill2)" stroke-width="2" opacity="0.6"/>
+        <circle cx="22" cy="22" r="7" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
+        <circle cx="78" cy="22" r="7" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
+        <circle cx="22" cy="78" r="7" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
+        <circle cx="78" cy="78" r="7" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
+      `, 100, 100);
+    },
   },
   plant: {
     label: "Plant", emoji: "🪴", occupiable: false,
@@ -142,7 +151,24 @@ const OBJECT_TYPES = {
   },
   path: {
     label: "Path", emoji: "🧱", occupiable: true, ground: true,
-    art() { return twemojiArt("1f9f1"); },
+    art(colSpan = 1, rowSpan = 1) {
+      const w = 100 * colSpan, h = 100 * rowSpan;
+      const rows = 4 * rowSpan, cols = 3 * colSpan;
+      const rowH = h / rows, brickW = w / cols;
+      let bricks = "";
+      for (let row = 0; row < rows; row++) {
+        const y = row * rowH;
+        const offset = row % 2 === 0 ? 0 : -brickW / 2;
+        for (let col = -1; col <= cols; col++) {
+          const x = offset + col * brickW;
+          bricks += `<rect x="${x + 2}" y="${y + 2}" width="${brickW - 4}" height="${rowH - 4}" rx="2" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="2"/>`;
+        }
+      }
+      return svgObject("#c98a5a", "#a8703f", "#5c3a1f", `
+        <rect x="0" y="0" width="${w}" height="${h}" fill="var(--obj-fill2)"/>
+        ${bricks}
+      `, w, h);
+    },
   },
   bear: {
     label: "Bear", emoji: "🐻", occupiable: false,
