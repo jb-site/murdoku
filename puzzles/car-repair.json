@@ -56,7 +56,7 @@
   ],
   "art": {
     "board": "art/car-repair/board.png",
-    "boardCrop": { "x": 0.2906, "y": 0.3173, "w": 0.6346, "h": 0.527 },
+    "boardCrop": { "x": 0.3006, "y": 0.3181, "w": 0.6196, "h": 0.5146 },
     "calibratedFor": {
       "rows": 6,
       "cols": 6
