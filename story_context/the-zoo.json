@@ -1,0 +1,500 @@
+{
+ "id": "the-zoo",
+ "title": "The Zoo",
+ "difficulty": "expert",
+ "rooms": {
+  "lion": "Lion Habitat",
+  "penguin": "Penguin Habitat",
+  "bear": "Bear Habitat",
+  "crocodile": "Crocodile Habitat",
+  "shark": "Shark Habitat",
+  "deck": "Deck",
+  "elephant": "Elephant Habitat",
+  "concessions": "Concessions",
+  "mainarea": "Main Area",
+  "entrance": "Entrance"
+ },
+ "generalClues": [
+  "Everyone from Ivan (I) to Vlad (V) was a Zookeeper. Only Zookeepers could be in Habitats.",
+  "Each Habitat had at least one Zookeeper in it.",
+  "The killer was alone with the victim, in the same area."
+ ],
+ "victim": "V",
+ "murderer": "J",
+ "asciiMapLegend": {
+  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "roomCodes": {
+   "lion": "L",
+   "penguin": "P",
+   "bear": "B",
+   "crocodile": "C",
+   "shark": "S",
+   "deck": "D",
+   "elephant": "E",
+   "concessions": "Cx1",
+   "mainarea": "M",
+   "entrance": "Ex1"
+  },
+  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+ },
+ "asciiMap": "L..   L..   L..   Ls.   L..   L..   Pp.   Pw.   PwL   Pw.   Pb.   Pw.   B..   B..   Bt.   B..  \nLs.   L..   Ll.   L..   L..   Ls.   Pw.   Pw.   Pw.   Pp.   Pw.   Bb.   B.O   Bb.   B..   Bb.  \nL..   L..   L..   L..   Ll.   L..   M.A   Pp.   Pb.   Pw.   Pw.   B..   B..   B..   Bb.   Bw.  \nL..   Ls.   L..   L..   L.I   L..   M..   Pw.   Pw.   Pw.   M..   B..   B..   B..   B..   Bw.  \nL..   L..   L..   L..   Ls.   L.C   M..   Mc.   M..   M..   M..   B..   Bb.   Bt.   B..   Bw.  \nMt.   M..   M..   M..   M..   M..   M..   M..   M..   M..   M.D   B..   B..   B..   Bt.   Bw.  \nCw.   Cw.   CwN   Ct.   Cc.   Cw.   M..   E..   E..   Mc.   M..   M..   M..   M..   M..   M..  \nCw.   Cw.   Cw.   Cb.   Cw.   Cw.   M..   E..   Es.   Mt.   Mc.   M..   M..   Cx1c. Cx1t. Cx1cB\nCw.   Cc.   Ct.   Cw.   Cb.   Cw.   M..   E.J   E..   E..   M..   M..   M..   Cx1t. Cx1c. Cx1..\nCc.   Cb.   Cw.   Cw.   Cw.   Cw.   M..   Ew.   Es.   Ee.   Ee.   E..   M..   Cx1.E Cx1t. Cx1c.\nCw.   Cw.   Cw.   D..   D..   Cw.   M..   Ew.   Ew.   Ee.   Ee.   E.V   M..   Cx1c. Cx1t. Cx1c.\nCcG   D..   D..   D..   D..   M..   M..   Ew.   Es.   E..   E..   Es.   M..   Ex1c. Ex1.. Ex1..\nSw.   SwM   Ss.   Sb.   D..   D..   M..   Es.   E..   E..   Ee.   Ee.   M..   Ex1t. Ex1t. Ex1..\nSw.   Sb.   Ss.   Sb.   Ss.   D..   M..   E..   E..   E..   Ee.   Ee.   M..   Ex1.. Ex1.H Ex1..\nSw.   Sw.   Ss.   SwK   D..   D..   M..   M..   M..   M..   M..   M..   M..   Ex1t. Ex1.. Ex1..\nSs.   Sw.   Sw.   D..   D..   D..   M..   Mt.   Mc.   M.F   M..   M..   M..   Ex1c. Ex1.. Ex1..",
+ "people": [
+  {
+   "letter": "A",
+   "name": "Alfred",
+   "role": "suspect",
+   "position": [
+    2,
+    6
+   ],
+   "room": {
+    "id": "mainarea",
+    "name": "Main Area"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "penguin",
+    "water"
+   ],
+   "withInRoom": [
+    {
+     "letter": "D",
+     "name": "Deborah"
+    },
+    {
+     "letter": "F",
+     "name": "Flavia"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Alfred (A) was exactly one row north of Ivan."
+   ]
+  },
+  {
+   "letter": "B",
+   "name": "Barry",
+   "role": "suspect",
+   "position": [
+    7,
+    15
+   ],
+   "room": {
+    "id": "concessions",
+    "name": "Concessions"
+   },
+   "onObjectType": "chair",
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "E",
+     "name": "Eloise"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Barry (B) was in Concessions alone with a Visitor."
+   ]
+  },
+  {
+   "letter": "C",
+   "name": "Carolyn",
+   "role": "suspect",
+   "position": [
+    4,
+    5
+   ],
+   "room": {
+    "id": "lion",
+    "name": "Lion Habitat"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "shrub"
+   ],
+   "withInRoom": [
+    {
+     "letter": "I",
+     "name": "Ivan"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Carolyn (C) was exactly one row north of Deborah."
+   ]
+  },
+  {
+   "letter": "D",
+   "name": "Deborah",
+   "role": "suspect",
+   "position": [
+    5,
+    10
+   ],
+   "room": {
+    "id": "mainarea",
+    "name": "Main Area"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Alfred"
+    },
+    {
+     "letter": "F",
+     "name": "Flavia"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Deborah (D) was in the Main Area."
+   ]
+  },
+  {
+   "letter": "E",
+   "name": "Eloise",
+   "role": "suspect",
+   "position": [
+    9,
+    13
+   ],
+   "room": {
+    "id": "concessions",
+    "name": "Concessions"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "chair",
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "B",
+     "name": "Barry"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Eloise (E) was beside a table. She was not sitting."
+   ]
+  },
+  {
+   "letter": "F",
+   "name": "Flavia",
+   "role": "suspect",
+   "position": [
+    15,
+    9
+   ],
+   "room": {
+    "id": "mainarea",
+    "name": "Main Area"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "chair"
+   ],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Alfred"
+    },
+    {
+     "letter": "D",
+     "name": "Deborah"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Flavia (F) was beside a chair."
+   ]
+  },
+  {
+   "letter": "G",
+   "name": "Gordon",
+   "role": "suspect",
+   "position": [
+    11,
+    0
+   ],
+   "room": {
+    "id": "crocodile",
+    "name": "Crocodile Habitat"
+   },
+   "onObjectType": "chair",
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "water"
+   ],
+   "withInRoom": [
+    {
+     "letter": "N",
+     "name": "Nancy"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Gordon (G) was sitting in a chair. He was alone."
+   ]
+  },
+  {
+   "letter": "H",
+   "name": "Henry",
+   "role": "suspect",
+   "position": [
+    13,
+    14
+   ],
+   "room": {
+    "id": "entrance",
+    "name": "Entrance"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "table"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Henry (H) was alone."
+   ]
+  },
+  {
+   "letter": "I",
+   "name": "Ivan",
+   "role": "suspect",
+   "position": [
+    3,
+    4
+   ],
+   "room": {
+    "id": "lion",
+    "name": "Lion Habitat"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "lion",
+    "shrub"
+   ],
+   "withInRoom": [
+    {
+     "letter": "C",
+     "name": "Carolyn"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Ivan (I) was beside an animal."
+   ]
+  },
+  {
+   "letter": "J",
+   "name": "Jim",
+   "role": "murderer",
+   "position": [
+    8,
+    7
+   ],
+   "room": {
+    "id": "elephant",
+    "name": "Elephant Habitat"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "water"
+   ],
+   "withInRoom": [
+    {
+     "letter": "V",
+     "name": "Vlad (victim)"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Jim (J) was not in water. He was beside water."
+   ],
+   "nearbyObjectTypesForMethod": [
+    "water"
+   ]
+  },
+  {
+   "letter": "K",
+   "name": "Kaiden",
+   "role": "suspect",
+   "position": [
+    14,
+    3
+   ],
+   "room": {
+    "id": "shark",
+    "name": "Shark Habitat"
+   },
+   "onObjectType": "water",
+   "on": "on/at the water",
+   "besideObjectTypes": [
+    "boulder",
+    "shark"
+   ],
+   "withInRoom": [
+    {
+     "letter": "M",
+     "name": "Mara"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Kaiden (K) was alone with Mara."
+   ]
+  },
+  {
+   "letter": "L",
+   "name": "Langston",
+   "role": "suspect",
+   "position": [
+    0,
+    8
+   ],
+   "room": {
+    "id": "penguin",
+    "name": "Penguin Habitat"
+   },
+   "onObjectType": "water",
+   "on": "on/at the water",
+   "besideObjectTypes": [
+    "water"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Langston (L) was in water. He was not beside an animal."
+   ]
+  },
+  {
+   "letter": "M",
+   "name": "Mara",
+   "role": "suspect",
+   "position": [
+    12,
+    1
+   ],
+   "room": {
+    "id": "shark",
+    "name": "Shark Habitat"
+   },
+   "onObjectType": "water",
+   "on": "on/at the water",
+   "besideObjectTypes": [
+    "boulder",
+    "shark",
+    "water"
+   ],
+   "withInRoom": [
+    {
+     "letter": "K",
+     "name": "Kaiden"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Mara (M) was in the 2nd column."
+   ]
+  },
+  {
+   "letter": "N",
+   "name": "Nancy",
+   "role": "suspect",
+   "position": [
+    6,
+    2
+   ],
+   "room": {
+    "id": "crocodile",
+    "name": "Crocodile Habitat"
+   },
+   "onObjectType": "water",
+   "on": "on/at the water",
+   "besideObjectTypes": [
+    "tree",
+    "water"
+   ],
+   "withInRoom": [
+    {
+     "letter": "G",
+     "name": "Gordon"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Nancy (N) was beside a tree."
+   ]
+  },
+  {
+   "letter": "O",
+   "name": "Oliver",
+   "role": "suspect",
+   "position": [
+    1,
+    12
+   ],
+   "room": {
+    "id": "bear",
+    "name": "Bear Habitat"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "bear",
+    "boulder"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Oliver (O) was beside a boulder."
+   ]
+  },
+  {
+   "letter": "V",
+   "name": "Vlad (victim)",
+   "role": "victim",
+   "position": [
+    10,
+    11
+   ],
+   "room": {
+    "id": "elephant",
+    "name": "Elephant Habitat"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "elephant",
+    "shrub"
+   ],
+   "withInRoom": [
+    {
+     "letter": "J",
+     "name": "Jim"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Vlad (V), the victim, was alone with the murderer \u2014 the killer was in the same area (room) as him."
+   ]
+  }
+ ],
+ "hasPortraits": false,
+ "sourceFile": "source/the-zoo-color.pdf"
+}

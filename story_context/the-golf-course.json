@@ -1,0 +1,504 @@
+{
+ "id": "the-golf-course",
+ "title": "The Golf Course",
+ "difficulty": "expert",
+ "rooms": {
+  "hole1": "Hole 1",
+  "hole2": "Hole 2",
+  "hole3": "Hole 3",
+  "hole4": "Hole 4",
+  "hole5": "Hole 5",
+  "hole6": "Hole 6",
+  "hole7": "Hole 7",
+  "hole8": "Hole 8"
+ },
+ "generalClues": [
+  "The killer was alone with the victim, in the same area.",
+  "Even-numbered holes have an even number of occupants (this includes zero occupants).",
+  "Odd-numbered holes have an odd number of occupants."
+ ],
+ "victim": "V",
+ "murderer": "B",
+ "asciiMapLegend": {
+  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "roomCodes": {
+   "hole1": "H1",
+   "hole2": "H2",
+   "hole3": "H3",
+   "hole4": "H4",
+   "hole5": "H5",
+   "hole6": "H6",
+   "hole7": "H7",
+   "hole8": "H8"
+  },
+  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+ },
+ "asciiMap": "H2s. H2s. H2s. H2t. H2.. H2.. H2.. H2t. H3t. H3t. H3.. H3.O H3.. H3w. H3w. H3w.\nH2s. H2s. H2.. H2.. H2.. H2s. H2f. H2t. H3t. H3t. H3.K H3.. H3.. H3.. H3t. H3w.\nH2s. H2t. H2.. H2.. H2s. H2s. H2s. H7.. H7.. H7t. H3w. H3w. H3.. H3.. H3fM H3..\nH2s. H2.. H2.. H2s. H2s. H2sC H7s. H7.. H7f. H7.. H3w. H3w. H3w. H4.. H4.. H4..\nH2.. H2tG H2.. H7s. H7s. H7s. H7s. H7.. H7t. H8t. H8.. H8.. H4.. H4.. H4t. H4..\nH2.. H2t. H7t. H7.. H7.. H7.. H7.. H7t. H8t. H8.. H8.. H8t. H4.. H4c. H4.. H4.V\nH1.. H1t. H7t. H7t. H7.. H7s. H7sN H8s. H8.. H8.. H8.. H8t. H4.. H4.. H4t. H4..\nH1f. H1t. H7t. H7.. H7s. H7s. H8s. H8sL H8c. H8.. H8t. H8t. H4.. H4t. H4t. H4t.\nH1.. H1.. H1t. H7t. H7.. H7s. H8s. H8.. H8.. H8.. H8t. H4t. H4.. H4.B H4t. H4t.\nH1t. H1.. H1.I H1t. H7.. H7.. H8.. H8.. H8.. H8.. H8t. H4.. H4s. H4.. H4.. H4..\nH1t. H1.. H1.. H1.. H7t. H7.. H8w. H8w. H8f. H8.D H8.. H4s. H4s. H4s. H4.. H4t.\nH1c. H1.. H1.. H1cF H6.. H6w. H6w. H8w. H8w. H5f. H5s. H5s. H5s. H4s. H4f. H4t.\nH1.. H1.. H1.. H1t. H6fE H6t. H6t. H6w. H6.. H5.. H5.. H5s. H5s. H4.. H4.. H4..\nH1.. H1t. H1.. H6t. H6.. H6.. H6t. H6.. H6tJ H5.. H5.. H5.. H5.. H5.. H5.. H5..\nH1.H H1t. H1t. H6t. H6.. H6.. H6.. H6.. H6w. H5w. H5w. H5.. H5.. H5c. H5.. H5t.\nH1t. H1t. H1t. H6.. H6.. H6t. H6w. H6w. H6w. H5.. H5.. H5w. H5.A H5.. H5.. H5..",
+ "people": [
+  {
+   "letter": "A",
+   "name": "Anna",
+   "role": "suspect",
+   "position": [
+    15,
+    12
+   ],
+   "room": {
+    "id": "hole5",
+    "name": "Hole 5"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "water"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Anna (A) was beside a water square."
+   ]
+  },
+  {
+   "letter": "B",
+   "name": "Berta",
+   "role": "murderer",
+   "position": [
+    8,
+    13
+   ],
+   "room": {
+    "id": "hole4",
+    "name": "Hole 4"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "tree"
+   ],
+   "withInRoom": [
+    {
+     "letter": "V",
+     "name": "Vinny"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Berta (B) was beside a tree in Hole 4. She had a higher hole number than Harry."
+   ],
+   "nearbyObjectTypesForMethod": [
+    "tree"
+   ]
+  },
+  {
+   "letter": "C",
+   "name": "Carson",
+   "role": "suspect",
+   "position": [
+    3,
+    5
+   ],
+   "room": {
+    "id": "hole2",
+    "name": "Hole 2"
+   },
+   "onObjectType": "sand",
+   "on": "standing in the sand",
+   "besideObjectTypes": [
+    "sand"
+   ],
+   "withInRoom": [
+    {
+     "letter": "G",
+     "name": "Gerald"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Carson (C) was not in the first or the last column."
+   ]
+  },
+  {
+   "letter": "D",
+   "name": "Drew",
+   "role": "suspect",
+   "position": [
+    10,
+    9
+   ],
+   "room": {
+    "id": "hole8",
+    "name": "Hole 8"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "flag"
+   ],
+   "withInRoom": [
+    {
+     "letter": "L",
+     "name": "Lars"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Drew (D) was beside a flag."
+   ]
+  },
+  {
+   "letter": "E",
+   "name": "Edna",
+   "role": "suspect",
+   "position": [
+    12,
+    4
+   ],
+   "room": {
+    "id": "hole6",
+    "name": "Hole 6"
+   },
+   "onObjectType": "flag",
+   "on": "standing by the flag",
+   "besideObjectTypes": [
+    "tree"
+   ],
+   "withInRoom": [
+    {
+     "letter": "J",
+     "name": "Jana"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Edna (E) occupied the flag in an even-numbered hole."
+   ]
+  },
+  {
+   "letter": "F",
+   "name": "Flor",
+   "role": "suspect",
+   "position": [
+    11,
+    3
+   ],
+   "room": {
+    "id": "hole1",
+    "name": "Hole 1"
+   },
+   "onObjectType": "cart",
+   "on": "in the golf cart",
+   "besideObjectTypes": [
+    "tree"
+   ],
+   "withInRoom": [
+    {
+     "letter": "H",
+     "name": "Harry"
+    },
+    {
+     "letter": "I",
+     "name": "Iris"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Flor (F) did not occupy the hole immediately before Naomi's hole."
+   ]
+  },
+  {
+   "letter": "G",
+   "name": "Gerald",
+   "role": "suspect",
+   "position": [
+    4,
+    1
+   ],
+   "room": {
+    "id": "hole2",
+    "name": "Hole 2"
+   },
+   "onObjectType": "tee",
+   "on": "standing on the tee",
+   "besideObjectTypes": [
+    "tree"
+   ],
+   "withInRoom": [
+    {
+     "letter": "C",
+     "name": "Carson"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Gerald (G) was the only man to occupy a golf tee."
+   ]
+  },
+  {
+   "letter": "H",
+   "name": "Harry",
+   "role": "suspect",
+   "position": [
+    14,
+    0
+   ],
+   "room": {
+    "id": "hole1",
+    "name": "Hole 1"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "tree"
+   ],
+   "withInRoom": [
+    {
+     "letter": "F",
+     "name": "Flor"
+    },
+    {
+     "letter": "I",
+     "name": "Iris"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Harry (H): in his hole, there was a woman in a cart."
+   ]
+  },
+  {
+   "letter": "I",
+   "name": "Iris",
+   "role": "suspect",
+   "position": [
+    9,
+    2
+   ],
+   "room": {
+    "id": "hole1",
+    "name": "Hole 1"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "tree"
+   ],
+   "withInRoom": [
+    {
+     "letter": "F",
+     "name": "Flor"
+    },
+    {
+     "letter": "H",
+     "name": "Harry"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Iris (I) was northwest of Flor, and in the same hole."
+   ]
+  },
+  {
+   "letter": "J",
+   "name": "Jana",
+   "role": "suspect",
+   "position": [
+    13,
+    8
+   ],
+   "room": {
+    "id": "hole6",
+    "name": "Hole 6"
+   },
+   "onObjectType": "tee",
+   "on": "standing on the tee",
+   "besideObjectTypes": [
+    "water"
+   ],
+   "withInRoom": [
+    {
+     "letter": "E",
+     "name": "Edna"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Jana (J) occupied the golf tee on either the Hole 6, 7 or 8."
+   ]
+  },
+  {
+   "letter": "K",
+   "name": "Kent",
+   "role": "suspect",
+   "position": [
+    1,
+    10
+   ],
+   "room": {
+    "id": "hole3",
+    "name": "Hole 3"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "tree",
+    "water"
+   ],
+   "withInRoom": [
+    {
+     "letter": "M",
+     "name": "Mona"
+    },
+    {
+     "letter": "O",
+     "name": "Oscar"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Kent (K): he was in the same hole as Mona."
+   ]
+  },
+  {
+   "letter": "L",
+   "name": "Lars",
+   "role": "suspect",
+   "position": [
+    7,
+    7
+   ],
+   "room": {
+    "id": "hole8",
+    "name": "Hole 8"
+   },
+   "onObjectType": "sand",
+   "on": "standing in the sand",
+   "besideObjectTypes": [
+    "golf cart",
+    "sand"
+   ],
+   "withInRoom": [
+    {
+     "letter": "D",
+     "name": "Drew"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Lars (L): his hole number is greater than Naomi's hole number."
+   ]
+  },
+  {
+   "letter": "M",
+   "name": "Mona",
+   "role": "suspect",
+   "position": [
+    2,
+    14
+   ],
+   "room": {
+    "id": "hole3",
+    "name": "Hole 3"
+   },
+   "onObjectType": "flag",
+   "on": "standing by the flag",
+   "besideObjectTypes": [
+    "tree"
+   ],
+   "withInRoom": [
+    {
+     "letter": "K",
+     "name": "Kent"
+    },
+    {
+     "letter": "O",
+     "name": "Oscar"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Mona (M) was on the flag for either Hole 3, 4 or 5."
+   ]
+  },
+  {
+   "letter": "N",
+   "name": "Naomi",
+   "role": "suspect",
+   "position": [
+    6,
+    6
+   ],
+   "room": {
+    "id": "hole7",
+    "name": "Hole 7"
+   },
+   "onObjectType": "sand",
+   "on": "standing in the sand",
+   "besideObjectTypes": [
+    "sand"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Naomi (N) was within a sand pit."
+   ]
+  },
+  {
+   "letter": "O",
+   "name": "Oscar",
+   "role": "suspect",
+   "position": [
+    0,
+    11
+   ],
+   "room": {
+    "id": "hole3",
+    "name": "Hole 3"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "K",
+     "name": "Kent"
+    },
+    {
+     "letter": "M",
+     "name": "Mona"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Oscar (O) was in the northmost row and beside a tree."
+   ]
+  },
+  {
+   "letter": "V",
+   "name": "Vinny",
+   "role": "victim",
+   "position": [
+    5,
+    15
+   ],
+   "room": {
+    "id": "hole4",
+    "name": "Hole 4"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "B",
+     "name": "Berta"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Vinny (V): the Victim. He was alone with the murderer."
+   ]
+  }
+ ],
+ "hasPortraits": false,
+ "sourceFile": "source/the-golf-course-color.pdf"
+}

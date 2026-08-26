@@ -165,9 +165,9 @@ below the grid, next to `#status`. Clicking it runs two checks, in order:
    editor round-trips the puzzle file through `enterEditMode()` → `Download JSON`, and a spoiler
    key living inside that object would be one silent bug away from riding along on that export;
    and lazy-fetching only works at all if the answer isn't already sitting in the response the
-   puzzle loaded from. Currently only `netflix-and-kill` has a solution file — the rest resolve
-   to `"none"` and show the "nothing to check against" verdict, which is an expected, honest gap
-   rather than a bug.
+   puzzle loaded from. All 12 puzzles currently have a solution file, checked for internal
+   consistency (a legal placement, and the murderer named in the source PDF is exactly the
+   single person sharing the victim's room) by `tools/check_solutions.py`.
 
 The outcome is stored in a module-level `verdict` (`null` when there isn't one) and rendered two
 ways: a dismissible `#verdictPanel`/`#verdictBackdrop` overlay carries the cosy-comic verdict
@@ -182,17 +182,58 @@ bumped alongside it so an in-flight solution fetch that outlives a mid-check mut
 puzzle switch) is detected and discarded when it resolves, rather than painted onto a different
 board.
 
+## Solving and the reveal (the story)
+
+On a `correct` verdict, the terse "Case closed" text is replaced by a short cosy-comic reveal
+story instead — the same `#verdictPanel`/`#verdictBackdrop` overlay becomes the story panel
+(`.story-panel` class added for a wider layout), rather than being a separate UI surface.
+
+- **`puzzles/stories/<id>.json`** holds the story: `title`, `acts` (3 short prose paragraphs),
+  `whereabouts` (one line per suspect, keyed by letter — "what were they doing"), `reveal` (a
+  paragraph naming the murderer/room/method), and `escape` (`generic` plus one `byAccused[letter]`
+  line per non-murderer suspect, used by the not-yet-built Phase E wrong-arrest reveal). Like the
+  solution files, this is a separate file from `puzzles/<id>.json` for the same reason: it must
+  never ride along on the editor's `Download JSON` export, and lazy-fetching it (`storyCache`,
+  same pattern as `solutionCache`) only works if it isn't already sitting in the puzzle's own
+  load response.
+- **`tools/story_context.py <id>`** (or `--all`) builds `story_context/<id>.json` by joining a
+  puzzle and its solution file — every spatial fact a story needs (who shares a room with whom,
+  who's orthogonally adjacent, what someone's on/beside, each clue verbatim, an ASCII map of the
+  solved board) computed by plain code, so the model drafting the actual prose never has to
+  re-derive geometry from a `roomGrid` and a coordinate list — that's exactly the kind of
+  reasoning that goes quietly wrong, and a story that puts two characters in the same scene when
+  they were in different rooms is the most likely way this feature fails. This is authoring-time
+  tooling only; nothing under `story_context/` is fetched by the app.
+- **`STORY_PROMPT.md`** is the literal authoring prompt (same house pattern as
+  `PUZZLE_IMPORT_PROMPT.md`) — run manually per puzzle by an assistant that reads the
+  `story_context/<id>.json` output plus the puzzle's portraits (`art.portraits` if present,
+  otherwise the source PDF's portrait row) and writes `puzzles/stories/<id>.json` by hand. No
+  API call, nothing at runtime — this keeps the app 100% static.
+- **`tools/check_stories.py <id>`** (or `--all`) audits a finished story back against its
+  `story_context/<id>.json`: every suspect must have a `whereabouts` line and (if not the
+  murderer or victim) an `escape.byAccused` line, no name from a *different* puzzle's cast may
+  leak in, and no `escape` line may name the real murderer or the murder-scene room (the
+  spoiler rule — a player who guessed wrong and reads the escape copy must not be spoiled). It
+  also flags (as non-blocking warnings, since these are text heuristics) a `whereabouts` line
+  that just restates the room instead of naming an activity, and two characters named in the
+  same act paragraph when the context never puts them in the same room or adjacent.
+- **`murdoku:solved`** (localStorage) is the set of puzzle ids ever solved correctly
+  (`markSolved()`), independent of per-puzzle progress. It drives a `📖 The story` button
+  (`storyBtn`, next to `Solved!?`) that reopens the story panel for any already-solved puzzle
+  without re-running the solve checks.
+
 ## Status / Next up
 
 Core solving interactions (pencil marks, definitive placement via click/hold/drag, cross-out,
 erase, undo), room/object rendering with SVG art and multi-cell spans, room labels, a legend,
 hover status, clue-ref highlighting, irregular/non-rectangular grids (void cells), the row/column
-bulk-fill headers, the side-by-side clues layout, the multi-puzzle library, and the in-app puzzle
-editor mode (rows/cols, rooms, objects, JSON import/export/validation), and completion detection
-plus the two-check verdict (structural conflicts, then a solution comparison) are all working. Not
-yet built: structured suspects/clues editing in the editor (currently a raw-JSON textarea), the
-per-puzzle official solutions for 11 of the 12 puzzles, and the narrative "reveal" once a puzzle
-is solved correctly.
+bulk-fill headers, the side-by-side clues layout, the multi-puzzle library, the in-app puzzle
+editor mode (rows/cols, rooms, objects, JSON import/export/validation), completion detection plus
+the two-check verdict, and the cosy-comic reveal story on a correct solve are all working for all
+12 puzzles. Not yet built: structured suspects/clues editing in the editor (currently a raw-JSON
+textarea), the opt-in "show me what happened anyway" escape path after a wrong solve (Phase E —
+the `escape` data already exists in every story file), and importing the two puzzles still sitting
+unimported in `puzzles/source/` (`a-walk-in-the-park`, `the-backyard-garden`).
 
 ## Conventions
 

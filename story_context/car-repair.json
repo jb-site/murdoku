@@ -1,0 +1,210 @@
+{
+ "id": "car-repair",
+ "title": "Car Repair",
+ "difficulty": "easy",
+ "rooms": {
+  "reception": "Reception",
+  "storage": "Storage",
+  "waitingarea": "Waiting Area",
+  "garage": "Garage"
+ },
+ "generalClues": [],
+ "victim": "V",
+ "murderer": "C",
+ "asciiMapLegend": {
+  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "roomCodes": {
+   "reception": "R",
+   "storage": "S",
+   "waitingarea": "W",
+   "garage": "G"
+  },
+  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+ },
+ "asciiMap": "Rt. RcC Rt. Wt. S.. Ss.\nR.V Rt. Rt. W.. Wp. S..\nR.. R.. Rs. Wc. Wc. W.D\nG.. G.. G.E Gs. Gs. G..\nG.. Gc. Gc. GoB G.. G..\nG.. Go. G.. Gc. GcA G..",
+ "people": [
+  {
+   "letter": "A",
+   "name": "Anthony",
+   "role": "suspect",
+   "position": [
+    5,
+    4
+   ],
+   "room": {
+    "id": "garage",
+    "name": "Garage"
+   },
+   "onObjectType": "car",
+   "on": "in the car",
+   "besideObjectTypes": [
+    "car"
+   ],
+   "withInRoom": [
+    {
+     "letter": "B",
+     "name": "Brock"
+    },
+    {
+     "letter": "E",
+     "name": "Emilio"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Anthony (A) was in a car."
+   ]
+  },
+  {
+   "letter": "B",
+   "name": "Brock",
+   "role": "suspect",
+   "position": [
+    4,
+    3
+   ],
+   "room": {
+    "id": "garage",
+    "name": "Garage"
+   },
+   "onObjectType": "oilslick",
+   "on": "standing in an oil slick",
+   "besideObjectTypes": [
+    "car",
+    "shelf"
+   ],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Anthony"
+    },
+    {
+     "letter": "E",
+     "name": "Emilio"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Brock (B) was on an oil slick."
+   ]
+  },
+  {
+   "letter": "C",
+   "name": "Crystal",
+   "role": "murderer",
+   "position": [
+    0,
+    1
+   ],
+   "room": {
+    "id": "reception",
+    "name": "Reception"
+   },
+   "onObjectType": "chair",
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "V",
+     "name": "Vaughn (victim)"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Crystal (C) was sitting in a chair."
+   ],
+   "nearbyObjectTypesForMethod": [
+    "chair",
+    "table"
+   ]
+  },
+  {
+   "letter": "D",
+   "name": "Diane",
+   "role": "suspect",
+   "position": [
+    2,
+    5
+   ],
+   "room": {
+    "id": "waitingarea",
+    "name": "Waiting Area"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "chair"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Diane (D) was alone in the Waiting Area."
+   ]
+  },
+  {
+   "letter": "E",
+   "name": "Emilio",
+   "role": "suspect",
+   "position": [
+    3,
+    2
+   ],
+   "room": {
+    "id": "garage",
+    "name": "Garage"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "car",
+    "shelf"
+   ],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Anthony"
+    },
+    {
+     "letter": "B",
+     "name": "Brock"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Emilio (E) was beside a shelf."
+   ]
+  },
+  {
+   "letter": "V",
+   "name": "Vaughn (victim)",
+   "role": "victim",
+   "position": [
+    1,
+    0
+   ],
+   "room": {
+    "id": "reception",
+    "name": "Reception"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "C",
+     "name": "Crystal"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Vaughn (V), the victim, was alone with the murderer \u2014 the killer was in the same area (room) as him."
+   ]
+  }
+ ],
+ "hasPortraits": false,
+ "sourceFile": "source/car-repair-color.pdf"
+}

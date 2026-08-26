@@ -1,0 +1,281 @@
+{
+ "id": "sleeping-with-the-fishes",
+ "title": "Sleeping with the Fishes",
+ "difficulty": "hard",
+ "rooms": {
+  "sea": "Sea",
+  "boathouse": "Boathouse",
+  "docka": "Dock A",
+  "dockb": "Dock B",
+  "boardwalk": "Boardwalk",
+  "fishmarket": "Fish Market",
+  "warehouse": "Warehouse"
+ },
+ "generalClues": [
+  "There are exactly two empty columns. One boat is inside the two empty columns."
+ ],
+ "victim": "V",
+ "murderer": "E",
+ "asciiMapLegend": {
+  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "roomCodes": {
+   "sea": "S",
+   "boathouse": "B",
+   "docka": "D",
+   "dockb": "Dx1",
+   "boardwalk": "Bx1",
+   "fishmarket": "F",
+   "warehouse": "W"
+  },
+  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+ },
+ "asciiMap": "S..   S..   Sb.   SbA   S..   S..   S..   S..   S..   S..   S..  \nS..   S..   S..   S..   S..   D..   SbC   Sb.   S..   S..   S..  \nBc.   Bb.   Bb.   S..   S..   Db.   S..   S..   Dx1.F Dx1.. Dx1c.\nBc.   B..   B..   S..   D..   D..   S..   S..   Dx1.. S..   Dx1.G\nBx1.. Bx1.. Bx1.. Bx1.. Bx1.. S..   S..   Bx1.. Bx1.. Bx1cE Bx1..\nBx1c. Bx1c. Bx1.. Bx1.. Bx1.. Bx1.V Bx1.. Bx1.. W..   Bx1.. Bx1..\nF..   Ft.   Ft.   Ft.   Bx1.. Bx1.. Ws.   W.H   W..   Wc.   Bx1..\nF.D   Fc.   F..   Fb.   Bx1.. Bx1.. Wc.   W..   Wc.   W..   W..  \nF..   Fb.   F..   F..   FcB   Fb.   W..   Ws.   Ws.   Wc.   Ws.  ",
+ "people": [
+  {
+   "letter": "A",
+   "name": "Antonio",
+   "role": "suspect",
+   "position": [
+    0,
+    3
+   ],
+   "room": {
+    "id": "sea",
+    "name": "Sea"
+   },
+   "onObjectType": "boat",
+   "on": "in the boat",
+   "besideObjectTypes": [
+    "boat"
+   ],
+   "withInRoom": [
+    {
+     "letter": "C",
+     "name": "Claire"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Antonio (A) was on a boat."
+   ]
+  },
+  {
+   "letter": "B",
+   "name": "Barry",
+   "role": "suspect",
+   "position": [
+    8,
+    4
+   ],
+   "room": {
+    "id": "fishmarket",
+    "name": "Fish Market"
+   },
+   "onObjectType": "chair",
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "box"
+   ],
+   "withInRoom": [
+    {
+     "letter": "D",
+     "name": "Delilah"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Barry (B): there was a woman beside a crate in his area."
+   ]
+  },
+  {
+   "letter": "C",
+   "name": "Claire",
+   "role": "suspect",
+   "position": [
+    1,
+    6
+   ],
+   "room": {
+    "id": "sea",
+    "name": "Sea"
+   },
+   "onObjectType": "boat",
+   "on": "in the boat",
+   "besideObjectTypes": [
+    "boat"
+   ],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Antonio"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Claire (C) was on a boat. She was east of Antonio."
+   ]
+  },
+  {
+   "letter": "D",
+   "name": "Delilah",
+   "role": "suspect",
+   "position": [
+    7,
+    0
+   ],
+   "room": {
+    "id": "fishmarket",
+    "name": "Fish Market"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "crate"
+   ],
+   "withInRoom": [
+    {
+     "letter": "B",
+     "name": "Barry"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Delilah (D) was in the Fish Market."
+   ]
+  },
+  {
+   "letter": "E",
+   "name": "Erin",
+   "role": "murderer",
+   "position": [
+    4,
+    9
+   ],
+   "room": {
+    "id": "boardwalk",
+    "name": "Boardwalk"
+   },
+   "onObjectType": "chair",
+   "on": "sitting in a chair",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "V",
+     "name": "Vincenza (victim)"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Erin (E) was sitting in a chair."
+   ],
+   "nearbyObjectTypesForMethod": [
+    "chair"
+   ]
+  },
+  {
+   "letter": "F",
+   "name": "Franklin",
+   "role": "suspect",
+   "position": [
+    2,
+    8
+   ],
+   "room": {
+    "id": "dockb",
+    "name": "Dock B"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "G",
+     "name": "Graham"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Franklin (F) was on Dock A or B."
+   ]
+  },
+  {
+   "letter": "G",
+   "name": "Graham",
+   "role": "suspect",
+   "position": [
+    3,
+    10
+   ],
+   "room": {
+    "id": "dockb",
+    "name": "Dock B"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "crate"
+   ],
+   "withInRoom": [
+    {
+     "letter": "F",
+     "name": "Franklin"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Graham (G) was beside a crate."
+   ]
+  },
+  {
+   "letter": "H",
+   "name": "Hilton",
+   "role": "suspect",
+   "position": [
+    6,
+    7
+   ],
+   "room": {
+    "id": "warehouse",
+    "name": "Warehouse"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "shelf"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Hilton (H) was beside a shelf."
+   ]
+  },
+  {
+   "letter": "V",
+   "name": "Vincenza (victim)",
+   "role": "victim",
+   "position": [
+    5,
+    5
+   ],
+   "room": {
+    "id": "boardwalk",
+    "name": "Boardwalk"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "E",
+     "name": "Erin"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Vincenza (V), the victim, was alone with the murderer \u2014 the killer was in the same area (room) as him."
+   ]
+  }
+ ],
+ "hasPortraits": false,
+ "sourceFile": "source/sleeping-with-the-fishes-color.pdf"
+}

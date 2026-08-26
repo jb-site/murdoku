@@ -1,0 +1,502 @@
+{
+ "id": "the-movie-studio",
+ "title": "The Movie Studio",
+ "difficulty": "expert",
+ "rooms": {
+  "western": "Western Set",
+  "romance": "Romance Set",
+  "epic": "Epic Set",
+  "walkway": "Walkway",
+  "makeup": "Makeup",
+  "costumes": "Costumes",
+  "startrailer": "Star Trailer",
+  "editing": "Editing",
+  "horror": "Horror Set",
+  "war": "War Set",
+  "scifi": "SciFi Set"
+ },
+ "generalClues": [
+  "The killer was alone with the victim, in the same area.",
+  "On each movie set, exactly one person was beside the camera."
+ ],
+ "victim": "V",
+ "murderer": "N",
+ "asciiMapLegend": {
+  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "roomCodes": {
+   "western": "W",
+   "romance": "R",
+   "epic": "E",
+   "walkway": "Wx1",
+   "makeup": "M",
+   "costumes": "C",
+   "startrailer": "S",
+   "editing": "Ex1",
+   "horror": "H",
+   "war": "Wx2",
+   "scifi": "Sx1"
+  },
+  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+ },
+ "asciiMap": "W..   W..   Wm.   W..   Wc.   R..   R..   R..   Rf.   E..   E.E   E..   Er.   E..   Er.   E..  \nWt.   Wc.   W..   Wb.   Wt.   R..   Rf.   Rt.   R.D   E..   Ec.   Er.   E..   E..   E..   Et.  \nWt.   W..   W..   W..   Wt.   R.C   Rc.   Rc.   Rf.   Et.   E..   E..   E..   E..   Et.   E..  \nWm.   W..   Wc.   W.J   Wt.   Rc.   R..   R..   R..   Et.   E..   Et.   Ec.   E..   Et.   E..  \nW..   Wb.   W..   W..   Wb.   R..   R..   R..   R..   E.M   Ec.   Et.   E..   E..   Ec.   E..  \nW..   W..   W..   Wc.   W.F   Wx1.. Wx1.. Wx1.. Wx1.. E..   Et.   E..   Et.   E..   E..   E..  \nM..   McO   Mt.   Wx1.. Wx1.. Wx1.. Wx1.. Wx1.. Wx1.. Wx1.. Wx1.. Hs.   Hb.   Hb.   H..   H..  \nM..   M..   Ms.   Wx1.. Wx1.. Wx1.. Wx1.. Wx1.. Wx1.. Wx1.. Wx1.. H.G   H..   Ht.   Ht.   Hc.  \nM..   Mc.   Mt.   Wx1.. Wx1.. Ex1t. Ex1.. Ex1.. Ex1t. Wx1.. Wx1.. Ht.   Hc.   HcH   H..   H..  \nM..   M..   M..   Wx1.. Wx1.. Ex1t. Ex1.B Ex1c. Ex1t. Wx1.. Wx1.. Hs.   Hs.   H..   H..   H..  \nM..   Mc.   Mt.   Wx1.. Wx1.. Ex1t. Ex1.. Ex1c. Ex1t. Wx1.. Wx1.. Wx2.. Wx2r. Wx2.. Wx2.. Wx2.K\nCc.   Cs.   Cs.   Cc.   Wx1.. Ex1t. Ex1.. Ex1.. Ex1t. Wx1.. Wx1.. Wx2.. Wx2.L Wx2r. Wx2.. Wx2c.\nC..   C..   C..   C..   Wx1.. Wx1.. Sx1t. Sx1t. Sx1.. Sx1.. Sx1.. Sx1t. Wx2.. Wx2.. Wx2mI Wx2..\nS.V   S..   S..   Ss.   Wx1.. Wx1.. Sx1.. Sx1t. Sx1.. Sx1t. Sx1.. Sx1.. Wx2r. Wx2.. Wx2.. Wx2..\nSt.   S..   SbN   S..   Wx1.. Wx1.. Sx1c. Sx1.. Sx1.. Sx1t. Sx1.. Sx1.. Wx2.. Wx2.. Wx2r. Wx2..\nS..   S..   Sb.   S..   Wx1.. Wx1.. Sx1t. Sx1.A Sx1c. Sx1.. Sx1.. Sx1t. Wx2.. Wx2.. Wx2r. Wx2r.",
+ "people": [
+  {
+   "letter": "A",
+   "name": "Antonio",
+   "role": "suspect",
+   "position": [
+    15,
+    7
+   ],
+   "room": {
+    "id": "scifi",
+    "name": "SciFi Set"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "camera",
+    "table"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Antonio (A) was beside a camera, directly to its left."
+   ]
+  },
+  {
+   "letter": "B",
+   "name": "Belah",
+   "role": "suspect",
+   "position": [
+    9,
+    6
+   ],
+   "room": {
+    "id": "editing",
+    "name": "Editing"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "TV",
+    "chair"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Belah (B) was beside a TV."
+   ]
+  },
+  {
+   "letter": "C",
+   "name": "Cornelius",
+   "role": "suspect",
+   "position": [
+    2,
+    5
+   ],
+   "room": {
+    "id": "romance",
+    "name": "Romance Set"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "camera",
+    "chair",
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "D",
+     "name": "Damara"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Cornelius (C) was in the sixth column."
+   ]
+  },
+  {
+   "letter": "D",
+   "name": "Damara",
+   "role": "suspect",
+   "position": [
+    1,
+    8
+   ],
+   "room": {
+    "id": "romance",
+    "name": "Romance Set"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "flower",
+    "tree"
+   ],
+   "withInRoom": [
+    {
+     "letter": "C",
+     "name": "Cornelius"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Damara (D) was beside some flowers."
+   ]
+  },
+  {
+   "letter": "E",
+   "name": "Erik",
+   "role": "suspect",
+   "position": [
+    0,
+    10
+   ],
+   "room": {
+    "id": "epic",
+    "name": "Epic Set"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "camera"
+   ],
+   "withInRoom": [
+    {
+     "letter": "M",
+     "name": "Mason"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Erik (E) was on a Set. He was beside a wall."
+   ]
+  },
+  {
+   "letter": "F",
+   "name": "Falcon",
+   "role": "suspect",
+   "position": [
+    5,
+    4
+   ],
+   "room": {
+    "id": "western",
+    "name": "Western Set"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "barrel",
+    "cactus"
+   ],
+   "withInRoom": [
+    {
+     "letter": "J",
+     "name": "Johnny"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Falcon (F) was beside a cactus."
+   ]
+  },
+  {
+   "letter": "G",
+   "name": "Gilbert",
+   "role": "suspect",
+   "position": [
+    7,
+    11
+   ],
+   "room": {
+    "id": "horror",
+    "name": "Horror Set"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "TV",
+    "shelf"
+   ],
+   "withInRoom": [
+    {
+     "letter": "H",
+     "name": "Hadako"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Gilbert (G): a woman in his room was beside the camera."
+   ]
+  },
+  {
+   "letter": "H",
+   "name": "Hadako",
+   "role": "suspect",
+   "position": [
+    8,
+    13
+   ],
+   "room": {
+    "id": "horror",
+    "name": "Horror Set"
+   },
+   "onObjectType": "chair",
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "camera",
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "G",
+     "name": "Gilbert"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Hadako (H) was on the Horror Set."
+   ]
+  },
+  {
+   "letter": "I",
+   "name": "Idris",
+   "role": "suspect",
+   "position": [
+    12,
+    14
+   ],
+   "room": {
+    "id": "war",
+    "name": "War Set"
+   },
+   "onObjectType": "mudpuddle",
+   "on": "standing in a mud puddle",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "K",
+     "name": "Kobe"
+    },
+    {
+     "letter": "L",
+     "name": "Leeroy"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Idris (I) was on a mud puddle."
+   ]
+  },
+  {
+   "letter": "J",
+   "name": "Johnny",
+   "role": "suspect",
+   "position": [
+    3,
+    3
+   ],
+   "room": {
+    "id": "western",
+    "name": "Western Set"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "camera",
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "F",
+     "name": "Falcon"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Johnny (J) was not in a corner of the room."
+   ]
+  },
+  {
+   "letter": "K",
+   "name": "Kobe",
+   "role": "suspect",
+   "position": [
+    10,
+    15
+   ],
+   "room": {
+    "id": "war",
+    "name": "War Set"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "camera"
+   ],
+   "withInRoom": [
+    {
+     "letter": "I",
+     "name": "Idris"
+    },
+    {
+     "letter": "L",
+     "name": "Leeroy"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Kobe (K) was in a corner of a Set."
+   ]
+  },
+  {
+   "letter": "L",
+   "name": "Leeroy",
+   "role": "suspect",
+   "position": [
+    11,
+    12
+   ],
+   "room": {
+    "id": "war",
+    "name": "War Set"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "rubble"
+   ],
+   "withInRoom": [
+    {
+     "letter": "I",
+     "name": "Idris"
+    },
+    {
+     "letter": "K",
+     "name": "Kobe"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Leeroy (L) was beside some rubble."
+   ]
+  },
+  {
+   "letter": "M",
+   "name": "Mason",
+   "role": "suspect",
+   "position": [
+    4,
+    9
+   ],
+   "room": {
+    "id": "epic",
+    "name": "Epic Set"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "catapult",
+    "tree"
+   ],
+   "withInRoom": [
+    {
+     "letter": "E",
+     "name": "Erik"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Mason (M) was beside a catapult."
+   ]
+  },
+  {
+   "letter": "N",
+   "name": "Natalia",
+   "role": "murderer",
+   "position": [
+    14,
+    2
+   ],
+   "room": {
+    "id": "startrailer",
+    "name": "Star Trailer"
+   },
+   "onObjectType": "bed",
+   "on": "on the bed",
+   "besideObjectTypes": [
+    "bed"
+   ],
+   "withInRoom": [
+    {
+     "letter": "V",
+     "name": "Vaughn (victim)"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Natalia (N) was on a bed."
+   ],
+   "nearbyObjectTypesForMethod": [
+    "bed"
+   ]
+  },
+  {
+   "letter": "O",
+   "name": "Olivia",
+   "role": "suspect",
+   "position": [
+    6,
+    1
+   ],
+   "room": {
+    "id": "makeup",
+    "name": "Makeup"
+   },
+   "onObjectType": "chair",
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "table"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Olivia (O) was sitting on a chair."
+   ]
+  },
+  {
+   "letter": "V",
+   "name": "Vaughn (victim)",
+   "role": "victim",
+   "position": [
+    13,
+    0
+   ],
+   "room": {
+    "id": "startrailer",
+    "name": "Star Trailer"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "N",
+     "name": "Natalia"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Vaughn (V), the victim, was alone with the murderer."
+   ]
+  }
+ ],
+ "hasPortraits": false,
+ "sourceFile": "source/the-movie-studio-color.pdf"
+}

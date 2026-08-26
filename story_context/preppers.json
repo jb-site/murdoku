@@ -1,0 +1,285 @@
+{
+ "id": "preppers",
+ "title": "Preppers",
+ "difficulty": "medium",
+ "rooms": {
+  "yard": "Yard",
+  "kitchen": "Kitchen",
+  "livingroom": "Living Room",
+  "bathroom": "Bathroom",
+  "bedroom": "Bedroom",
+  "secretstairs": "Secret Stairs",
+  "saferoom": "Safe Room",
+  "supply": "Supply"
+ },
+ "generalClues": [],
+ "victim": "V",
+ "murderer": "A",
+ "asciiMapLegend": {
+  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "roomCodes": {
+   "yard": "Y",
+   "kitchen": "K",
+   "livingroom": "L",
+   "bathroom": "B",
+   "bedroom": "Bx1",
+   "secretstairs": "S",
+   "saferoom": "Sx1",
+   "supply": "Sx2"
+  },
+  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+ },
+ "asciiMap": "Y..   Y..   Y..   Y..   Y..   Y..   Yc.   Yc.   Y.A  \nY..   Kt.   Kt.   K..   Lc.   L..   L.F   Yb.   Y..  \nY..   Kt.   K..   Kt.   Lc.   L..   Lt.   Y.V   Ys.  \nYs.   K..   K..   KcG   L..   L..   Ls.   Y..   Y..  \nY..   B..   B..   Bx1t. Bx1b. Bx1bB Bx1.. Y..   Y..  \nY..   BcH   Bb.   Bx1s. Bx1.. Bx1.. Bx1.. Sx2s. Sx2b.\nSx1b. Sx1t. Sx1b. S..   Bx1.C Sx2s. Sx2b. Sx2.. Sx2..\nSx1bD Sx1c. Sx1b. S..   S..   Sx2.. Sx2.. Sx2b. Sx2b.\nSx1b. Sx1s. Sx1.E Sx1.. Sx1b. Sx2.. Sx2b. Sx2s. Sx2..",
+ "people": [
+  {
+   "letter": "A",
+   "name": "Angelo",
+   "role": "murderer",
+   "position": [
+    0,
+    8
+   ],
+   "room": {
+    "id": "yard",
+    "name": "Yard"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "car"
+   ],
+   "withInRoom": [
+    {
+     "letter": "V",
+     "name": "Vivianna (victim)"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Angelo (A): there was a box in his area. He was not beside any box."
+   ],
+   "nearbyObjectTypesForMethod": [
+    "car"
+   ]
+  },
+  {
+   "letter": "B",
+   "name": "Blake",
+   "role": "suspect",
+   "position": [
+    4,
+    5
+   ],
+   "room": {
+    "id": "bedroom",
+    "name": "Bedroom"
+   },
+   "onObjectType": "bed",
+   "on": "on the bed",
+   "besideObjectTypes": [
+    "bed"
+   ],
+   "withInRoom": [
+    {
+     "letter": "C",
+     "name": "Carolina"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Blake (B) was in the Bedroom."
+   ]
+  },
+  {
+   "letter": "C",
+   "name": "Carolina",
+   "role": "suspect",
+   "position": [
+    6,
+    4
+   ],
+   "room": {
+    "id": "bedroom",
+    "name": "Bedroom"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "shelf"
+   ],
+   "withInRoom": [
+    {
+     "letter": "B",
+     "name": "Blake"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Carolina (C): there was a man on the bed in her area."
+   ]
+  },
+  {
+   "letter": "D",
+   "name": "Daryl",
+   "role": "suspect",
+   "position": [
+    7,
+    0
+   ],
+   "room": {
+    "id": "saferoom",
+    "name": "Safe Room"
+   },
+   "onObjectType": "bed",
+   "on": "on the bed",
+   "besideObjectTypes": [
+    "bed",
+    "box",
+    "chair"
+   ],
+   "withInRoom": [
+    {
+     "letter": "E",
+     "name": "Edna"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Daryl (D): someone else was beside a shelf in her area."
+   ]
+  },
+  {
+   "letter": "E",
+   "name": "Edna",
+   "role": "suspect",
+   "position": [
+    8,
+    2
+   ],
+   "room": {
+    "id": "saferoom",
+    "name": "Safe Room"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "box",
+    "shelf"
+   ],
+   "withInRoom": [
+    {
+     "letter": "D",
+     "name": "Daryl"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Edna (E) was in the bottom row."
+   ]
+  },
+  {
+   "letter": "F",
+   "name": "Friedrich",
+   "role": "suspect",
+   "position": [
+    1,
+    6
+   ],
+   "room": {
+    "id": "livingroom",
+    "name": "Living Room"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "TV",
+    "box",
+    "car"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Friedrich (F) was beside a TV."
+   ]
+  },
+  {
+   "letter": "G",
+   "name": "Greg",
+   "role": "suspect",
+   "position": [
+    3,
+    3
+   ],
+   "room": {
+    "id": "kitchen",
+    "name": "Kitchen"
+   },
+   "onObjectType": "chair",
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "table"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Greg (G) was sitting in a chair."
+   ]
+  },
+  {
+   "letter": "H",
+   "name": "Howie",
+   "role": "suspect",
+   "position": [
+    5,
+    1
+   ],
+   "room": {
+    "id": "bathroom",
+    "name": "Bathroom"
+   },
+   "onObjectType": "chair",
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "TV",
+    "box"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Howie (H) was in the Bathroom."
+   ]
+  },
+  {
+   "letter": "V",
+   "name": "Vivianna (victim)",
+   "role": "victim",
+   "position": [
+    2,
+    7
+   ],
+   "room": {
+    "id": "yard",
+    "name": "Yard"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "TV",
+    "box",
+    "shrub"
+   ],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Angelo"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Vivianna (V), the victim, was alone with the murderer \u2014 the killer was in the same area (room) as her."
+   ]
+  }
+ ],
+ "hasPortraits": false,
+ "sourceFile": "source/preppers-color.pdf"
+}
