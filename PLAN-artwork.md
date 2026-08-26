@@ -762,3 +762,41 @@ least-squares fit of the PNG's own interior gridlines and then checked by eye in
 **Regression check** (this is the one that matters — the new modes add branches to the
 shared edit-mode pointer path): room drag-paint across three cells and multi-cell object
 place + erase both re-verified in the browser after the changes.
+
+### Follow-up (2026-08-26): making the hand-update to the source file "easy and clear"
+
+Edit mode is, and stays, session-only — `exitEditMode()` clears `murdoku:draft`, and a
+reload re-fetches `puzzles/<id>.json`, so any boardCrop nudge is gone unless the author
+pastes it back by hand. That's an accepted tradeoff, not a bug: no localStorage override
+layer and no File System Access write-back were wanted. What *was* missing was making the
+hand-update step itself hard to get wrong. Three gaps, all closed without touching the
+boardCrop data model or the Copy button's output format:
+
+1. **Named the destination.** The Art tab now states, next to the Copy button, exactly
+   where the copied snippet goes: `puzzles/<id>.json` (repo-relative, built from
+   `PUZZLE.id`, so it works whether the author pastes locally or in GitHub's web editor) →
+   `art.boardCrop`.
+
+2. **Live diff against the file's actual value.** `enterEditMode()` already stashes the
+   original puzzle in `EDIT.stash` before cloning into the working copy, so
+   `EDIT.stash.puzzle.art.boardCrop` *is* the file's current value — no extra plumbing
+   needed. `updateArtCopyStatus()` compares it against `PUZZLE.art.boardCrop` (`cropsEqual`,
+   4-decimal tolerance) on every crop mutation (`setArtCrop`) and panel rebuild, and shows
+   either a green "Matches the file — nothing to save" or an amber panel spelling out both
+   the file value and the current one.
+
+3. **Warn before losing an uncopied change.** `EDIT.artCopiedSinceChange` tracks whether
+   the crop has been copied since it last moved — `setArtCrop` clears it, `copyBoardCrop`
+   sets it (on both the real clipboard-write path and the insecure-origin/no-clipboard
+   fallback, since either way the author now has the snippet in hand). `checkUnsavedArtCrop()`
+   gates Apply and Discard: if the crop differs from the file value and hasn't been copied
+   since, a `confirm()` names what's about to be lost and points back at the Copy button —
+   dismissible, since Discard-without-saving is legitimate, not a mistake to block.
+
+Verified all four states in the browser (matches → nudged/uncopied → copied → nudged again
+reverts to uncopied), and that Cancel on the exit-confirm aborts the exit while Continue
+proceeds.
+
+**Regression check**: room drag-paint and multi-cell object place + erase re-verified in
+the browser after these changes (pointer-event simulation over `.cell` elements with real
+`getBoundingClientRect()` coordinates, not calling internal functions directly).

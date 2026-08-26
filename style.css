@@ -272,6 +272,23 @@ body.resizing { cursor: col-resize; }
 }
 .art-copy-note { color: var(--muted); font-size: 0.8rem; font-family: ui-monospace, monospace; }
 
+.art-save-info { margin: 2px 0 4px; }
+.art-target { margin: 0 0 4px; font-size: 0.82rem; color: var(--muted); text-align: left; }
+.art-target code { font-family: ui-monospace, monospace; color: var(--text); }
+.art-copy-status {
+  margin: 0;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-family: ui-monospace, monospace;
+  text-align: left;
+  line-height: 1.5;
+}
+.art-copy-status.match { color: #7ed08c; background: rgba(126, 208, 140, 0.1); }
+.art-copy-status.changed { color: var(--highlight); background: rgba(255, 209, 102, 0.1); border: 1px solid rgba(255, 209, 102, 0.35); }
+.art-copy-status.changed.copied { color: var(--muted); background: rgba(154, 156, 166, 0.08); border-color: var(--border); }
+.art-copy-status code { font-family: ui-monospace, monospace; }
+
 .editor-validation { font-size: 0.82rem; }
 .editor-validation .valid { color: #7ed08c; }
 .editor-validation .error { color: var(--x-color); }

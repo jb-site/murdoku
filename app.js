@@ -2101,7 +2101,12 @@ function enterEditMode(sourcePuzzle) {
   const baseCrop = (sourcePuzzle ?? PUZZLE)?.art?.boardCrop;
   EDIT = { stash: { puzzle: PUZZLE, objectAt, grid, history, selection }, tool: "rooms", roomPaint: null, objPaint: null, drag: null, dirty: false,
     artBase: baseCrop ? { ...baseCrop } : { x: 0, y: 0, w: 1, h: 1 },
-    artSquareLock: true, artPick: null, artPickNote: "", artCropTool: false };
+    artSquareLock: true, artPick: null, artPickNote: "", artCropTool: false,
+    // Whether the current boardCrop has been copied (via copyBoardCrop) since it last
+    // changed — drives the unsaved-crop warning on Apply/Discard. True at entry because
+    // PUZZLE.art.boardCrop still equals the file's value (EDIT.stash), so there is
+    // nothing to warn about yet regardless of this flag.
+    artCopiedSinceChange: true };
   PUZZLE = normalizePuzzle(structuredClone(sourcePuzzle ?? PUZZLE));
   objectAt = buildObjectIndex(PUZZLE);
   grid = freshGrid();
@@ -2173,14 +2178,34 @@ function refreshPuzzleMeta() {
 
 editBtn.addEventListener("click", () => enterEditMode(PUZZLE));
 
+// There is no persistence for the boardCrop nudge (see the "BACKGROUND" note at the
+// top of the Art tab section) — the only place it survives Apply/Discard is the
+// hand-pasted snippet. If the crop has changed since it was last copied, warn before
+// either exit so that change isn't lost silently. A confirm, not a hard block: Discard
+// (or Apply) without saving is a legitimate choice, just one worth a pause.
+function checkUnsavedArtCrop() {
+  const fileCrop = EDIT.stash.puzzle.art?.boardCrop;
+  const curCrop = PUZZLE.art?.boardCrop;
+  if (!curCrop || cropsEqual(fileCrop, curCrop) || EDIT.artCopiedSinceChange) return true;
+  return confirm(
+    "The board crop has changed but hasn't been copied yet.\n\n" +
+    `Continuing now will lose that change — puzzles/${PUZZLE.id || "<puzzle-id>"}.json will keep its old boardCrop ` +
+    "until you paste it in by hand.\n\n" +
+    "Go to the Art tab and click 📋 Copy boardCrop first if you want to keep it.\n\n" +
+    "Continue anyway?"
+  );
+}
+
 editApplyBtn.addEventListener("click", () => {
   const { errors } = validateDraft();
   if (errors.length && !confirm(`This puzzle has ${errors.length} validation error(s). Apply anyway?`)) return;
+  if (!checkUnsavedArtCrop()) return;
   exitEditMode("apply");
 });
 
 editDiscardBtn.addEventListener("click", () => {
   if (EDIT.dirty && !confirm("Discard your edits?")) return;
+  if (!checkUnsavedArtCrop()) return;
   exitEditMode("discard");
 });
 
@@ -2571,6 +2596,17 @@ function buildArtPanel() {
     <span class="art-copy-note" id="artCopyNote"></span>
   `;
   editorDetailsEl.appendChild(controls);
+
+  // Where the copied snippet has to be hand-pasted, and whether it's still needed —
+  // this is the only place that data leaves the browser (see module comment above),
+  // so both facts need to be impossible to miss.
+  const saveInfo = document.createElement("div");
+  saveInfo.className = "art-save-info";
+  saveInfo.innerHTML = `
+    <p class="art-target">Saves to <code id="artTargetPath"></code> → <code>art.boardCrop</code></p>
+    <p class="art-copy-status" id="artCopyStatus"></p>
+  `;
+  editorDetailsEl.appendChild(saveInfo);
   controls.querySelectorAll("[data-zoom]").forEach((btn) => {
     btn.addEventListener("click", () => zoomArt(+btn.dataset.zoom));
   });
@@ -2639,6 +2675,7 @@ function buildArtPanel() {
   updateArtInstructions();
   updateArtCellNote();
   updateArtButtons();
+  updateArtCopyStatus();
 }
 
 // The three modes are mutually exclusive, and the panel is rebuilt from scratch after a
@@ -2681,6 +2718,41 @@ function updateArtInstructions() {
     "for boards whose outer corners are too fuzzy to click.";
 }
 
+// The file's boardCrop is exactly EDIT.stash.puzzle.art.boardCrop: PUZZLE was loaded
+// from puzzles/<id>.json and enterEditMode() stashed that original before cloning it
+// into the working copy, so the stash never sees any nudge made in this session.
+function cropsEqual(a, b) {
+  if (!a || !b) return a === b;
+  return ["x", "y", "w", "h"].every((k) => Math.abs((a[k] ?? 0) - (b[k] ?? 0)) < 1e-6);
+}
+
+function fmtCrop(c) {
+  return c ? `x=${round4(c.x)} y=${round4(c.y)} w=${round4(c.w)} h=${round4(c.h)}` : "(none)";
+}
+
+// The one place that answers "does the file need updating, and has that already
+// happened?" — recomputed on every crop change (setArtCrop) and every copy
+// (copyBoardCrop) so it can never go stale while the Art tab is open.
+function updateArtCopyStatus() {
+  const pathEl = document.getElementById("artTargetPath");
+  const statusEl = document.getElementById("artCopyStatus");
+  if (!pathEl || !statusEl) return; // no-board-art panel has neither
+  pathEl.textContent = `puzzles/${PUZZLE.id || "<puzzle-id>"}.json`;
+  const fileCrop = EDIT.stash.puzzle.art?.boardCrop;
+  const curCrop = PUZZLE.art?.boardCrop;
+  if (cropsEqual(fileCrop, curCrop)) {
+    statusEl.textContent = "Matches the file — nothing to save";
+    statusEl.className = "art-copy-status match";
+    return;
+  }
+  const copied = EDIT.artCopiedSinceChange;
+  statusEl.className = "art-copy-status changed" + (copied ? " copied" : "");
+  statusEl.innerHTML =
+    `Changed from the file value${copied ? " (copied — paste it in when you get a chance)" : " — not yet copied"}:<br>` +
+    `file: <code>${fmtCrop(fileCrop)}</code><br>` +
+    `now: <code>${fmtCrop(curCrop)}</code>`;
+}
+
 function updateArtCellNote() {
   const el = document.getElementById("artCellNote");
   if (!el) return;
@@ -2721,8 +2793,10 @@ function setArtCrop(crop, opts = {}) {
     h: round4(Math.max(crop.h, 0.01)),
   };
   EDIT.dirty = true;
+  EDIT.artCopiedSinceChange = false; // a new nudge invalidates any earlier copy
   syncArtInputs(opts.except);
   updateArtCellNote();
+  updateArtCopyStatus();
   scheduleEditRerender();
   scheduleDraftSave();
 }
@@ -3101,7 +3175,14 @@ function copyBoardCrop() {
   const crop = artCrop();
   const text = `"boardCrop": { "x": ${round4(crop.x)}, "y": ${round4(crop.y)}, "w": ${round4(crop.w)}, "h": ${round4(crop.h)} },`;
   const note = document.getElementById("artCopyNote");
-  const done = (ok) => { if (note) note.textContent = ok ? "Copied ✓" : text; };
+  // Either path — a real clipboard write or the manual-copy fallback — counts as "the
+  // author has the snippet in hand", so both mark the crop copied. Only a *further*
+  // nudge (setArtCrop) should re-arm the unsaved-crop warning.
+  const done = (ok) => {
+    if (note) note.textContent = ok ? "Copied ✓" : text;
+    EDIT.artCopiedSinceChange = true;
+    updateArtCopyStatus();
+  };
   if (navigator.clipboard?.writeText) {
     navigator.clipboard.writeText(text).then(() => done(true), () => done(false));
   } else {
