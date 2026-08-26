@@ -1,0 +1,47 @@
+{
+  "id": "the-zoo",
+  "title": "The Zoo",
+  "acts": [
+    "Vlad had run the zoo for thirty-one years, and everybody knew the shape of him at closing time: white beard, khaki jacket, clipboard held at the exact angle of a man about to write something down about you. Ten minutes before the last bell there was a sound from the far side of the park. Not a scream. A colossal, slapstick SPLOOSH — the sound of roughly a bathtub of water arriving somewhere it had never previously been — followed by a wet silence and one very smug trumpeting noise. Every radio on the site crackled. Nobody answered, because every single person on the site was, at that precise moment, catastrophically busy.",
+    "In the Main Area, Alfred stood at the rail with headphones the size of dinner plates clamped over his ears, filming birds and hearing absolutely nothing that had ever happened in his life. Forty feet behind him Deborah advanced along the path in a pink neck scarf, holding the park map upside down and composing a complaint about the signage; she passed Flavia, who was standing guard over an entirely empty chair with the grim resolve of a woman who has queued for it, glasses flashing. Over in Concessions, Barry had achieved the ideal afternoon — seated, tray of churros, elbow on the table, mid-anecdote — while Eloise refused on principle to sit on anything that tacky and ate her chips vertically, from a great height, like a heron.",
+    "The keepers fared no better. Langston was waist-deep in the penguin pool scrubbing algae while every penguin in the building stood on the far bank watching him with open contempt. Carolyn — a paying visitor, in a habitat, crouched behind a shrub for a photograph — was being reasoned with by Ivan, who was simultaneously trying to persuade an eleven-stone lion to look the other way. Kaiden stood ankle-deep on the shallow shelf lobbing fish while Mara bellowed the count across the water at her from two columns over, both of them entirely surrounded by fins. Gordon, silver-haired and horizontal in a folding chair he had brought from home, was asleep beside the crocodile pool and would swear afterwards he was alone, which was news to Nancy, up to her knees at the far end retrieving a sun hat. Oliver was hiding a bucket of berries behind a boulder from a bear who had already found it. Henry stood at the Entrance beside the leaflet table, alone, as he had been for two hours. Nobody heard the SPLOOSH. Which meant nobody saw who made it."
+  ],
+  "whereabouts": {
+    "A": "Alfred was pressed to the Main Area rail beside the penguin water, giant over-ear headphones on, filming penguins in glorious noise-cancelling ignorance — the finest alibi in the park and the least useful witness in it.",
+    "B": "Barry was fully seated in a Concessions chair, elbow on the table, dreadlocks and moustache framing an anecdote he was telling to the only other person there, a visitor who had stopped listening some time ago.",
+    "C": "Carolyn, blonde and entirely unauthorised, had got herself over the rope into the Lion Habitat and was crouched behind a shrub angling for a photograph, ignoring the keeper begging her to come back.",
+    "D": "Deborah was route-marching the Main Area path in her pink neck scarf with the map held upside down, drafting a formal complaint about the signage of a zoo she was currently lost in.",
+    "E": "Eloise stood beside the Concessions table rather than sit at it — red hair, bare arms, chips held at altitude — on the firm grounds that the chairs were sticky and she had standards.",
+    "F": "Flavia was in the Main Area standing sentry over one empty chair, spectacles down her nose, defending it from a crowd that had shown no interest in it whatsoever.",
+    "G": "Gordon had carried his own folding chair to the edge of the crocodile water and fallen asleep in it, and would later insist, with real conviction, that he had been completely alone.",
+    "H": "Henry stood at the Entrance beside the leaflet table, moustache bristling, alone with a stack of maps and a grievance about the price of a family ticket.",
+    "I": "Ivan was beside the lion, khaki shirt soaked with the sweat of a keeper trying to shoo a large cat one way and coax a trespassing visitor the other way at the same time.",
+    "J": "Jim was standing at the very edge of the elephant pool, conspicuously, immaculately dry, with a whistle in his hand and a plausible reason to be there.",
+    "K": "Kaiden was ankle-deep on the shark shelf beside a boulder, flinging fish and yelling the tally back across the water to the only colleague in earshot.",
+    "L": "Langston was in the penguin water with a long brush, scrubbing algae, with not one penguin willing to come within four feet of him.",
+    "M": "Mara was in the water in the second column, hauling a bucket over the boulders in the shark pool and shouting a count that kept getting eaten by fins.",
+    "N": "Nancy was up to her knees at the crocodile pool beside a palm tree, fishing out a visitor's dropped sun hat and blissfully unaware there was a sleeping man in a folding chair at the other end.",
+    "O": "Oliver, bald and moustached, was hiding a bucket of berries behind a boulder from a bear who had located it four minutes earlier and was politely waiting.",
+    "V": "Vlad was doing his end-of-day inspection beside the elephant, clipboard up, standing near a shrub and writing a note about hose pressure that he would never get to finish."
+  },
+  "reveal": "It was Jim, in the Elephant Habitat, with the elephant and about ninety gallons of pool water. Jim had spent months teaching the big fellow a party trick for the summer show: one short whistle, one full trunk drawn from the pool, one enormous jet on command. That evening, with Vlad standing beside the elephant clipboard-first and complaining about hose pressure, Jim stood dry at the water's edge — not in it, beside it, exactly as he'd tell anyone who asked — and whistled. The elephant did what it had been so patiently taught. Vlad went across the enclosure like a bar of soap in a bathtub and did not come back. Jim's shoes were the only dry thing within thirty feet, which is a very strange thing for a man beside a pool to be, and precisely how he came unstuck.",
+  "escape": {
+    "generic": "The file went cold, the trumpeting was recorded as 'ambient', and somewhere in the zoo a killer is still smiling and pretending to check a water level.",
+    "byAccused": {
+      "A": "Alfred was led away with his headphones still on, so he found out he'd been arrested roughly four minutes after everyone else did — while the real culprit strolled out past the gift shop.",
+      "B": "Barry was hauled from his chair mid-anecdote, churros abandoned, protesting that a man who has not stood up all afternoon cannot possibly be a murderer — and he was right, which helped the actual killer enormously.",
+      "C": "Carolyn was arrested for the crime of being where she absolutely should not have been, which she was, just not for that — and the guilty party quietly let her take it.",
+      "D": "Deborah was taken in still holding the map upside down, filing her complaint about the signage from the back of the van, while the real killer walked out under a sign she'd have found very clearly labelled.",
+      "E": "Eloise refused to sit down even in the interview room, which the detectives found suspicious and everyone who knew her found completely in character — and the true culprit went home unbothered.",
+      "F": "Flavia was arrested beside the empty chair she had defended for two hours, and her last request was that somebody keep it for her, which nobody did — and the real killer never even had to run.",
+      "G": "Gordon was woken up, charged, and carried off still in his folding chair, insisting the whole way that he'd been alone — while the person who wasn't got clean away.",
+      "H": "Henry, who had been alone at the front gate all day with nothing but leaflets, discovered that having no witnesses is exactly as good as having no alibi — and the guilty party said nothing at all.",
+      "I": "Ivan was arrested for a splash he had nowhere near enough water to make, and the lion, the only real witness to his innocence, declined to comment while the real killer slipped away.",
+      "K": "Kaiden was taken away mid-fish-throw and the sharks got a very disorganised dinner, which was the only injustice anyone bothered to report — the true culprit remains at large.",
+      "L": "Langston was charged while still dripping, on the theory that the wettest man present is the likeliest suspect, a theory the real killer had rather counted on.",
+      "M": "Mara was arrested in the second column, still holding her bucket, and spent the trip protesting that she'd been shouting loudly enough to prove where she was — while the guilty party said nothing loudly at all.",
+      "N": "Nancy was led off holding a stranger's soggy sun hat as evidence of nothing, and the real killer was free to be extremely helpful with the enquiries.",
+      "O": "Oliver was arrested behind his boulder and the bear finally got the berries, which made it the only party in the whole affair to come out ahead — apart from the actual murderer."
+    }
+  }
+}

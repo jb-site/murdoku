@@ -1,0 +1,286 @@
+{
+ "id": "the-art-school",
+ "title": "The Art School",
+ "difficulty": "medium",
+ "rooms": {
+  "office": "Office",
+  "modelplatform": "Model Platform",
+  "supplies": "Supplies",
+  "paintingstudio": "Painting Studio",
+  "gallery": "Gallery",
+  "sculptingstudio": "Sculpting Studio"
+ },
+ "generalClues": [],
+ "victim": "V",
+ "murderer": "D",
+ "asciiMapLegend": {
+  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "roomCodes": {
+   "office": "O",
+   "modelplatform": "M",
+   "supplies": "S",
+   "paintingstudio": "P",
+   "gallery": "G",
+   "sculptingstudio": "Sx1"
+  },
+  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+ },
+ "asciiMap": "Oc.   OfB   M..   Mc.   Mc.   Mc.   Ms.   Ss.   Ss.  \nOt.   O..   M..   Mc.   McF   Mc.   M..   S..   Se.  \nO..   Pc.   Pe.   P..   P..   P..   Pt.   Pc.   S.A  \nP..   Pc.   Pe.   Ps.   P..   P..   P.H   P..   P..  \nP..   P..   PcG   Pe.   Pe.   P..   Pe.   P..   P..  \nGf.   Gp.   P..   P.E   P..   P..   Pc.   Sx1c. Sx1..\nGs.   Gp.   Gf.   Gt.   Gf.   Sx1s. Sx1s. Sx1.V Sx1s.\nG.C   Gp.   Gp.   Gp.   Gp.   Sx1c. Sx1.. Sx1s. Sx1c.\nG..   G..   Gs.   G..   G..   Sx1.D Sx1c. Sx1t. Sx1..",
+ "people": [
+  {
+   "letter": "A",
+   "name": "Anthony",
+   "role": "suspect",
+   "position": [
+    2,
+    8
+   ],
+   "room": {
+    "id": "supplies",
+    "name": "Supplies"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "chair",
+    "easel"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Anthony (A) was alone."
+   ]
+  },
+  {
+   "letter": "B",
+   "name": "Ben",
+   "role": "suspect",
+   "position": [
+    0,
+    1
+   ],
+   "room": {
+    "id": "office",
+    "name": "Office"
+   },
+   "onObjectType": "framedpainting",
+   "on": "standing in front of a framed painting",
+   "besideObjectTypes": [
+    "chair"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Ben (B): there was a framed painting on his square."
+   ]
+  },
+  {
+   "letter": "C",
+   "name": "Coralie",
+   "role": "suspect",
+   "position": [
+    7,
+    0
+   ],
+   "room": {
+    "id": "gallery",
+    "name": "Gallery"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "path",
+    "statue"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Coralie (C) was beside a statue."
+   ]
+  },
+  {
+   "letter": "D",
+   "name": "Delilah",
+   "role": "murderer",
+   "position": [
+    8,
+    5
+   ],
+   "room": {
+    "id": "sculptingstudio",
+    "name": "Sculpting Studio"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "chair"
+   ],
+   "withInRoom": [
+    {
+     "letter": "V",
+     "name": "Veronica (victim)"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Delilah (D): there was a woman alone in the Gallery, one row north of her."
+   ],
+   "nearbyObjectTypesForMethod": [
+    "chair"
+   ]
+  },
+  {
+   "letter": "E",
+   "name": "Everly",
+   "role": "suspect",
+   "position": [
+    5,
+    3
+   ],
+   "room": {
+    "id": "paintingstudio",
+    "name": "Painting Studio"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "easel",
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "G",
+     "name": "Ginevra"
+    },
+    {
+     "letter": "H",
+     "name": "Hartley"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Everly (E) was beside an easel, directly south of it."
+   ]
+  },
+  {
+   "letter": "F",
+   "name": "Fritz",
+   "role": "suspect",
+   "position": [
+    1,
+    4
+   ],
+   "room": {
+    "id": "modelplatform",
+    "name": "Model Platform"
+   },
+   "onObjectType": "carpet",
+   "on": "standing on the carpet",
+   "besideObjectTypes": [
+    "carpet",
+    "chair"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Fritz (F) was on a carpet."
+   ]
+  },
+  {
+   "letter": "G",
+   "name": "Ginevra",
+   "role": "suspect",
+   "position": [
+    4,
+    2
+   ],
+   "room": {
+    "id": "paintingstudio",
+    "name": "Painting Studio"
+   },
+   "onObjectType": "chair",
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "easel"
+   ],
+   "withInRoom": [
+    {
+     "letter": "E",
+     "name": "Everly"
+    },
+    {
+     "letter": "H",
+     "name": "Hartley"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Ginevra (G) was the only person sitting in a chair."
+   ]
+  },
+  {
+   "letter": "H",
+   "name": "Hartley",
+   "role": "suspect",
+   "position": [
+    3,
+    6
+   ],
+   "room": {
+    "id": "paintingstudio",
+    "name": "Painting Studio"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "easel",
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "E",
+     "name": "Everly"
+    },
+    {
+     "letter": "G",
+     "name": "Ginevra"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Hartley (H) was beside a table."
+   ]
+  },
+  {
+   "letter": "V",
+   "name": "Veronica (victim)",
+   "role": "victim",
+   "position": [
+    6,
+    7
+   ],
+   "room": {
+    "id": "sculptingstudio",
+    "name": "Sculpting Studio"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "chair",
+    "statue"
+   ],
+   "withInRoom": [
+    {
+     "letter": "D",
+     "name": "Delilah"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Veronica (V), the victim, was alone with the murderer \u2014 the killer was in the same area (room) as her."
+   ]
+  }
+ ],
+ "hasPortraits": false,
+ "sourceFile": "source/the-art-school-color.pdf"
+}

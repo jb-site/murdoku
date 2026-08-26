@@ -1,0 +1,27 @@
+{
+ "id": "netflix-and-kill",
+ "title": "Netflix and Kill",
+ "acts": [
+  "Movie night at Vaughn's had the structural integrity of a house of cards. Austin was on his knees in front of the living-room shelf, pulling out DVDs nobody owned a player for and holding them up like evidence. \"We are not watching anything with Charlotte's face on the case,\" he announced, which was rich, because Charlotte had already claimed the good chair — the only chair worth sitting in, a fact she repeated so often it had become her whole personality for the evening. Enid crouched by the TV with the remote held at arm's length, cycling through four different streaming apps and getting a spinning wheel from all of them. \"It's buffering,\" she said, to no one, for the ninth time. In the kitchen, mercifully out of earshot of all of it, Dean was microwaving popcorn with the calm of a man who had opted out of group decisions entirely.",
+  "\"The wifi password's taped to the router,\" Vaughn called out, \"which is on the desk, which is in the bedroom, which none of you are allowed in because it's a disaster in there.\" He went to fetch it himself. Barbara, curled up on the end of his bed with her phone since the film selection had turned into a debate club, patted the mattress beside her. \"I already found it,\" she said. \"Come sit, you're missing the argument out there.\" He sat. Out in the living room the argument was in fact still going — Austin had moved on to accusing Charlotte of hoarding cushions, and Enid had gotten one app to load, only for it to be the wrong one entirely.",
+  "It took Dean arriving with the popcorn, and finding the sofa's third occupant conspicuously missing, to break the mood. The bedroom door was ajar. The router password was still taped exactly where Vaughn had left it, unread."
+ ],
+ "whereabouts": {
+  "A": "Austin was crouched at the living-room shelf, rejecting DVDs one by one to avoid picking a side in the movie argument.",
+  "B": "Barbara was curled up on the end of the bed with her phone, using the film debate as an excuse to get Vaughn alone.",
+  "C": "Charlotte had annexed the only good chair in the living room and was defending it like a throne.",
+  "D": "Dean had quietly excused himself to the kitchen to make popcorn, opting out of the argument entirely.",
+  "E": "Enid was parked in front of the TV, cycling through streaming apps and getting nothing but spinning wheels.",
+  "V": "Vaughn slipped away to the bedroom for the wifi password taped to his desk, and never made it back."
+ },
+ "reveal": "It was Barbara, in the bedroom, on the very bed she'd been sitting on all evening. The phone she'd waved as a distraction became the last thing Vaughn ever looked at; the pillow he never saw coming did the rest. She was back on the sofa before the popcorn finished popping, one streaming app away from a perfect alibi.",
+ "escape": {
+  "generic": "The wifi password is still taped to that desk. Nobody ever did agree on a movie, and somewhere out there the real killer is already halfway through someone else's box set.",
+  "byAccused": {
+   "A": "Austin got hauled off still clutching a DVD nobody owns a player for, loudly explaining that rejecting cushion arrangements is not, legally, a motive.",
+   "C": "Charlotte was pried out of the good chair for questioning, which she considered the real crime of the evening.",
+   "D": "Dean went quietly, popcorn still warm, insisting — accurately, as it happens — that he'd been nowhere near any of it.",
+   "E": "Enid was led away mid-buffer, the fourth streaming app finally loading just as the door closed behind her."
+  }
+ }
+}

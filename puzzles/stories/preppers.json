@@ -1,0 +1,33 @@
+{
+  "id": "preppers",
+  "title": "Preppers",
+  "acts": [
+    "The Bunkerbrook household had prepared for eleven varieties of apocalypse and precisely zero varieties of Tuesday. Out on the grass, Vivianna moved along the shrubbery with a clipboard the size of a paving slab, conducting the Annual Reconciliation of Stores — tin by tin, crate by crate, ponytail whipping in the wind of her own righteousness. Twenty metres uphill, Angelo hummed and loaded the bug-out car, stacking supplies onto the roof rack until the suspension made a noise like a whale apologising. He stood, notably, an arm's length clear of the supply pallet, the way a man stands clear of a thing he does not wish to be photographed next to. Through the window, Friedrich watched the emergency broadcast test with his moustache set to maximum solemnity, and did not once look away, not even when the car outside sank another two inches.",
+    "Upstairs, the readiness protocols were going about as well as ever. Blake lay flat out on the bed with his boots on, insisting that Sleep Endurance was a discipline and that he was, in fact, training extremely hard right now. Carolina stood at the shelf beside him with her glasses pushed up her nose, reading expiry dates aloud in the tone of a woman reading out a will. \"Peaches, twenty-nine. Beans — \" She stopped. She checked the crate. She checked it again. There were, she noted, supposed to be four hundred tins of beans in this house, and by her count the house was running a deficit of three hundred and ninety-eight. In the kitchen, alone at the table in his enormous hat, Greg lowered a spoonful of fifteen-year-old freeze-dried stroganoff, chewed thoughtfully, and declared it \"characterful\" to nobody at all.",
+    "Down in the deep bones of the place, Daryl lay on the bunk with a stopwatch, timing herself doing absolutely nothing in a lockdown-authentic manner, while Edna knelt at the far shelf rearranging the entire preserved-goods inventory into alphabetical order, which put beetroot alarmingly near the front and started a debate that had been running since March. In the bathroom, Howie sat in a chair he had carried in himself, guarding a bath filled to the brim with drinking water and watching a small television he did not trust. Which is why nobody indoors reacted, at first, to the noise from outside: a low, patient, grinding trundle, gathering speed; a long screech of shrubbery; and then, after a considerable pause, a car horn playing eight cheerful notes of a tune nobody could name."
+  ],
+  "whereabouts": {
+    "A": "Angelo was out on the grass loading the bug-out car until its roof rack groaned — standing pointedly clear of the supply pallet, one hand resting very casually on the driver's door.",
+    "B": "Blake was flat on his back on the bed with his boots on, bearded and unbothered, describing his nap to anyone in earshot as 'rest-cycle conditioning'.",
+    "C": "Carolina was at the shelf with her glasses and a clipboard, auditing expiry dates and discovering a catastrophic bean shortfall, while glaring at the man horizontal on the bed behind her.",
+    "D": "Daryl was on the safe-room bunk with a stopwatch, running a lockdown drill that consisted entirely of lying still, plaits arranged, and timing it.",
+    "E": "Edna was on her knees at the shelf beside the crates, alphabetising the preserved goods and arguing the beetroot question with the woman on the bunk.",
+    "F": "Friedrich was standing in the living room three feet from the TV, watching the emergency broadcast test through his moustache with the gravity of a man receiving orders.",
+    "G": "Greg was sitting in a kitchen chair at the table under his enormous hat, taste-testing fifteen-year-old freeze-dried stroganoff and rating it aloud.",
+    "H": "Howie was sitting in a chair he had hauled into the bathroom, guarding the bath he had filled with drinking water and squinting suspiciously at a small TV.",
+    "V": "Vivianna was out among the shrubs with her clipboard, mid-audit of the outdoor stores, counting boxes in a straight line that unfortunately pointed uphill."
+  },
+  "reveal": "It was Angelo, out in the Yard, with the car. He had eaten the four-hundred-tin bean reserve over the course of a long and lonely winter — three hundred and ninety-eight tins, one bowl at a time — and Vivianna's clipboard was eleven crates from proving it. So he loaded the bug-out car until it was heavier than a small moon, aimed it down the slope, released the handbrake, and stepped smartly aside to admire the view. The car set off at the speed of continental drift, which gave everyone a truly generous amount of time to do nothing about it. Vivianna, mid-tally, heard it, turned, said 'that had better be a drill', and was gently and comprehensively removed from the inventory by two tons of preparedness. She left behind a very neat outline, a scatter of tins, and one horn playing a merry little tune.",
+  "escape": {
+    "generic": "The case closed unsolved, the household raised its threat level to Extremely Cross, and the one person who actually did it went right on stockpiling with a clear conscience and an excellent alibi.",
+    "byAccused": {
+      "B": "Blake was hauled off still insisting he was in the middle of a nap so strenuous it constituted a witness statement, while the real culprit helpfully carried his kit bag to the car for him.",
+      "C": "Carolina was led away clutching her expiry-date clipboard and shouting about three hundred and ninety-eight missing tins of beans, which everyone agreed was a very odd thing to shout, and which the actual killer agreed with loudest of all.",
+      "D": "Daryl was arrested with the stopwatch still running, and out of sheer professionalism stopped it on the way out — four minutes eleven, a personal best for a drill she never expected to do for real.",
+      "E": "Edna went quietly, but only after finishing the letter B, and the guilty party sent her a sympathy card and quietly un-alphabetised the whole shelf that evening.",
+      "F": "Friedrich was taken in without ever turning away from the emergency broadcast, having missed the entire arrest, the entire crime, and most of the decade.",
+      "G": "Greg was cuffed at the kitchen table mid-spoonful and asked to bring the stroganoff along, on the grounds that if anything in this house was a murder weapon, it was probably that.",
+      "H": "Howie was marched out of the bathroom protesting that he had been guarding the water supply all afternoon, which was true, useless, and the last honest thing said about the case."
+    }
+  }
+}

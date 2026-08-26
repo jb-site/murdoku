@@ -1,0 +1,341 @@
+{
+ "id": "the-hiking-trip",
+ "title": "The Hiking Trip",
+ "difficulty": "hard",
+ "rooms": {
+  "summit": "Summit",
+  "rangershut": "Ranger's Hut",
+  "windytrail": "Windy Trail",
+  "rockytrail": "Rocky Trail",
+  "pineforest": "Pine Forest",
+  "bearwoods": "Bear Woods",
+  "grove": "Grove",
+  "lake": "Lake",
+  "booth": "Booth"
+ },
+ "generalClues": [
+  "There are two empty rows. Each empty row contains a bear."
+ ],
+ "victim": "V",
+ "murderer": "J",
+ "asciiMapLegend": {
+  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "roomCodes": {
+   "summit": "S",
+   "rangershut": "R",
+   "windytrail": "W",
+   "rockytrail": "Rx1",
+   "pineforest": "P",
+   "bearwoods": "B",
+   "grove": "G",
+   "lake": "L",
+   "booth": "Bx1"
+  },
+  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+ },
+ "asciiMap": "#     #     #     #     S..   S..   S.G   S..   S..   S..   #     #    \n#     #     S..   S..   S..   S..   S..   S..   S..   S..   R..   R..  \n#     #     S..   S..   S..   W..   W..   W..   Rx1.. Rx1.. R.E   R..  \nP..   P..   P..   S..   S..   W.B   B..   B..   B..   Rx1.. G..   G..  \nP..   P..   P..   P..   P..   W..   B..   B..   B..   Rx1.. G..   G.K  \nP..   P..   P..   W..   W..   W..   B..   B..   B..   Rx1.F G..   G..  \nP..   P..   W..   W.A   B..   B..   B..   B..   B..   Rx1.. G..   G..  \nP..   P..   W..   B..   B..   B..   B..   B..   B..   Rx1.. Rx1.. G..  \nP..   W..   W..   B..   B..   B..   B..   B.V   B..   B..   Rx1.. G..  \nP.D   W..   B..   B..   B..   B..   B..   B..   B..   B..   Rx1.. L..  \nP..   W..   B..   B..   B.J   B..   B..   B..   B..   Rx1.. Rx1.. L..  \nP..   W..   Bx1.I Bx1.. Bx1.. Bx1.. B..   B..   Rx1.. Rx1.. L..   L..  \nW..   W..   Bx1.. Bx1.. Bx1.. Bx1.. B..   B..   Rx1.C L..   L..   L..  \nW..   W.H   Bx1.. Bx1.. Bx1.. Bx1.. Rx1.. Rx1.. Rx1.. L..   L..   L..  ",
+ "people": [
+  {
+   "letter": "A",
+   "name": "Aubrey",
+   "role": "suspect",
+   "position": [
+    6,
+    3
+   ],
+   "room": {
+    "id": "windytrail",
+    "name": "Windy Trail"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "B",
+     "name": "Brianna"
+    },
+    {
+     "letter": "H",
+     "name": "Hank"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Aubrey (A) was on the Windy Trail, everyone there wore a cap."
+   ]
+  },
+  {
+   "letter": "B",
+   "name": "Brianna",
+   "role": "suspect",
+   "position": [
+    3,
+    5
+   ],
+   "room": {
+    "id": "windytrail",
+    "name": "Windy Trail"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Aubrey"
+    },
+    {
+     "letter": "H",
+     "name": "Hank"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Brianna (B) was exactly two rows north of Finlay."
+   ]
+  },
+  {
+   "letter": "C",
+   "name": "Clark",
+   "role": "suspect",
+   "position": [
+    12,
+    8
+   ],
+   "room": {
+    "id": "rockytrail",
+    "name": "Rocky Trail"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "F",
+     "name": "Finlay"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Clark (C) was on the Rocky Trail, everyone there wore glasses."
+   ]
+  },
+  {
+   "letter": "D",
+   "name": "Danika",
+   "role": "suspect",
+   "position": [
+    9,
+    0
+   ],
+   "room": {
+    "id": "pineforest",
+    "name": "Pine Forest"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Danika (D) was alone in the Pine Forest."
+   ]
+  },
+  {
+   "letter": "E",
+   "name": "Elias",
+   "role": "suspect",
+   "position": [
+    2,
+    10
+   ],
+   "room": {
+    "id": "rangershut",
+    "name": "Ranger's Hut"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Elias (E) was in the Ranger's Hut."
+   ]
+  },
+  {
+   "letter": "F",
+   "name": "Finlay",
+   "role": "suspect",
+   "position": [
+    5,
+    9
+   ],
+   "room": {
+    "id": "rockytrail",
+    "name": "Rocky Trail"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "C",
+     "name": "Clark"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Finlay (F) \u2014 there was a bear in his column, exactly 4 rows north of him."
+   ]
+  },
+  {
+   "letter": "G",
+   "name": "Gavin",
+   "role": "suspect",
+   "position": [
+    0,
+    6
+   ],
+   "room": {
+    "id": "summit",
+    "name": "Summit"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Gavin (G) was beside a boulder."
+   ]
+  },
+  {
+   "letter": "H",
+   "name": "Hank",
+   "role": "suspect",
+   "position": [
+    13,
+    1
+   ],
+   "room": {
+    "id": "windytrail",
+    "name": "Windy Trail"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Aubrey"
+    },
+    {
+     "letter": "B",
+     "name": "Brianna"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Hank (H) was in the bottom row. His area had at least 3 people in it."
+   ]
+  },
+  {
+   "letter": "I",
+   "name": "Iris",
+   "role": "suspect",
+   "position": [
+    11,
+    2
+   ],
+   "room": {
+    "id": "booth",
+    "name": "Booth"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Iris (I) was sitting in a chair."
+   ]
+  },
+  {
+   "letter": "J",
+   "name": "Joe",
+   "role": "murderer",
+   "position": [
+    10,
+    4
+   ],
+   "room": {
+    "id": "bearwoods",
+    "name": "Bear Woods"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "V",
+     "name": "Vincenza (victim)"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Joe (J) was beside a bear."
+   ],
+   "nearbyObjectTypesForMethod": []
+  },
+  {
+   "letter": "K",
+   "name": "Kobe",
+   "role": "suspect",
+   "position": [
+    4,
+    11
+   ],
+   "room": {
+    "id": "grove",
+    "name": "Grove"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Kobe (K) was in the Grove."
+   ]
+  },
+  {
+   "letter": "V",
+   "name": "Vincenza (victim)",
+   "role": "victim",
+   "position": [
+    8,
+    7
+   ],
+   "room": {
+    "id": "bearwoods",
+    "name": "Bear Woods"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "J",
+     "name": "Joe"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Vincenza (V), the victim, was alone with the murderer."
+   ]
+  }
+ ],
+ "hasPortraits": true,
+ "sourceFile": "source/the-hiking-trip-color.pdf"
+}

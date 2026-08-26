@@ -1,0 +1,27 @@
+{
+  "id": "car-repair",
+  "title": "Car Repair",
+  "acts": [
+    "Vaughn's Auto & Alignment ran on three things: coffee thick enough to patch a tyre, a laminated price list nobody had updated since the moustache came into fashion, and Vaughn himself — dirty-blond, greying moustache, leather jacket worn indoors like a man who might leave at any moment and simply never did. That Tuesday he did not leave. At 11:04 a noise came from the front of the building. It was not a mechanical noise. It was the specific, cartoonish WHUMP of something extremely heavy meeting something extremely not.",
+    "The Garage heard it and did nothing, because the Garage was busy. Anthony — young, blond, magnificently moustached, name patch stitched to a coverall that had never once been clean — was folded into the driver's seat of a sedan he had been \"road-testing\" stationary for forty minutes, one hand on the wheel, making engine noises with his mouth. Brock stood four feet away in an oil slick the size of a small lake, black glasses fogging, insisting he had it under control while sliding a further six inches with every insistence. Emilio, white goatee, plaid flannel, was working his way along the parts shelf with a clipboard, counting the same box of wiper blades three times because Brock kept drifting past and putting him off. Anthony honked. Emilio lost count. Brock travelled another inch.",
+    "Out in the Waiting Area, Diane — cat-eye glasses, purple blouse, four hours into a ninety-minute job — had abandoned the chairs entirely and taken up standing, on the theory that a customer visibly upright is harder to forget about. She had heard the WHUMP too. She assumed it was her repair bill being calculated. Meanwhile Crystal, copper bob, white headband, name tag on straight, was somewhere up front doing what she always did at 11:04 — being extremely, conspicuously seated. By the time anyone thought to check on Vaughn, the leather jacket was still there. The man inside it had been rather comprehensively rearranged, and every single alibi in the building was a spectacular one."
+  ],
+  "whereabouts": {
+    "A": "Anthony had climbed into the customer's car in the Garage to \"listen to the engine\" and had instead spent forty minutes sitting in it going brrrm, which is why his clue is the shortest and his moustache the proudest.",
+    "B": "Brock was standing in the middle of the oil slick he himself had created, glasses fogged, refusing to move because moving was how it had got this big in the first place.",
+    "C": "Crystal was sitting in her chair beside the front table, working out — with a calculator and an unusual amount of enthusiasm — exactly how much Vaughn had skimmed off her commission.",
+    "D": "Diane was standing on the open floor of the Waiting Area beside a perfectly good chair she had given up on, staring at the door and radiating the quiet fury of a woman on hour four of a ninety-minute service.",
+    "E": "Emilio was on the Garage floor beside the parts shelf with a clipboard, doing a stock count that Brock's slow-motion oil-slick voyage and Anthony's horn kept resetting to zero.",
+    "V": "Vaughn was out front beside the table, jacket on, cheerfully explaining to the only other person in the room why her commission had been \"restructured\" — a sentence he did not get to finish."
+  },
+  "reveal": "It was Crystal, in the Reception, with the chair and everything the table was holding up. She never stood, which is the whole trick: the wheeled reception chair took one hard shove off the counter, rolled the length of the desk, and clipped the leg of the table — the one groaning under a decade of laminated quote binders, a display engine block, and the enormous novelty CUSTOMER SATISFACTION trophy Vaughn had bought himself. The entire monument came down in one glorious off-screen avalanche, and Crystal rolled serenely back to her original position, still seated, still smiling, calculator still in hand. Vaughn was flatter than the price list, and considerably more honest.",
+  "escape": {
+    "generic": "The case went cold, the garage reopened under new management, and the real killer kept turning up to work every single day, punctual and beaming.",
+    "byAccused": {
+      "A": "They led Anthony away still making engine noises, which he took as a character reference, while the actual culprit waved him off from behind an alibi nobody thought to shake.",
+      "B": "Brock was hauled off protesting that a man who cannot walk across his own oil slick could hardly ambush anybody, which was true, and did him no good at all, while the real killer said nothing and kept smiling.",
+      "D": "Diane was arrested on the grounds that four hours of waiting is a motive, which it frankly is, and she went quietly — leaving the genuinely guilty party to close up at five as usual.",
+      "E": "Emilio went down for it clutching his clipboard, still three wiper blades short in the count, and the person who actually did it very kindly offered to finish the stock take for him."
+    }
+  }
+}
