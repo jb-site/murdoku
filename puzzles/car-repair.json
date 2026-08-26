@@ -56,10 +56,71 @@
   ],
   "art": {
     "board": "art/car-repair/board.png",
-    "boardCrop": { "x": 0.3006, "y": 0.3181, "w": 0.6196, "h": 0.5146 },
+    "boardCrop": {
+      "x": 0.3006,
+      "y": 0.3181,
+      "w": 0.6196,
+      "h": 0.5146
+    },
     "calibratedFor": {
       "rows": 6,
       "cols": 6
+    },
+    "portraits": {
+      "A": {
+        "src": "art/car-repair/A.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "C": {
+        "src": "art/car-repair/C.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "B": {
+        "src": "art/car-repair/B.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "D": {
+        "src": "art/car-repair/D.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "V": {
+        "src": "art/car-repair/V.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "E": {
+        "src": "art/car-repair/E.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      }
     }
   }
 }

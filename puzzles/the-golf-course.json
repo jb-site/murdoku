@@ -1763,6 +1763,152 @@
     "calibratedFor": {
       "rows": 16,
       "cols": 16
+    },
+    "portraits": {
+      "A": {
+        "src": "art/the-golf-course/A.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "B": {
+        "src": "art/the-golf-course/B.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "C": {
+        "src": "art/the-golf-course/C.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "D": {
+        "src": "art/the-golf-course/D.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "E": {
+        "src": "art/the-golf-course/E.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "F": {
+        "src": "art/the-golf-course/F.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "G": {
+        "src": "art/the-golf-course/G.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "H": {
+        "src": "art/the-golf-course/H.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "I": {
+        "src": "art/the-golf-course/I.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "J": {
+        "src": "art/the-golf-course/J.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "K": {
+        "src": "art/the-golf-course/K.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "L": {
+        "src": "art/the-golf-course/L.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "M": {
+        "src": "art/the-golf-course/M.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "N": {
+        "src": "art/the-golf-course/N.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "O": {
+        "src": "art/the-golf-course/O.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "V": {
+        "src": "art/the-golf-course/V.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      }
     }
   }
 }
