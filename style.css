@@ -637,11 +637,15 @@ body.art-mode.art-calibrate .layer-cells .cell {
 body.art-mode.art-calibrate .layer-art img {
   opacity: var(--calib-art-opacity, 1);
 }
-body.art-mode.art-calibrate .layer-cells,
-body.art-mode.art-calibrate .layer-cells .cell {
+/* Pan affordance is Art-tab-only (the JS pan/drag handlers are gated on
+   EDIT.tool === "art"), NOT tied to .art-calibrate generally — .art-calibrate now also
+   applies on the Rooms/Objects tabs (see applyViewPrefs() in app.js), where nothing
+   would actually pan. */
+body.art-tab .layer-cells,
+body.art-tab .layer-cells .cell {
   cursor: grab;
 }
-body.art-mode.art-calibrate .layer-cells:active {
+body.art-tab .layer-cells:active {
   cursor: grabbing;
 }
 
