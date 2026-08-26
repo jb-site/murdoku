@@ -800,3 +800,46 @@ proceeds.
 **Regression check**: room drag-paint and multi-cell object place + erase re-verified in
 the browser after these changes (pointer-event simulation over `.cell` elements with real
 `getBoundingClientRect()` coordinates, not calling internal functions directly).
+
+### Follow-up (2026-08-26): the Art tab as a transcription check — object overlay + opacity sliders
+
+The author wants the Art tab to double as a way to confirm the puzzle *data* — not just
+the crop — matches the photo: are the right objects in the right cells? Two additions,
+both edit-mode only, both pure view state (never touch `PUZZLE` or leak into "Copy
+boardCrop").
+
+1. **Object art now renders on top of the source photo while calibrating.**
+   `body.art-mode .object-cell .object-art { display: none }` is exactly right for
+   *players* — immersive mode deliberately shows the artwork's own drawn furniture
+   instead of the app's SVGs — so it's untouched. A new rule scoped to
+   `body.art-mode.art-calibrate` (the class `applyViewPrefs()` already sets for edit
+   mode + the Art tab, and only there) re-shows it with 4 classes of specificity beating
+   the 3-class `display:none` rule regardless of source order, so no `!important` tug of
+   war. Room labels stay hidden in this mode too — not asked for, left alone.
+
+2. **Three opacity sliders — Art / Grid / Objects — in the Art tab**, driving three CSS
+   custom properties (`--calib-art-opacity/-grid-opacity/-obj-opacity`) set on `#grid` by
+   `applyArtCalibView()`, read by the `body.art-mode.art-calibrate` rules in style.css.
+   A slider drag is a `var()` write, not a re-render. "Grid" replaces the old hardcoded
+   `opacity: 0.5` on `.layer-cells .cell` — that value is now just the slider's default,
+   read live instead of baked in. Defaults: Art 100%, Grid 50%, Objects 100% (matches the
+   pre-existing calibration look exactly, so nothing changes until a slider moves), plus a
+   "↺ Reset opacities" button. Persisted under its own `murdoku:artCalibView` key — an
+   authoring preference, deliberately not folded into `murdoku:viewPrefs` (player display
+   state) — and applied at boot so it's already in place before any puzzle loads.
+
+Both gated by the existing `!PUZZLE.art?.board` early-return in `buildArtPanel()`: no
+board art, no sliders, same as the rest of the Art tab.
+
+**Verified in the browser** (Netflix and Kill — bed, chairs, TV, shelf, table, plant):
+object SVGs render over the photo at the calibration defaults; each slider taken to its
+extremes (0%/100%) changes only its own layer, confirmed via computed `--calib-*-opacity`
+on `#grid`; Reset restores 100/50/100 and the persisted value; the boardCrop copy text
+contains only `x/y/w/h`, no opacity keys. Exited edit mode and turned on Board art as a
+**player**: `body` classes were `art-mode` with no `art-calibrate`, `.object-art`
+computed `display: none`, and `#layerLabels` computed `display: none` — pixel-identical
+to before this change (the room-name pills visible in that screenshot are baked into the
+source photo itself, not the app's label layer).
+
+**Regression check**: room drag-paint and multi-cell object place + erase re-verified
+again in the browser after these changes, same method as above.

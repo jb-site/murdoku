@@ -585,6 +585,16 @@ body.art-mode .layer-labels {
 body.art-mode .object-cell .object-art {
   display: none;
 }
+/* The Art tab doubles as a transcription check: show the app's own object art ON TOP
+   of the source artwork so the author can confirm the puzzle data has the right
+   furniture in the right cells. Scoped to .art-calibrate (edit mode + Art tab is the
+   only time that class is set — see applyViewPrefs()), so player-facing art mode is
+   untouched: the display:none rule above still applies there. Specificity here (4
+   classes) beats the display:none rule above (3 classes) regardless of source order. */
+body.art-mode.art-calibrate .object-cell .object-art {
+  display: block;
+  opacity: var(--calib-obj-opacity, 1);
+}
 /* :not(.art-calibrate) — the editor's Art tab wants the room tints and the real room
    borders LEFT IN (at half opacity, below) so misalignment against the artwork's own
    cell boundaries is obvious. Both are inline per-cell styles, so once !important has
@@ -602,8 +612,16 @@ body.art-mode .void-cell {
 body.art-mode:not(.art-calibrate) .cell {
   border-color: rgba(255, 255, 255, 0.22) !important;
 }
+/* Grid opacity slider (Art tab). --calib-grid-opacity is set on #grid by
+   applyArtCalibView() in app.js; 0.5 here is just the CSS-side fallback for the one
+   frame before JS has run, and matches ART_CALIB_DEFAULTS.grid. */
 body.art-mode.art-calibrate .layer-cells .cell {
-  opacity: 0.5;
+  opacity: var(--calib-grid-opacity, 0.5);
+}
+/* Art opacity slider (Art tab) — the source photo itself. Untouched in player art
+   mode: outside .art-calibrate this is simply always 1 (no slider sets the variable). */
+body.art-mode.art-calibrate .layer-art img {
+  opacity: var(--calib-art-opacity, 1);
 }
 body.art-mode.art-calibrate .layer-cells,
 body.art-mode.art-calibrate .layer-cells .cell {
@@ -840,6 +858,27 @@ body.art-pick .layer-cells .cell {
 .art-cell-note { color: var(--muted); font-size: 0.8rem; font-family: ui-monospace, monospace; }
 .art-cell-note.off-square { color: var(--x-color); }
 .art-lock-row label { cursor: pointer; }
+.art-opacity-row {
+  align-items: center;
+  padding: 4px 0;
+}
+.art-opacity-row label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.art-opacity-row input[type="range"] {
+  width: 100px;
+  accent-color: var(--accent);
+}
+.art-opacity-row .art-op-value {
+  font-family: ui-monospace, monospace;
+  color: var(--text);
+  min-width: 2.5em;
+  text-align: right;
+}
 
 /* Registered pick points. Grid markers (snapped to an intersection, so exact) and
    artwork markers are deliberately different colours — they are different spaces. */

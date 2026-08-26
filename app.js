@@ -1984,6 +1984,48 @@ function saveViewPrefs() {
   }
 }
 
+// --- Art-calibrate opacity (Art tab, edit mode only) ------------------------
+//
+// An authoring preference, not player display state — deliberately its own
+// localStorage key rather than folding into murdoku:viewPrefs above. Drives three CSS
+// custom properties set on #grid (--calib-art-opacity / --calib-grid-opacity /
+// --calib-obj-opacity), read by the body.art-mode.art-calibrate rules in style.css, so
+// dragging a slider is a var() update — no re-render, no touch to PUZZLE or the
+// exported JSON.
+const ART_CALIB_DEFAULTS = { art: 1, grid: 0.5, objects: 1 };
+let artCalibView = { ...ART_CALIB_DEFAULTS };
+
+function loadArtCalibView() {
+  try {
+    const raw = localStorage.getItem("murdoku:artCalibView");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      const clamp01 = (v, d) => (typeof v === "number" && v >= 0 && v <= 1 ? v : d);
+      artCalibView = {
+        art: clamp01(parsed.art, ART_CALIB_DEFAULTS.art),
+        grid: clamp01(parsed.grid, ART_CALIB_DEFAULTS.grid),
+        objects: clamp01(parsed.objects, ART_CALIB_DEFAULTS.objects),
+      };
+    }
+  } catch (err) {
+    console.warn("Couldn't load art-calibrate opacity:", err);
+  }
+}
+
+function saveArtCalibView() {
+  try {
+    localStorage.setItem("murdoku:artCalibView", JSON.stringify(artCalibView));
+  } catch (err) {
+    console.warn("Couldn't save art-calibrate opacity:", err);
+  }
+}
+
+function applyArtCalibView() {
+  gridEl.style.setProperty("--calib-art-opacity", artCalibView.art);
+  gridEl.style.setProperty("--calib-grid-opacity", artCalibView.grid);
+  gridEl.style.setProperty("--calib-obj-opacity", artCalibView.objects);
+}
+
 function applyViewPrefs() {
   document.body.classList.toggle("color-pencils", viewPrefs.colorPencils);
   document.body.classList.toggle("show-player-notes", viewPrefs.playerNotes);
@@ -2607,6 +2649,44 @@ function buildArtPanel() {
     <p class="art-copy-status" id="artCopyStatus"></p>
   `;
   editorDetailsEl.appendChild(saveInfo);
+
+  // Three independent opacity sliders so the Art tab can double as a transcription
+  // check: fade the photo and/or the room tints down while bringing the app's own
+  // object art up, to confirm the puzzle data has the right furniture in the right
+  // cells against the source. Pure view state — see the module comment at
+  // ART_CALIB_DEFAULTS — so it's never part of what Copy boardCrop emits.
+  const opacityRow = document.createElement("div");
+  opacityRow.className = "editor-row art-opacity-row";
+  opacityRow.innerHTML =
+    ["art", "grid", "objects"].map((k) =>
+      `<label>${k[0].toUpperCase()}${k.slice(1)}` +
+      `<input type="range" min="0" max="100" step="1" data-op="${k}">` +
+      `<span class="art-op-value" data-op-value="${k}"></span></label>`
+    ).join("") +
+    `<button type="button" class="tool-btn" id="artOpResetBtn" title="Reset to defaults (Art 100%, Grid 50%, Objects 100%)">↺ Reset opacities</button>`;
+  editorDetailsEl.appendChild(opacityRow);
+  const syncOpacityUI = () => {
+    ["art", "grid", "objects"].forEach((k) => {
+      opacityRow.querySelector(`[data-op="${k}"]`).value = Math.round(artCalibView[k] * 100);
+      opacityRow.querySelector(`[data-op-value="${k}"]`).textContent = `${Math.round(artCalibView[k] * 100)}%`;
+    });
+  };
+  opacityRow.querySelectorAll("[data-op]").forEach((input) => {
+    input.addEventListener("input", () => {
+      artCalibView[input.dataset.op] = input.valueAsNumber / 100;
+      opacityRow.querySelector(`[data-op-value="${input.dataset.op}"]`).textContent = `${input.valueAsNumber}%`;
+      applyArtCalibView();
+      saveArtCalibView();
+    });
+  });
+  opacityRow.querySelector("#artOpResetBtn").addEventListener("click", () => {
+    artCalibView = { ...ART_CALIB_DEFAULTS };
+    syncOpacityUI();
+    applyArtCalibView();
+    saveArtCalibView();
+  });
+  syncOpacityUI();
+
   controls.querySelectorAll("[data-zoom]").forEach((btn) => {
     btn.addEventListener("click", () => zoomArt(+btn.dataset.zoom));
   });
@@ -2676,6 +2756,7 @@ function buildArtPanel() {
   updateArtCellNote();
   updateArtButtons();
   updateArtCopyStatus();
+  applyArtCalibView();
 }
 
 // The three modes are mutually exclusive, and the panel is rebuilt from scratch after a
@@ -3756,6 +3837,8 @@ async function boot() {
   loadSplitPref();
   loadViewPrefs();
   applyViewPrefs();
+  loadArtCalibView();
+  applyArtCalibView();
   buildLegend();
 
   let manifest;
