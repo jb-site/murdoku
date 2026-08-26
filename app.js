@@ -733,7 +733,15 @@ const prefPortraitsEl = document.getElementById("prefPortraits");
 const prefPortraitsLabelEl = document.getElementById("prefPortraitsLabel");
 const prefArtModeEl = document.getElementById("prefArtMode");
 const prefArtModeLabelEl = document.getElementById("prefArtModeLabel");
+const editArtModeEl = document.getElementById("editArtMode");
+const editArtModeLabelEl = document.getElementById("editArtModeLabel");
 const playerPanelEl = document.getElementById("playerPanel");
+const solveBtn = document.getElementById("solveBtn");
+const verdictBackdropEl = document.getElementById("verdictBackdrop");
+const verdictPanelEl = document.getElementById("verdictPanel");
+const verdictTitleEl = document.getElementById("verdictTitle");
+const verdictBodyEl = document.getElementById("verdictBody");
+const verdictDismissBtn = document.getElementById("verdictDismissBtn");
 
 clearBtn.addEventListener("click", () => {
   if (!confirm("Clear the whole grid?")) return;
@@ -1273,6 +1281,12 @@ function makeHeaderButton(kind, index, gridRow, gridColumn) {
 // Rewrites cell content (definite letter / X / pencil marks) after a mutation.
 // Does not touch DOM structure or listeners.
 function renderMarks() {
+  // Any grid mutation invalidates a previous verdict (a stale "you were wrong" ring on a
+  // cell the player has since changed would be actively misleading) and any in-flight
+  // Solved!? check that started before this mutation (see onSolveClick's generation guard).
+  verdict = null;
+  gridGeneration++;
+
   for (let r = 0; r < PUZZLE.rows; r++) {
     for (let c = 0; c < PUZZLE.cols; c++) {
       const cell = grid[r][c];
@@ -1308,6 +1322,7 @@ function renderMarks() {
     }
   }
   updatePlacedStates();
+  updateSolveButton();
 }
 
 // Suspects with a definite placement somewhere on the board right now. Derived from `grid`
@@ -1364,6 +1379,15 @@ function applyHighlights() {
       const pencilSpan = markEl.querySelector(`.pencil-grid span[data-letter="${highlightLetter}"]`);
       markEl.querySelectorAll(".pencil-grid span").forEach((s) => s.classList.remove("pencil-highlighted"));
       if (highlightLetter && pencilSpan) pencilSpan.classList.add("pencil-highlighted");
+
+      // Solved!? verdict feedback — set by checkSolution()'s two checks, cleared at the top
+      // of renderMarks() on the next mutation. The wrongly-accused suspect (if any) gets a
+      // distinct treatment from the merely-misplaced.
+      const key = `${r},${c}`;
+      const isAccused = !!verdict && verdict.accusedCell === key;
+      const isWrong = !!verdict && !isAccused && verdict.cells.has(key);
+      markEl.classList.toggle("verdict-accused", isAccused);
+      markEl.classList.toggle("verdict-wrong", isWrong);
     }
   }
 
@@ -1391,6 +1415,281 @@ function applyHighlights() {
     btn.classList.toggle("no-op", dead);
   });
 }
+
+// --- Solving: completion detection, the two checks, and the verdict panel -----------------
+//
+// `puzzles/solutions/<id>.json` is fetched lazily (only on a Solved!? click, never at puzzle
+// load) and kept out of `puzzles/<id>.json` entirely — see CLAUDE.md's "Solving and the
+// verdict" section for why. `solutionCache` remembers the result (or the string "none" for a
+// 404/parse failure) per puzzle id so repeat clicks don't re-fetch.
+const solutionCache = new Map();
+
+// Bumped by every renderMarks() call (i.e. every grid mutation, including undo/load/edit-mode
+// transitions). onSolveClick() snapshots this before its await and bails if it's moved on —
+// the player switched puzzles or changed the grid mid-flight.
+let gridGeneration = 0;
+
+// null, or { status, cells: Set("r,c") of wrongly-placed suspects, accusedCell: "r,c"|null,
+// murderer, lines }. Set by checkSolution()/findConflicts(), read by applyHighlights(),
+// cleared at the top of every renderMarks().
+let verdict = null;
+
+function isComplete() {
+  if (!PUZZLE) return false;
+  const placed = getPlacedLetters();
+  return PUZZLE.suspects.every((l) => placed.has(l));
+}
+
+function updateSolveButton() {
+  if (!solveBtn) return;
+  if (EDIT || !PUZZLE) {
+    solveBtn.hidden = true;
+    solveBtn.classList.remove("solve-btn-attention");
+    return;
+  }
+  const shouldShow = isComplete();
+  const wasHidden = solveBtn.hidden;
+  solveBtn.hidden = !shouldShow;
+  if (shouldShow && wasHidden) {
+    // Restart the one-shot attention animation even if the class never left (e.g. two
+    // renders in a row while already shown, which can't reach this branch, but stays cheap).
+    solveBtn.classList.remove("solve-btn-attention");
+    void solveBtn.offsetWidth;
+    solveBtn.classList.add("solve-btn-attention");
+  } else if (!shouldShow) {
+    solveBtn.classList.remove("solve-btn-attention");
+  }
+}
+
+function suspectFirstName(letter) {
+  const name = PUZZLE.names?.[letter] || letter;
+  return name.replace(/\s*\(victim\)\s*$/i, "");
+}
+
+function findLetterCell(letter) {
+  for (let r = 0; r < PUZZLE.rows; r++) {
+    for (let c = 0; c < PUZZLE.cols; c++) {
+      if (grid[r][c].definite === letter) return [r, c];
+    }
+  }
+  return null;
+}
+
+// Structural check — reachable in normal play (see CLAUDE.md): placeDefinitely() doesn't
+// clear a suspect's earlier placement, and a hold on an already-crossed cell still places, so
+// two people can end up sharing a row/column, or the same letter can appear twice.
+function findConflicts() {
+  const byRow = new Map(), byCol = new Map(), byLetter = new Map();
+  const cells = new Set();
+
+  for (let r = 0; r < PUZZLE.rows; r++) {
+    for (let c = 0; c < PUZZLE.cols; c++) {
+      const letter = grid[r][c].definite;
+      if (!letter) continue;
+      const entry = { letter, r, c };
+      if (!byRow.has(r)) byRow.set(r, []);
+      byRow.get(r).push(entry);
+      if (!byCol.has(c)) byCol.set(c, []);
+      byCol.get(c).push(entry);
+      if (!byLetter.has(letter)) byLetter.set(letter, []);
+      byLetter.get(letter).push(entry);
+    }
+  }
+
+  const lines = [];
+  for (const [r, entries] of byRow) {
+    if (entries.length < 2) continue;
+    entries.forEach((e) => cells.add(`${e.r},${e.c}`));
+    lines.push(`${entries.map((e) => suspectFirstName(e.letter)).join(" and ")} are both in row ${r + 1}.`);
+  }
+  for (const [c, entries] of byCol) {
+    if (entries.length < 2) continue;
+    entries.forEach((e) => cells.add(`${e.r},${e.c}`));
+    lines.push(`${entries.map((e) => suspectFirstName(e.letter)).join(" and ")} are both in column ${c + 1}.`);
+  }
+  for (const [letter, entries] of byLetter) {
+    if (entries.length < 2) continue;
+    entries.forEach((e) => cells.add(`${e.r},${e.c}`));
+    lines.push(`${suspectFirstName(letter)} is in two places at once.`);
+  }
+
+  return { cells, lines };
+}
+
+async function fetchSolution(puzzleId) {
+  if (solutionCache.has(puzzleId)) return solutionCache.get(puzzleId);
+  let result = "none";
+  try {
+    const res = await fetch(`puzzles/solutions/${puzzleId}.json`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.placements) result = data;
+    }
+  } catch (err) {
+    result = "none";
+  }
+  solutionCache.set(puzzleId, result);
+  return result;
+}
+
+// Compares the board cell-for-cell against the official solution and classifies the outcome,
+// most-specific-first (see CLAUDE.md / PLAN-solve-and-story.md Phase C for the table).
+function buildSolutionVerdict(solution) {
+  const wrongCells = new Set();
+  let anyWrong = false;
+  PUZZLE.suspects.forEach((letter) => {
+    const target = solution.placements[letter];
+    if (!target) return;
+    const cur = findLetterCell(letter);
+    if (!cur || cur[0] !== target[0] || cur[1] !== target[1]) {
+      anyWrong = true;
+      if (cur) wrongCells.add(`${cur[0]},${cur[1]}`);
+    }
+  });
+
+  if (!anyWrong) {
+    return { status: "correct", cells: new Set(), accusedCell: null, murderer: solution.murderer };
+  }
+
+  const vCell = findLetterCell("V");
+  if (!vCell || vCell[0] !== solution.placements.V[0] || vCell[1] !== solution.placements.V[1]) {
+    return { status: "body", cells: wrongCells, accusedCell: null };
+  }
+
+  const vRoom = PUZZLE.roomGrid[vCell[0]][vCell[1]];
+  const inRoom = [];
+  PUZZLE.suspects.forEach((letter) => {
+    if (letter === "V") return;
+    const cell = findLetterCell(letter);
+    if (cell && PUZZLE.roomGrid[cell[0]][cell[1]] === vRoom) inRoom.push({ letter, cell });
+  });
+
+  if (inRoom.length === 1 && inRoom[0].letter !== solution.murderer) {
+    const [ar, ac] = inRoom[0].cell;
+    return { status: "wrong-arrest", cells: wrongCells, accusedCell: `${ar},${ac}`, accusedLetter: inRoom[0].letter };
+  }
+  if (inRoom.length === 0) {
+    return { status: "no-accusation", cells: wrongCells, accusedCell: null };
+  }
+  return { status: "generic", cells: wrongCells, accusedCell: null };
+}
+
+function renderVerdictContent(v) {
+  const victimName = suspectFirstName("V");
+  let title, bodyHtml;
+
+  switch (v.status) {
+    case "correct": {
+      const vCell = findLetterCell("V");
+      const roomName = PUZZLE.rooms[PUZZLE.roomGrid[vCell[0]][vCell[1]]]?.name || "";
+      title = "Case closed.";
+      bodyHtml = `<p>It was ${escapeHtml(suspectFirstName(v.murderer))}, in the ${escapeHtml(roomName)}, and you had every last one of them exactly where they stood.</p>`;
+      break;
+    }
+    case "conflict": {
+      title = "The criminal escaped!";
+      bodyHtml =
+        `<p>Two people can't have been in the same place at once — the constabulary took one look ` +
+        `at your seating plan, lost the thread entirely, and the murderer strolled out during the argument.</p>` +
+        `<ul>${v.lines.map((l) => `<li>${escapeHtml(l)}</li>`).join("")}</ul>`;
+      break;
+    }
+    case "no-solution": {
+      title = "Nothing to check against.";
+      bodyHtml =
+        `<p>Every suspect is placed and the grid plays by the rules, but this puzzle's official ` +
+        `solution hasn't been recorded yet, so the arrest can't be confirmed.</p>`;
+      break;
+    }
+    case "body": {
+      title = "You don't even know where the body is.";
+      bodyHtml = `<p>${escapeHtml(victimName)} wasn't there. Whatever you've reconstructed, it isn't this evening.</p>`;
+      break;
+    }
+    case "wrong-arrest": {
+      const accusedName = suspectFirstName(v.accusedLetter);
+      title = "You arrested the wrong person.";
+      bodyHtml =
+        `<p>${escapeHtml(accusedName)} was the only one in the room with ${escapeHtml(victimName)}, so ` +
+        `${escapeHtml(accusedName)} was the one they took away — innocent, as it happens, while somewhere ` +
+        `out there the real culprit is having a very good evening.</p>`;
+      break;
+    }
+    case "no-accusation": {
+      title = "Case closed, unsolved.";
+      bodyHtml = `<p>You've left ${escapeHtml(victimName)} entirely alone — no witness, no suspect, nobody to arrest.</p>`;
+      break;
+    }
+    default: {
+      title = "The criminal escaped!";
+      bodyHtml = `<p>Some of them weren't where you put them, and in the confusion the murderer walked straight out.</p>`;
+    }
+  }
+
+  verdictTitleEl.textContent = title;
+  verdictBodyEl.innerHTML = bodyHtml;
+  // "Keep trying" is only right when there's something left to try — on a correct solve it
+  // reads as though the win didn't count, and on a puzzle with no recorded solution there's
+  // nothing to try again.
+  verdictDismissBtn.textContent =
+    v.status === "correct" ? "Nice." : v.status === "no-solution" ? "Fair enough" : "Keep trying";
+}
+
+function openVerdictPanel() {
+  verdictBackdropEl.hidden = false;
+  verdictDismissBtn.focus();
+}
+
+function closeVerdictPanel() {
+  verdictBackdropEl.hidden = true;
+}
+
+function showVerdict(v) {
+  verdict = v;
+  applyHighlights();
+  renderVerdictContent(v);
+  openVerdictPanel();
+}
+
+async function onSolveClick() {
+  if (EDIT || !PUZZLE || solveBtn.disabled) return;
+
+  const conflicts = findConflicts();
+  if (conflicts.cells.size > 0) {
+    // Structural check first, no fetch: a scrambled grid must never leak the solution's shape.
+    showVerdict({ status: "conflict", cells: conflicts.cells, accusedCell: null, lines: conflicts.lines });
+    return;
+  }
+
+  const puzzleId = PUZZLE.id;
+  const generation = gridGeneration;
+  solveBtn.disabled = true;
+  let solution;
+  try {
+    solution = await fetchSolution(puzzleId);
+  } finally {
+    solveBtn.disabled = false;
+  }
+
+  // The player may have switched puzzles or mutated the grid while the fetch was in flight.
+  if (!PUZZLE || PUZZLE.id !== puzzleId || gridGeneration !== generation) return;
+
+  if (solution === "none") {
+    showVerdict({ status: "no-solution", cells: new Set(), accusedCell: null });
+    return;
+  }
+
+  showVerdict(buildSolutionVerdict(solution));
+}
+
+solveBtn.addEventListener("click", onSolveClick);
+verdictDismissBtn.addEventListener("click", closeVerdictPanel);
+verdictBackdropEl.addEventListener("click", (e) => {
+  if (e.target === verdictBackdropEl) closeVerdictPanel();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !verdictBackdropEl.hidden) closeVerdictPanel();
+});
 
 // --- Gesture handling (pointer events: short click = pencil, hold = place, drag = paint) --
 
@@ -2050,6 +2349,16 @@ function applyViewPrefs() {
   prefPortraitsLabelEl.hidden = !PUZZLE?.art?.portraits;
   prefArtModeEl.checked = viewPrefs.artMode;
   prefArtModeLabelEl.hidden = !hasBoard;
+  // Same checkbox, same viewPrefs.artMode, mirrored into the editor bar (the toolbar's
+  // #viewOptions is hidden entirely in edit mode) so art can be switched off during
+  // Rooms/Objects/Details editing to see the board exactly as it plays. On the Art tab
+  // itself art is force-enabled (see `calibrating` above) so the control is disabled,
+  // not hidden, with a title explaining why — hiding it would reflow the bar on every
+  // tab switch.
+  editArtModeEl.checked = viewPrefs.artMode;
+  editArtModeEl.disabled = calibrating;
+  editArtModeEl.title = calibrating ? "Art is always shown while calibrating on the Art tab" : "";
+  editArtModeLabelEl.hidden = !hasBoard;
 }
 
 prefColorPencilsEl.addEventListener("change", () => {
@@ -2064,6 +2373,11 @@ prefPortraitsEl.addEventListener("change", () => {
 });
 prefArtModeEl.addEventListener("change", () => {
   viewPrefs.artMode = prefArtModeEl.checked;
+  applyViewPrefs();
+  saveViewPrefs();
+});
+editArtModeEl.addEventListener("change", () => {
+  viewPrefs.artMode = editArtModeEl.checked;
   applyViewPrefs();
   saveViewPrefs();
 });
@@ -2137,6 +2451,7 @@ function blankPuzzle() {
 }
 
 function enterEditMode(sourcePuzzle) {
+  closeVerdictPanel(); // a draft board can't be "solved" — don't leave a stale verdict up
   // artBase is the "Reset" target for the Art tab: the boardCrop as extracted by
   // tools/extract_art.py, captured before any nudging. Cloned so later mutation of
   // PUZZLE.art.boardCrop can't reach back into it.

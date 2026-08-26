@@ -60,6 +60,8 @@
       <button class="tool-btn edit-tab" data-tab="objects">Objects</button>
       <button class="tool-btn edit-tab" data-tab="details">Details</button>
       <button class="tool-btn edit-tab" data-tab="art">Art</button>
+      <span class="editor-spacer"></span>
+      <label id="editArtModeLabel" hidden><input type="checkbox" id="editArtMode"> Board art</label>
     </div>
     <div class="editor-palette" id="editorPalette"></div>
     <div class="editor-details" id="editorDetails" hidden></div>
@@ -82,6 +84,7 @@
         <div id="layerHeaders" class="grid-layer layer-headers"></div>
       </div>
       <p id="status" class="status-line"></p>
+      <button type="button" id="solveBtn" class="solve-btn" hidden>Solved!?</button>
     </section>
 
     <div class="resize-handle" id="resizeHandle" role="separator" aria-orientation="vertical"
@@ -101,6 +104,16 @@
 
   <section class="legend" id="legend"></section>
 </main>
+
+<div id="verdictBackdrop" class="verdict-backdrop" hidden>
+  <div id="verdictPanel" class="verdict-panel" role="dialog" aria-modal="true" aria-labelledby="verdictTitle">
+    <h2 id="verdictTitle"></h2>
+    <div id="verdictBody" class="verdict-body"></div>
+    <div class="verdict-actions">
+      <button type="button" id="verdictDismissBtn" class="tool-btn">Keep trying</button>
+    </div>
+  </div>
+</div>
 
 <script src="app.js"></script>
 </body>
