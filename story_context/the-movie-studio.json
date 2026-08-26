@@ -22,7 +22,7 @@
  "victim": "V",
  "murderer": "N",
  "asciiMapLegend": {
-  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "format": "each cell is <room-code><object-code-or-.><ground-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
   "roomCodes": {
    "western": "W",
    "romance": "R",
@@ -36,9 +36,9 @@
    "war": "Wx2",
    "scifi": "Sx1"
   },
-  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+  "note": "object-code is the object type's first letter lowercase, ground-code is the ground type's first letter uppercase (e.g. a statue on a carpet is s + C); see people[].onObjectType / onGroundType / besideObjectTypes for full type names instead of decoding the code"
  },
- "asciiMap": "W..   W..   Wm.   W..   Wc.   R..   R..   R..   Rf.   E..   E.E   E..   Er.   E..   Er.   E..  \nWt.   Wc.   W..   Wb.   Wt.   R..   Rf.   Rt.   R.D   E..   Ec.   Er.   E..   E..   E..   Et.  \nWt.   W..   W..   W..   Wt.   R.C   Rc.   Rc.   Rf.   Et.   E..   E..   E..   E..   Et.   E..  \nWm.   W..   Wc.   W.J   Wt.   Rc.   R..   R..   R..   Et.   E..   Et.   Ec.   E..   Et.   E..  \nW..   Wb.   W..   W..   Wb.   R..   R..   R..   R..   E.M   Ec.   Et.   E..   E..   Ec.   E..  \nW..   W..   W..   Wc.   W.F   Wx1.. Wx1.. Wx1.. Wx1.. E..   Et.   E..   Et.   E..   E..   E..  \nM..   McO   Mt.   Wx1.. Wx1.. Wx1.. Wx1.. Wx1.. Wx1.. Wx1.. Wx1.. Hs.   Hb.   Hb.   H..   H..  \nM..   M..   Ms.   Wx1.. Wx1.. Wx1.. Wx1.. Wx1.. Wx1.. Wx1.. Wx1.. H.G   H..   Ht.   Ht.   Hc.  \nM..   Mc.   Mt.   Wx1.. Wx1.. Ex1t. Ex1.. Ex1.. Ex1t. Wx1.. Wx1.. Ht.   Hc.   HcH   H..   H..  \nM..   M..   M..   Wx1.. Wx1.. Ex1t. Ex1.B Ex1c. Ex1t. Wx1.. Wx1.. Hs.   Hs.   H..   H..   H..  \nM..   Mc.   Mt.   Wx1.. Wx1.. Ex1t. Ex1.. Ex1c. Ex1t. Wx1.. Wx1.. Wx2.. Wx2r. Wx2.. Wx2.. Wx2.K\nCc.   Cs.   Cs.   Cc.   Wx1.. Ex1t. Ex1.. Ex1.. Ex1t. Wx1.. Wx1.. Wx2.. Wx2.L Wx2r. Wx2.. Wx2c.\nC..   C..   C..   C..   Wx1.. Wx1.. Sx1t. Sx1t. Sx1.. Sx1.. Sx1.. Sx1t. Wx2.. Wx2.. Wx2mI Wx2..\nS.V   S..   S..   Ss.   Wx1.. Wx1.. Sx1.. Sx1t. Sx1.. Sx1t. Sx1.. Sx1.. Wx2r. Wx2.. Wx2.. Wx2..\nSt.   S..   SbN   S..   Wx1.. Wx1.. Sx1c. Sx1.. Sx1.. Sx1t. Sx1.. Sx1.. Wx2.. Wx2.. Wx2r. Wx2..\nS..   S..   Sb.   S..   Wx1.. Wx1.. Sx1t. Sx1.A Sx1c. Sx1.. Sx1.. Sx1t. Wx2.. Wx2.. Wx2r. Wx2r.",
+ "asciiMap": "W...   W...   Wm..   W...   Wc..   R...   R...   R...   Rf..   E...   E..E   E...   Er..   E...   Er..   E...  \nWt..   Wc..   W...   Wb..   Wt..   R...   Rf..   Rt..   R..D   E...   Ec..   Er..   E...   E...   E...   Et..  \nWt..   W...   W...   W...   Wt..   R..C   Rc..   Rc..   Rf..   Et..   E...   E...   E...   E...   Et..   E...  \nWm..   W...   Wc..   W..J   Wt..   Rc..   R...   R...   R...   Et..   E...   Et..   Ec..   E...   Et..   E...  \nW...   Wb..   W...   W...   Wb..   R...   R...   R...   R...   E..M   Ec..   Et..   E...   E...   Ec..   E...  \nW...   W...   W...   Wc..   W..F   Wx1... Wx1... Wx1... Wx1... E...   Et..   E...   Et..   E...   E...   E...  \nM...   Mc.O   Mt..   Wx1... Wx1... Wx1... Wx1... Wx1... Wx1... Wx1... Wx1... Hs..   Hb..   Hb..   H...   H...  \nM...   M...   Ms..   Wx1... Wx1... Wx1... Wx1... Wx1... Wx1... Wx1... Wx1... H..G   H...   Ht..   Ht..   Hc..  \nM...   Mc..   Mt..   Wx1... Wx1... Ex1t.. Ex1... Ex1... Ex1t.. Wx1... Wx1... Ht..   Hc..   Hc.H   H...   H...  \nM...   M...   M...   Wx1... Wx1... Ex1t.. Ex1..B Ex1c.. Ex1t.. Wx1... Wx1... Hs..   Hs..   H...   H...   H...  \nM...   Mc..   Mt..   Wx1... Wx1... Ex1t.. Ex1... Ex1c.. Ex1t.. Wx1... Wx1... Wx2... Wx2r.. Wx2... Wx2... Wx2..K\nCc..   Cs..   Cs..   Cc..   Wx1... Ex1t.. Ex1... Ex1... Ex1t.. Wx1... Wx1... Wx2... Wx2..L Wx2r.. Wx2... Wx2c..\nC...   C...   C...   C...   Wx1... Wx1... Sx1t.. Sx1t.. Sx1... Sx1... Sx1... Sx1t.. Wx2... Wx2... Wx2m.I Wx2...\nS..V   S...   S...   Ss..   Wx1... Wx1... Sx1... Sx1t.. Sx1... Sx1t.. Sx1... Sx1... Wx2r.. Wx2... Wx2... Wx2...\nSt..   S...   Sb.N   S...   Wx1... Wx1... Sx1c.. Sx1... Sx1... Sx1t.. Sx1... Sx1... Wx2... Wx2... Wx2r.. Wx2...\nS...   S...   Sb..   S...   Wx1... Wx1... Sx1t.. Sx1..A Sx1c.. Sx1... Sx1... Sx1t.. Wx2... Wx2... Wx2r.. Wx2r..",
  "people": [
   {
    "letter": "A",
@@ -53,6 +53,7 @@
     "name": "SciFi Set"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "camera",
@@ -77,6 +78,7 @@
     "name": "Editing"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "TV",
@@ -101,6 +103,7 @@
     "name": "Romance Set"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "camera",
@@ -131,6 +134,7 @@
     "name": "Romance Set"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "flower",
@@ -160,6 +164,7 @@
     "name": "Epic Set"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "camera"
@@ -188,6 +193,7 @@
     "name": "Western Set"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "barrel",
@@ -217,6 +223,7 @@
     "name": "Horror Set"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "TV",
@@ -246,6 +253,7 @@
     "name": "Horror Set"
    },
    "onObjectType": "chair",
+   "onGroundType": null,
    "on": "sitting in a chair",
    "besideObjectTypes": [
     "camera",
@@ -275,6 +283,7 @@
     "name": "War Set"
    },
    "onObjectType": "mudpuddle",
+   "onGroundType": null,
    "on": "standing in a mud puddle",
    "besideObjectTypes": [],
    "withInRoom": [
@@ -305,6 +314,7 @@
     "name": "Western Set"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "camera",
@@ -334,6 +344,7 @@
     "name": "War Set"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "camera"
@@ -366,6 +377,7 @@
     "name": "War Set"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "rubble"
@@ -398,6 +410,7 @@
     "name": "Epic Set"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "catapult",
@@ -427,6 +440,7 @@
     "name": "Star Trailer"
    },
    "onObjectType": "bed",
+   "onGroundType": null,
    "on": "on the bed",
    "besideObjectTypes": [
     "bed"
@@ -458,6 +472,7 @@
     "name": "Makeup"
    },
    "onObjectType": "chair",
+   "onGroundType": null,
    "on": "sitting in a chair",
    "besideObjectTypes": [
     "table"
@@ -481,6 +496,7 @@
     "name": "Star Trailer"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "table"
@@ -497,6 +513,6 @@
    ]
   }
  ],
- "hasPortraits": false,
+ "hasPortraits": true,
  "sourceFile": "source/the-movie-studio-color.pdf"
 }

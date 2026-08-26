@@ -368,7 +368,7 @@ body.edit-mode .players {
   position: relative;
 }
 
-.layer-objects, .layer-labels, .layer-marks, .layer-headers {
+.layer-ground, .layer-objects, .layer-labels, .layer-marks, .layer-headers {
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -478,6 +478,16 @@ body.edit-mode .players {
   filter: drop-shadow(0 0 6px var(--ref));
 }
 
+/* Ground (floor/terrain, under objects) renders fainter than a same-state object so an
+   object sitting on top of it stays the visually dominant thing in the cell. */
+.ground-cell { padding: 0; }
+.ground-cell.occupiable .object-art { opacity: 0.3; }
+.ground-cell.blocking .object-art { opacity: 0.5; }
+.ground-cell.ref-object .object-art {
+  opacity: 1;
+  filter: drop-shadow(0 0 6px var(--ref));
+}
+
 .object-preview {
   background: var(--accent-soft);
   border: 2px dashed var(--accent);
@@ -577,7 +587,8 @@ body:not(.color-pencils) .pencil-grid span.pencil-highlighted {
 
 /* Dim everything not referenced by the hovered clue */
 .grid.refs-active .layer-cells .cell:not(.ref-room) { opacity: 0.55; }
-.grid.refs-active .layer-objects .object-cell:not(.ref-object) { opacity: 0.35; }
+.grid.refs-active .layer-objects .object-cell:not(.ref-object),
+.grid.refs-active .layer-ground .object-cell:not(.ref-object) { opacity: 0.35; }
 
 /* --- Immersive board art (layer-art / art-mode) ---
    layer-art is NOT a CSS grid like the other four layers — one absolutely-positioned

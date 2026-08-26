@@ -13,7 +13,10 @@ clues and rules, the solver must place every person onto a grid such that:
 - Grids are divided into named **rooms** with irregular (non-rectangular) boundaries.
 - Cells may hold **furniture objects**, some spanning multiple cells (a wide bed, a dining table) —
   some occupiable (bed, chair), some blocking (TV, shelf, table, plant) — a person can never be
-  placed on a blocking object's cell.
+  placed on a blocking object's cell. A cell may separately hold one **ground** tile underneath
+  (carpet, sand, water, ...) — floor/terrain that an object can sit on top of (a statue on a
+  carpet, a house on sand). Ground has its own occupiable flag too, so blocking ground (e.g.
+  water) still keeps a person out even with no object on it.
 - The grid's `rows`×`cols` is always a bounding rectangle, but a puzzle's actual playable board
   doesn't have to be a full rectangle — a cell can be a **void** (`roomGrid[r][c] === null`),
   meaning it isn't part of the board at all. This covers non-rectangular outlines (cut corners,
@@ -39,9 +42,11 @@ URL) because `app.js` fetches puzzle JSON via `fetch()`.
 - `puzzles/index.json` — manifest listing available puzzles (id, title, filename). The app's
   puzzle picker reads this on load.
 - `puzzles/<id>.json` — one puzzle's full data: grid size, suspects, structured clues (with `refs`
-  for hover highlighting), room layout (`roomGrid`), and furniture layout (`objects`, a list of
-  `{type, cells}` — cells can span multiple cells, e.g. a 2-cell bed). See the top of `app.js` for
-  the exact schema and `OBJECT_TYPES` for the known furniture types and their SVG art.
+  for hover highlighting), room layout (`roomGrid`), furniture layout (`objects`, a list of
+  `{type, cells}` — cells can span multiple cells, e.g. a 2-cell bed), and an optional `ground`
+  layer (same shape, but each entry's `type` must be flagged `ground: true` in `OBJECT_TYPES`, and
+  cells need not form a rectangle). See the top of `app.js` for the exact schema and
+  `OBJECT_TYPES` for the known furniture/ground types and their SVG art.
 - `puzzles/source/` — original photos/PDFs a puzzle was transcribed from, kept for reference.
 - `PUZZLE_IMPORT_PROMPT.md` — the process (and literal prompt text) for turning a new puzzle
   photo/PDF into a `puzzles/<id>.json` file + manifest entry. Run this locally (Claude Code can
@@ -49,29 +54,33 @@ URL) because `app.js` fetches puzzle JSON via `fetch()`.
 
 ## Rendering
 
-The grid is five aligned CSS-grid layers stacked in one `#grid` container, sharing the same
+The grid is six aligned CSS-grid layers stacked in one `#grid` container, sharing the same
 `grid-template-rows/columns` so a cell at `(r,c)` lines up across all of them. Each template has
 a **fixed-size** leading track on both axes (`var(--hdr-size)`, a custom property on `.grid`) for
 the row/column header buttons, followed by `repeat(N, 1fr)` for the puzzle cells — model row/col
 `r`/`c` sit at CSS grid track `r+2`/`c+2`. The leading track must stay a fixed length, not `auto`:
-the five layers are independent grid containers only visually aligned via identical templates over
-the same shared box (four are `position:absolute;inset:0` against `layer-cells`' rendered box) —
+the six layers are independent grid containers only visually aligned via identical templates over
+the same shared box (five are `position:absolute;inset:0` against `layer-cells`' rendered box) —
 an `auto` track sizes to each container's own content, and only `layer-headers` has real content
-in that track, so it would drift every cell out of alignment in the other four.
+in that track, so it would drift every cell out of alignment in the other five.
 
 1. `layer-cells` — room background tint + borders (thick between different rooms, thin within one).
    **This is the only interactive layer for single-cell actions** — all pointer listeners are
    delegated here. A void cell (`isVoid(r,c)`) gets no `.cell` element at all — just a
    non-interactive `.void-cell` skin — so the entire gesture layer is naturally void-unaware:
    `cellFromEvent()`'s `.closest(".cell")` can never land on one.
-2. `layer-objects` — one SVG per object (`OBJECT_TYPES[type].art(colSpan, rowSpan)`), spanning
+2. `layer-ground` — one art tile per covered cell (`OBJECT_TYPES[type].art(1,1)`) for the `ground`
+   layer, rendered fainter than an object at the same occupiable state so an object sitting on
+   top stays visually dominant. Unlike objects, ground renders per-cell rather than as one
+   spanning SVG, since floor textures tile better than they stretch.
+3. `layer-objects` — one SVG per object (`OBJECT_TYPES[type].art(colSpan, rowSpan)`), spanning
    multiple grid cells for multi-cell objects.
-3. `layer-labels` — room-name pills, anchored to each room's longest bottom-most horizontal run.
-4. `layer-marks` — the definite letter / ✕ / pencil-mark grid, plus the highlight rings.
-5. `layer-headers` — clickable row/column number buttons (`.grid-header`) in the fixed leading
+4. `layer-labels` — room-name pills, anchored to each room's longest bottom-most horizontal run.
+5. `layer-marks` — the definite letter / ✕ / pencil-mark grid, plus the highlight rings.
+6. `layer-headers` — clickable row/column number buttons (`.grid-header`) in the fixed leading
    track, delegated `click` listener attached once at boot.
 
-`renderStatic()` rebuilds all five layers and runs once per puzzle load. `renderMarks()` (after
+`renderStatic()` rebuilds all six layers and runs once per puzzle load. `renderMarks()` (after
 every state mutation) and `applyHighlights()` (on every hover change) only rewrite content/classes
 on the existing `layer-marks` elements — never structure or listeners — so an in-progress
 long-press/drag gesture never has its DOM pulled out from under it.
@@ -120,10 +129,10 @@ on the same cell at once.
 ## Editing puzzles (edit mode)
 
 Clicking **✏️ Edit puzzle** enters an authoring mode for the loaded puzzle's rows/cols, rooms and
-objects. The whole feature works by **swapping `PUZZLE`/`objectAt`/`grid` for a working clone**
-(`enterEditMode()`), stashing the originals — so the entire solving render pipeline
+objects. The whole feature works by **swapping `PUZZLE`/`objectAt`/`groundAt`/`grid` for a working
+clone** (`enterEditMode()`), stashing the originals — so the entire solving render pipeline
 (`renderStatic`/`renderMarks`/`applyHighlights`/`describeCell`/etc.) renders the draft with zero
-changes, since it only ever reads those three globals. Solving-only code paths (the gesture state
+changes, since it only ever reads those four globals. Solving-only code paths (the gesture state
 machine, header bulk-fill, keyboard shortcuts, progress persistence) are diverted by `if (EDIT)`
 guards at their existing entry points rather than duplicated. **Apply** keeps the edited `PUZZLE`
 (resetting solving progress only if the dimensions changed); **Discard** restores the stash

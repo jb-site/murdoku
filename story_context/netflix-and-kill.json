@@ -12,16 +12,16 @@
  "victim": "V",
  "murderer": "B",
  "asciiMapLegend": {
-  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "format": "each cell is <room-code><object-code-or-.><ground-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
   "roomCodes": {
    "bedroom": "B",
    "bathroom": "Bx1",
    "kitchen": "K",
    "livingroom": "L"
   },
-  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+  "note": "object-code is the object type's first letter lowercase, ground-code is the ground type's first letter uppercase (e.g. a statue on a carpet is s + C); see people[].onObjectType / onGroundType / besideObjectTypes for full type names instead of decoding the code"
  },
- "asciiMap": "BbB   Bb.   B..   B..   Bx1p. Bx1c.\nB..   B..   B.V   Bc.   Bx1.. Bx1..\nBs.   Bp.   L..   Lc.   LcC   Bx1..\nK..   K..   L..   L..   L..   L.E  \nKs.   K.D   Lc.   L..   Lc.   Lt.  \nKt.   Kt.   Ls.   L.A   L..   Lp.  ",
+ "asciiMap": "Bb.B   Bb..   B...   B...   Bx1p.. Bx1c..\nB...   B...   B..V   Bc..   Bx1... Bx1...\nBs..   Bp..   L...   Lc..   Lc.C   Bx1...\nK...   K...   L...   L...   L...   L..E  \nKs..   K..D   Lc..   L...   Lc..   Lt..  \nKt..   Kt..   Ls..   L..A   L...   Lp..  ",
  "people": [
   {
    "letter": "A",
@@ -36,6 +36,7 @@
     "name": "Living Room"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "shelf"
@@ -68,6 +69,7 @@
     "name": "Bedroom"
    },
    "onObjectType": "bed",
+   "onGroundType": null,
    "on": "on the bed",
    "besideObjectTypes": [
     "bed"
@@ -99,6 +101,7 @@
     "name": "Living Room"
    },
    "onObjectType": "chair",
+   "onGroundType": null,
    "on": "sitting in a chair",
    "besideObjectTypes": [
     "chair"
@@ -131,6 +134,7 @@
     "name": "Kitchen"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "chair",
@@ -156,6 +160,7 @@
     "name": "Living Room"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "TV"
@@ -188,6 +193,7 @@
     "name": "Bedroom"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "chair"
@@ -204,6 +210,6 @@
    ]
   }
  ],
- "hasPortraits": false,
+ "hasPortraits": true,
  "sourceFile": "source/netflix-and-kill-color.pdf"
 }

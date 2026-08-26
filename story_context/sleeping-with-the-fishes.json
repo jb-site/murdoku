@@ -17,7 +17,7 @@
  "victim": "V",
  "murderer": "E",
  "asciiMapLegend": {
-  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "format": "each cell is <room-code><object-code-or-.><ground-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
   "roomCodes": {
    "sea": "S",
    "boathouse": "B",
@@ -27,9 +27,9 @@
    "fishmarket": "F",
    "warehouse": "W"
   },
-  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+  "note": "object-code is the object type's first letter lowercase, ground-code is the ground type's first letter uppercase (e.g. a statue on a carpet is s + C); see people[].onObjectType / onGroundType / besideObjectTypes for full type names instead of decoding the code"
  },
- "asciiMap": "S..   S..   Sb.   SbA   S..   S..   S..   S..   S..   S..   S..  \nS..   S..   S..   S..   S..   D..   SbC   Sb.   S..   S..   S..  \nBc.   Bb.   Bb.   S..   S..   Db.   S..   S..   Dx1.F Dx1.. Dx1c.\nBc.   B..   B..   S..   D..   D..   S..   S..   Dx1.. S..   Dx1.G\nBx1.. Bx1.. Bx1.. Bx1.. Bx1.. S..   S..   Bx1.. Bx1.. Bx1cE Bx1..\nBx1c. Bx1c. Bx1.. Bx1.. Bx1.. Bx1.V Bx1.. Bx1.. W..   Bx1.. Bx1..\nF..   Ft.   Ft.   Ft.   Bx1.. Bx1.. Ws.   W.H   W..   Wc.   Bx1..\nF.D   Fc.   F..   Fb.   Bx1.. Bx1.. Wc.   W..   Wc.   W..   W..  \nF..   Fb.   F..   F..   FcB   Fb.   W..   Ws.   Ws.   Wc.   Ws.  ",
+ "asciiMap": "S...   S...   Sb..   Sb.A   S...   S...   S...   S...   S...   S...   S...  \nS...   S...   S...   S...   S...   D...   Sb.C   Sb..   S...   S...   S...  \nBc..   Bb..   Bb..   S...   S...   Db..   S...   S...   Dx1..F Dx1... Dx1c..\nBc..   B...   B...   S...   D...   D...   S...   S...   Dx1... S...   Dx1..G\nBx1... Bx1... Bx1... Bx1... Bx1... S...   S...   Bx1... Bx1... Bx1c.E Bx1...\nBx1c.. Bx1c.. Bx1... Bx1... Bx1... Bx1..V Bx1... Bx1... W...   Bx1... Bx1...\nF...   Ft..   Ft..   Ft..   Bx1... Bx1... Ws..   W..H   W...   Wc..   Bx1...\nF..D   Fc..   F...   Fb..   Bx1... Bx1... Wc..   W...   Wc..   W...   W...  \nF...   Fb..   F...   F...   Fc.B   Fb..   W...   Ws..   Ws..   Wc..   Ws..  ",
  "people": [
   {
    "letter": "A",
@@ -44,6 +44,7 @@
     "name": "Sea"
    },
    "onObjectType": "boat",
+   "onGroundType": null,
    "on": "in the boat",
    "besideObjectTypes": [
     "boat"
@@ -72,6 +73,7 @@
     "name": "Fish Market"
    },
    "onObjectType": "chair",
+   "onGroundType": null,
    "on": "sitting in a chair",
    "besideObjectTypes": [
     "box"
@@ -100,6 +102,7 @@
     "name": "Sea"
    },
    "onObjectType": "boat",
+   "onGroundType": null,
    "on": "in the boat",
    "besideObjectTypes": [
     "boat"
@@ -128,6 +131,7 @@
     "name": "Fish Market"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "crate"
@@ -156,6 +160,7 @@
     "name": "Boardwalk"
    },
    "onObjectType": "chair",
+   "onGroundType": null,
    "on": "sitting in a chair",
    "besideObjectTypes": [],
    "withInRoom": [
@@ -185,6 +190,7 @@
     "name": "Dock B"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [
@@ -211,6 +217,7 @@
     "name": "Dock B"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "crate"
@@ -239,6 +246,7 @@
     "name": "Warehouse"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "shelf"
@@ -262,6 +270,7 @@
     "name": "Boardwalk"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [
@@ -276,6 +285,6 @@
    ]
   }
  ],
- "hasPortraits": false,
+ "hasPortraits": true,
  "sourceFile": "source/sleeping-with-the-fishes-color.pdf"
 }

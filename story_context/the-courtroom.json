@@ -17,7 +17,7 @@
  "victim": "V",
  "murderer": "F",
  "asciiMapLegend": {
-  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "format": "each cell is <room-code><object-code-or-.><ground-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
   "roomCodes": {
    "judgesoffice": "J",
    "security": "S",
@@ -29,9 +29,9 @@
    "gallery": "G",
    "jurybox": "Jx2"
   },
-  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+  "note": "object-code is the object type's first letter lowercase, ground-code is the ground type's first letter uppercase (e.g. a statue on a carpet is s + C); see people[].onObjectType / onGroundType / besideObjectTypes for full type names instead of decoding the code"
  },
- "asciiMap": "Js.   Jc.   Js.   Jp.   J..   S.G   St.   St.   St.  \nJt.   Jt.   J..   Jx1.A Jx1c. Jx1.. Sc.   Sc.   S..  \nPp.   P..   P..   Jx1t. Jx1t. Jx1t. D..   D..   D.V  \nP.H   Pc.   Pt.   Cc.   C..   C..   Dt.   Dc.   D..  \nP..   Pc.   Pt.   Ct.   Ct.   C..   Dt.   D.F   D..  \nP..   PcD   Pt.   W..   Wt.   W..   Dt.   Dc.   D..  \nGt.   Pc.   Pt.   Wc.   WcE   Wc.   Dt.   Jx2t. Jx2t.\nGt.   Gc.   G..   Gc.   Gc.   Gc.   G.B   Jx2t. Jx2c.\nG..   G..   GcC   Gc.   Gc.   Gc.   Gt.   Jx2t. Jx2c.",
+ "asciiMap": "Js..   Jc..   Js..   Jp..   J...   S..G   St..   St..   St..  \nJt..   Jt..   J...   Jx1..A Jx1c.. Jx1... Sc..   Sc..   S...  \nPp..   P...   P...   Jx1t.. Jx1t.. Jx1t.. D...   D...   D..V  \nP..H   Pc..   Pt..   Cc..   C...   C...   Dt..   Dc..   D...  \nP...   Pc..   Pt..   Ct..   Ct..   C...   Dt..   D..F   D...  \nP...   Pc.D   Pt..   W...   Wt..   W...   Dt..   Dc..   D...  \nGt..   Pc..   Pt..   Wc..   Wc.E   Wc..   Dt..   Jx2t.. Jx2t..\nGt..   Gc..   G...   Gc..   Gc..   Gc..   G..B   Jx2t.. Jx2c..\nG...   G...   Gc.C   Gc..   Gc..   Gc..   Gt..   Jx2t.. Jx2c..",
  "people": [
   {
    "letter": "A",
@@ -46,6 +46,7 @@
     "name": "Judge's Bench"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "chair",
@@ -71,6 +72,7 @@
     "name": "Gallery"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "chair",
@@ -100,6 +102,7 @@
     "name": "Gallery"
    },
    "onObjectType": "chair",
+   "onGroundType": null,
    "on": "sitting in a chair",
    "besideObjectTypes": [
     "chair"
@@ -128,6 +131,7 @@
     "name": "Prosecution"
    },
    "onObjectType": "carpet",
+   "onGroundType": null,
    "on": "standing on the carpet",
    "besideObjectTypes": [
     "carpet",
@@ -158,6 +162,7 @@
     "name": "Witness Stand"
    },
    "onObjectType": "carpet",
+   "onGroundType": null,
    "on": "standing on the carpet",
    "besideObjectTypes": [
     "carpet",
@@ -182,6 +187,7 @@
     "name": "Defense"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "chair",
@@ -215,6 +221,7 @@
     "name": "Security"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "TV"
@@ -238,6 +245,7 @@
     "name": "Prosecution"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "chair",
@@ -267,6 +275,7 @@
     "name": "Defense"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [
@@ -281,6 +290,6 @@
    ]
   }
  ],
- "hasPortraits": false,
+ "hasPortraits": true,
  "sourceFile": "source/the-courtroom-color.pdf"
 }

@@ -11,9 +11,15 @@
 //                    Cells of one object must form a filled rectangle. Two same-type objects sitting
 //                    side by side (e.g. two chairs) are two separate entries, NOT one spanning object —
 //                    a span is only ever inferred from what's authored here, never from adjacency.
+// ground           - [{type, cells: [[r,c], ...]}] — a floor/terrain layer under objects (carpet,
+//                    sand, path, water, ...). Only OBJECT_TYPES entries flagged `ground: true` may
+//                    appear here. Unlike objects, ground cells need not form a rectangle (floor
+//                    tiles per cell), and at most one ground entry may cover a given cell — but a
+//                    ground cell and an object cell can freely coincide (a statue on a carpet).
 //
 // A cell is "blocked" (nobody can ever go there) when it's covered by a non-occupiable object
-// (see OBJECT_TYPES[...].occupiable). Blocked cells are not interactive for placing/pencilling.
+// OR a non-occupiable ground tile (see OBJECT_TYPES[...].occupiable). Blocked cells are not
+// interactive for placing/pencilling.
 //
 // Puzzles live as JSON files under puzzles/, listed in puzzles/index.json. See
 // PUZZLE_IMPORT_PROMPT.md for how to turn a photo/PDF of a new puzzle into one of these files.
@@ -96,7 +102,7 @@ const OBJECT_TYPES = {
     art() { return twemojiArt("1fab4"); },
   },
   oilslick: {
-    label: "Oil Slick", emoji: "🛢️", occupiable: true,
+    label: "Oil Slick", emoji: "🛢️", occupiable: true, ground: true,
     art() {
       return svgObject("#3a3a42", "#54545e", "#17171b", `
         <ellipse cx="50" cy="52" rx="40" ry="26" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
@@ -123,7 +129,7 @@ const OBJECT_TYPES = {
     art() { return twemojiArt("1f335"); },
   },
   lilypad: {
-    label: "Lily Pad", emoji: "🍃", occupiable: false,
+    label: "Lily Pad", emoji: "🍃", occupiable: false, ground: true,
     art() { return twemojiArt("1f343"); },
   },
   flower: {
@@ -135,7 +141,7 @@ const OBJECT_TYPES = {
     art() { return twemojiArt("1f33f"); },
   },
   path: {
-    label: "Path", emoji: "🧱", occupiable: true,
+    label: "Path", emoji: "🧱", occupiable: true, ground: true,
     art() { return twemojiArt("1f9f1"); },
   },
   bear: {
@@ -147,7 +153,7 @@ const OBJECT_TYPES = {
     art() { return twemojiArt("1faa8"); },
   },
   carpet: {
-    label: "Carpet", emoji: "🧵", occupiable: true,
+    label: "Carpet", emoji: "🧵", occupiable: true, ground: true,
     art(colSpan, rowSpan) {
       const w = 100 * colSpan, h = 100 * rowSpan;
       return svgObject("#c96f6f", "#e8c15a", "#5c2f2f", `
@@ -199,7 +205,7 @@ const OBJECT_TYPES = {
     art() { return twemojiArt("1f5bc"); },
   },
   water: {
-    label: "Water", emoji: "🌊", occupiable: false,
+    label: "Water", emoji: "🌊", occupiable: false, ground: true,
     art() { return twemojiArt("1f30a"); },
   },
   lion: {
@@ -223,7 +229,7 @@ const OBJECT_TYPES = {
     art() { return twemojiArt("1f418"); },
   },
   mudpuddle: {
-    label: "Mud Puddle", emoji: "💧", occupiable: true,
+    label: "Mud Puddle", emoji: "💧", occupiable: true, ground: true,
     art() { return twemojiArt("1f4a7"); },
   },
   barrel: {
@@ -231,7 +237,7 @@ const OBJECT_TYPES = {
     art() { return twemojiArt("1f6e2"); },
   },
   rubble: {
-    label: "Rubble", emoji: "🪨", occupiable: false,
+    label: "Rubble", emoji: "🪨", occupiable: false, ground: true,
     art() { return twemojiArt("1faa8"); },
   },
   catapult: {
@@ -255,7 +261,7 @@ const OBJECT_TYPES = {
     art() { return twemojiArt("1f3e0"); },
   },
   sand: {
-    label: "Sand", emoji: "🏖️", occupiable: true,
+    label: "Sand", emoji: "🏖️", occupiable: true, ground: true,
     art() { return twemojiArt("1f3d6"); },
   },
   tee: {
@@ -380,6 +386,7 @@ const CELL_MAX = 96; // caps how big a cell (and thus the whole square-ish grid)
 
 let PUZZLE = null;
 let objectAt = []; // [r][c] -> object record or null
+let groundAt = []; // [r][c] -> ground record or null
 let grid = [];
 
 // selection: a suspect letter, or the sentinel strings "#x" / "#erase"
@@ -400,7 +407,8 @@ function isSuspectSelection(sel) {
 
 function isBlocked(r, c) {
   const o = objectAt[r][c];
-  return !!o && !OBJECT_TYPES[o.type].occupiable;
+  const g = groundAt[r][c];
+  return (!!o && !OBJECT_TYPES[o.type].occupiable) || (!!g && !OBJECT_TYPES[g.type].occupiable);
 }
 
 // A cell that is not part of the board at all — outside an irregular boundary, or a
@@ -441,6 +449,7 @@ function normalizePuzzle(data) {
     }
   }
   data.objects = objects || [];
+  data.ground = data.ground || [];
 
   data.clues = (data.clues || []).map((clue) => {
     if (typeof clue === "string") return { suspect: null, text: clue, refs: {} };
@@ -516,11 +525,52 @@ function buildObjectIndex(data, errors) {
   return at;
 }
 
+// errors: same convention as buildObjectIndex(). Unlike objects, ground cells need not form
+// a rectangle (floor tiles are per-cell), but at most one ground entry may cover a cell, and
+// only types flagged `ground: true` may be used here — keeps `ground` and `objects` from
+// drifting into an undifferentiated "anything anywhere" list.
+function buildGroundIndex(data, errors) {
+  const rows = data.rows, cols = data.cols;
+  const at = Array.from({ length: rows }, () => Array(cols).fill(null));
+  const report = (msg) => { console.error(msg); errors?.push(msg); };
+
+  (data.ground || []).forEach((obj) => {
+    if (!OBJECT_TYPES[obj.type]) {
+      report(`Unknown ground type "${obj.type}" — skipping.`);
+      return;
+    }
+    if (!OBJECT_TYPES[obj.type].ground) {
+      report(`Ground type "${obj.type}" isn't flagged \`ground: true\` — skipping.`);
+      return;
+    }
+    if (obj.cells.some(([r, c]) => r < 0 || c < 0 || r >= rows || c >= cols)) {
+      report(`Ground "${obj.type}" is out of bounds — skipping.`);
+      return;
+    }
+    if (obj.cells.some(([r, c]) => data.roomGrid[r][c] === null)) {
+      report(`Ground "${obj.type}" covers a void cell — skipping.`);
+      return;
+    }
+
+    const record = { type: obj.type, cells: obj.cells, occupiable: OBJECT_TYPES[obj.type].occupiable };
+    for (const [r, c] of obj.cells) {
+      if (at[r][c]) {
+        report(`Cell [${r},${c}] claimed by more than one ground entry — skipping "${obj.type}".`);
+        return;
+      }
+    }
+    for (const [r, c] of obj.cells) at[r][c] = record;
+  });
+
+  return at;
+}
+
 // --- DOM setup -------------------------------------------------------------
 
 const gridEl = document.getElementById("grid");
 const layerArtEl = document.getElementById("layerArt");
 const layerCellsEl = document.getElementById("layerCells");
+const layerGroundEl = document.getElementById("layerGround");
 const layerObjectsEl = document.getElementById("layerObjects");
 const layerLabelsEl = document.getElementById("layerLabels");
 const layerMarksEl = document.getElementById("layerMarks");
@@ -745,8 +795,9 @@ document.addEventListener("keydown", (e) => { if (e.key === "Escape") clearPortr
 // --- Legend --------------------------------------------------------------
 
 function buildLegend() {
-  const occupiable = Object.entries(OBJECT_TYPES).filter(([, t]) => t.occupiable);
-  const blocking = Object.entries(OBJECT_TYPES).filter(([, t]) => !t.occupiable);
+  const ground = Object.entries(OBJECT_TYPES).filter(([, t]) => t.ground);
+  const occupiable = Object.entries(OBJECT_TYPES).filter(([, t]) => t.occupiable && !t.ground);
+  const blocking = Object.entries(OBJECT_TYPES).filter(([, t]) => !t.occupiable && !t.ground);
 
   const tile = ([key, type]) => `
     <div class="legend-item">
@@ -758,6 +809,10 @@ function buildLegend() {
     <details open>
       <summary>Legend &amp; how to play</summary>
       <div class="legend-groups">
+        <div class="legend-group">
+          <h3>Ground</h3>
+          ${ground.map(tile).join("")}
+        </div>
         <div class="legend-group">
           <h3>Can be occupied</h3>
           ${occupiable.map(tile).join("")}
@@ -984,7 +1039,7 @@ function artCrop() {
 // so an in-progress long-press/drag gesture never has its DOM pulled out from under it.
 function renderStatic() {
   renderArtLayer();
-  [layerCellsEl, layerObjectsEl, layerLabelsEl, layerMarksEl, layerHeadersEl].forEach(setLayerTemplate);
+  [layerCellsEl, layerGroundEl, layerObjectsEl, layerLabelsEl, layerMarksEl, layerHeadersEl].forEach(setLayerTemplate);
 
   // Cap how wide (and, via aspect-ratio:1 cells, how tall) the grid can render.
   // Needed once the split layout can give it a much wider column than main's old
@@ -996,6 +1051,7 @@ function renderStatic() {
   gridEl.style.maxWidth = `${hdrPx + borderPx + PUZZLE.cols * CELL_MAX}px`;
 
   layerCellsEl.innerHTML = "";
+  layerGroundEl.innerHTML = "";
   layerObjectsEl.innerHTML = "";
   layerLabelsEl.innerHTML = "";
   layerMarksEl.innerHTML = "";
@@ -1043,6 +1099,26 @@ function renderStatic() {
       layerMarksEl.appendChild(markEl);
     }
   }
+
+  // Ground renders one art tile per covered cell (not one spanning SVG like objects) —
+  // floor textures tile better than they stretch, and ground cells need not form a rectangle.
+  PUZZLE.ground.forEach((obj) => {
+    const type = OBJECT_TYPES[obj.type];
+    obj.cells.forEach(([r, c]) => {
+      if (!groundAt[r]?.[c] || groundAt[r][c].type !== obj.type) return; // dropped by buildGroundIndex
+      const wrap = document.createElement("div");
+      wrap.className = "object-cell ground-cell " + (type.occupiable ? "occupiable" : "blocking");
+      wrap.dataset.type = obj.type;
+      wrap.dataset.r0 = r;
+      wrap.dataset.c0 = c;
+      wrap.dataset.rowSpan = 1;
+      wrap.dataset.colSpan = 1;
+      wrap.style.gridRow = `${r + 2} / span 1`;
+      wrap.style.gridColumn = `${c + 2} / span 1`;
+      wrap.innerHTML = type.art(1, 1);
+      layerGroundEl.appendChild(wrap);
+    });
+  });
 
   const seen = new Set();
   PUZZLE.objects.forEach((obj) => {
@@ -1226,9 +1302,11 @@ function applyHighlights() {
     cellEl.classList.toggle("ref-room", !!inRoom);
   });
 
-  layerObjectsEl.querySelectorAll(".object-cell").forEach((el) => {
-    const inRefs = refsActive && refObjects.has(el.dataset.type) && !isObjectRuledOut(el);
-    el.classList.toggle("ref-object", !!inRefs);
+  [layerGroundEl, layerObjectsEl].forEach((layer) => {
+    layer.querySelectorAll(".object-cell").forEach((el) => {
+      const inRefs = refsActive && refObjects.has(el.dataset.type) && !isObjectRuledOut(el);
+      el.classList.toggle("ref-object", !!inRefs);
+    });
   });
 
   layerHeadersEl.querySelectorAll(".grid-header").forEach((btn) => {
@@ -1796,11 +1874,16 @@ window.addEventListener("blur", () => {
 function describeCell(r, c) {
   const roomName = PUZZLE.rooms[PUZZLE.roomGrid[r][c]]?.name || "";
   const obj = objectAt[r][c];
+  const ground = groundAt[r][c];
   let what;
   if (obj) {
     const type = OBJECT_TYPES[obj.type];
     const spanNote = obj.cells.length > 1 ? ` · ${obj.cells.length} cells` : "";
-    what = `${type.label} (${type.occupiable ? "can be occupied" : "cannot be occupied"}${spanNote})`;
+    const groundNote = ground ? ` on ${OBJECT_TYPES[ground.type].label}` : "";
+    what = `${type.label}${groundNote} (${isBlocked(r, c) ? "cannot be occupied" : "can be occupied"}${spanNote})`;
+  } else if (ground) {
+    const type = OBJECT_TYPES[ground.type];
+    what = `${type.label} (${type.occupiable ? "can be occupied" : "cannot be occupied"})`;
   } else {
     what = "Empty floor";
   }
@@ -2575,6 +2658,7 @@ function blankPuzzle() {
     rooms: { room1: { name: "Room 1" } },
     roomGrid: Array.from({ length: rows }, () => Array(cols).fill("room1")),
     objects: [],
+    ground: [],
   };
 }
 
@@ -2584,7 +2668,7 @@ function enterEditMode(sourcePuzzle) {
   // tools/extract_art.py, captured before any nudging. Cloned so later mutation of
   // PUZZLE.art.boardCrop can't reach back into it.
   const baseCrop = (sourcePuzzle ?? PUZZLE)?.art?.boardCrop;
-  EDIT = { stash: { puzzle: PUZZLE, objectAt, grid, history, selection }, tool: "rooms", roomPaint: null, objPaint: null, drag: null, dirty: false,
+  EDIT = { stash: { puzzle: PUZZLE, objectAt, groundAt, grid, history, selection }, tool: "rooms", roomPaint: null, objPaint: null, drag: null, dirty: false,
     artBase: baseCrop ? { ...baseCrop } : { x: 0, y: 0, w: 1, h: 1 },
     artSquareLock: true, artPick: null, artPickNote: "", artCropTool: false,
     // Whether the current boardCrop has been copied (via copyBoardCrop) since it last
@@ -2594,6 +2678,7 @@ function enterEditMode(sourcePuzzle) {
     artCopiedSinceChange: true };
   PUZZLE = normalizePuzzle(structuredClone(sourcePuzzle ?? PUZZLE));
   objectAt = buildObjectIndex(PUZZLE);
+  groundAt = buildGroundIndex(PUZZLE);
   grid = freshGrid();
   history = [];
   selection = null;
@@ -2620,7 +2705,7 @@ function exitEditMode(mode) {
   endArtPick();     // clears the pick overlay/loupe and the art-pick body class
   endArtCropTool(); // and the crop rectangle's fitted view
   if (mode === "discard") {
-    ({ puzzle: PUZZLE, objectAt, grid, history, selection } = EDIT.stash);
+    ({ puzzle: PUZZLE, objectAt, groundAt, grid, history, selection } = EDIT.stash);
   } else {
     const dimsChanged = PUZZLE.rows !== EDIT.stash.puzzle.rows || PUZZLE.cols !== EDIT.stash.puzzle.cols;
     if (dimsChanged) {
@@ -2697,6 +2782,7 @@ editDiscardBtn.addEventListener("click", () => {
 function loadDraftPuzzle(data) {
   PUZZLE = normalizePuzzle(data);
   objectAt = buildObjectIndex(PUZZLE);
+  groundAt = buildGroundIndex(PUZZLE);
   grid = freshGrid();
   history = [];
   editRowsInput.value = PUZZLE.rows;
@@ -2746,6 +2832,7 @@ function resizeDraft(newRows, newCols) {
   if (newRows === PUZZLE.rows && newCols === PUZZLE.cols) return;
 
   const droppedObjects = PUZZLE.objects.filter((o) => o.cells.some(([r, c]) => r >= newRows || c >= newCols));
+  const droppedGround = PUZZLE.ground.filter((o) => o.cells.some(([r, c]) => r >= newRows || c >= newCols));
   const droppedRoomCells = [];
   for (let r = newRows; r < PUZZLE.rows; r++) {
     for (let c = 0; c < PUZZLE.cols; c++) if (PUZZLE.roomGrid[r][c] !== null) droppedRoomCells.push([r, c]);
@@ -2753,8 +2840,8 @@ function resizeDraft(newRows, newCols) {
   for (let r = 0; r < Math.min(newRows, PUZZLE.rows); r++) {
     for (let c = newCols; c < PUZZLE.cols; c++) if (PUZZLE.roomGrid[r][c] !== null) droppedRoomCells.push([r, c]);
   }
-  if (droppedObjects.length || droppedRoomCells.length) {
-    const msg = `Resizing to ${newRows}×${newCols} will delete ${droppedObjects.length} object(s) and discard ${droppedRoomCells.length} room assignment(s). Continue?`;
+  if (droppedObjects.length || droppedGround.length || droppedRoomCells.length) {
+    const msg = `Resizing to ${newRows}×${newCols} will delete ${droppedObjects.length} object(s), ${droppedGround.length} ground tile(s), and discard ${droppedRoomCells.length} room assignment(s). Continue?`;
     if (!confirm(msg)) return;
   }
 
@@ -2762,11 +2849,13 @@ function resizeDraft(newRows, newCols) {
     Array.from({ length: newCols }, (_, c) => (r < PUZZLE.rows && c < PUZZLE.cols ? PUZZLE.roomGrid[r][c] : null))
   );
   PUZZLE.objects = PUZZLE.objects.filter((o) => !o.cells.some(([r, c]) => r >= newRows || c >= newCols));
+  PUZZLE.ground = PUZZLE.ground.filter((o) => !o.cells.some(([r, c]) => r >= newRows || c >= newCols));
   PUZZLE.rows = newRows;
   PUZZLE.cols = newCols;
   PUZZLE.roomGrid = newRoomGrid;
 
   objectAt = buildObjectIndex(PUZZLE);
+  groundAt = buildGroundIndex(PUZZLE);
   grid = freshGrid();
   history = [];
   EDIT.dirty = true;
@@ -2932,17 +3021,27 @@ function buildRoomPalette() {
   });
 }
 
+// EDIT.objPaint values: an OBJECT_TYPES key paints an object; "ground:<key>" paints ground
+// (the same key namespaced, since ground and object share one type registry); "#erase" erases.
 function buildObjectPalette() {
   editorPaletteEl.innerHTML = "";
+
+  Object.entries(OBJECT_TYPES).filter(([, t]) => t.ground).forEach(([key, type]) => {
+    const paintKey = `ground:${key}`;
+    const chip = addEditorChip(editorPaletteEl, "object-chip", "", `${type.label} (ground, ${type.occupiable ? "can be occupied" : "cannot be occupied"})`,
+      () => { EDIT.objPaint = paintKey; buildObjectPalette(); }, EDIT.objPaint === paintKey);
+    chip.innerHTML = type.art(1, 1);
+  });
+
   [true, false].forEach((occupiable) => {
-    Object.entries(OBJECT_TYPES).filter(([, t]) => t.occupiable === occupiable).forEach(([key, type]) => {
+    Object.entries(OBJECT_TYPES).filter(([, t]) => t.occupiable === occupiable && !t.ground).forEach(([key, type]) => {
       const chip = addEditorChip(editorPaletteEl, "object-chip", "", `${type.label} (${occupiable ? "can be occupied" : "cannot be occupied"})`,
         () => { EDIT.objPaint = key; buildObjectPalette(); }, EDIT.objPaint === key);
       chip.innerHTML = type.art(1, 1);
     });
   });
 
-  addEditorChip(editorPaletteEl, "suspect-chip special-chip", "🧽", "Erase object",
+  addEditorChip(editorPaletteEl, "suspect-chip special-chip", "🧽", "Erase object/ground",
     () => { EDIT.objPaint = "#erase"; buildObjectPalette(); }, EDIT.objPaint === "#erase");
 
   addEditorChip(editorPaletteEl, "suspect-chip special-chip", "＋", "Define a new placeholder object type", openNewObjectTypeForm);
@@ -2955,17 +3054,18 @@ function openNewObjectTypeForm() {
   if (OBJECT_TYPES[key]) { alert(`"${key}" already exists.`); return; }
   const label = prompt("Display label:", key) || key;
   const occupiable = confirm("Can a person occupy this cell?\nOK = yes (occupiable), Cancel = no (blocking)");
+  const ground = confirm("Is this a ground/floor type (can have an object placed on top of it)?\nOK = yes, Cancel = no");
   const color = prompt("Colour (hex):", "#8a5a2e") || "#8a5a2e";
   OBJECT_TYPES[key] = {
-    label, emoji: "❓", occupiable,
+    label, emoji: "❓", occupiable, ground,
     art() {
       return svgObject(color, color, "#1a1a1a",
         `<rect x="10" y="10" width="80" height="80" rx="14" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>`, 100, 100);
     },
   };
   PUZZLE.customObjectTypes = PUZZLE.customObjectTypes || [];
-  PUZZLE.customObjectTypes.push({ key, label, occupiable, color });
-  EDIT.objPaint = key;
+  PUZZLE.customObjectTypes.push({ key, label, occupiable, ground, color });
+  EDIT.objPaint = ground ? `ground:${key}` : key;
   EDIT.dirty = true;
   buildObjectPalette();
   scheduleDraftSave();
@@ -4021,8 +4121,9 @@ function paintRoom(r, c) {
   const value = EDIT.roomPaint === VOID_TOOL ? null : EDIT.roomPaint;
   if (PUZZLE.roomGrid[r][c] === value) return;
   if (value === null) {
-    // An object can't sit on a void cell — clear anything covering this one.
+    // An object (or ground) can't sit on a void cell — clear anything covering this one.
     PUZZLE.objects = PUZZLE.objects.filter((o) => !o.cells.some(([or, oc]) => or === r && oc === c));
+    PUZZLE.ground = PUZZLE.ground.filter((o) => !o.cells.some(([or, oc]) => or === r && oc === c));
   }
   PUZZLE.roomGrid[r][c] = value;
   EDIT.dirty = true;
@@ -4036,6 +4137,7 @@ function scheduleEditRerender() {
   editRerenderRaf = requestAnimationFrame(() => {
     editRerenderRaf = null;
     objectAt = buildObjectIndex(PUZZLE);
+    groundAt = buildGroundIndex(PUZZLE);
     renderStatic();
     renderMarks();
     applyHighlights();
@@ -4060,18 +4162,28 @@ function clearObjectPreview() {
   layerObjectsEl.querySelectorAll(".object-preview").forEach((el) => el.remove());
 }
 
-function placeObject(r0, c0, r1, c1, type) {
+function placeObject(r0, c0, r1, c1, paintKey) {
   const cells = [];
   for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) cells.push([r, c]);
   if (cells.some(([r, c]) => PUZZLE.roomGrid[r][c] === null)) {
     setStatus("Objects can't be placed on void cells.");
     return;
   }
-  const doomed = new Set(cells.map(([r, c]) => objectAt[r]?.[c]).filter(Boolean));
-  PUZZLE.objects = PUZZLE.objects.filter((o) => !doomed.has(objectAt[o.cells[0][0]]?.[o.cells[0][1]]));
-  PUZZLE.objects.push({ type, cells });
+
+  if (paintKey.startsWith("ground:")) {
+    const type = paintKey.slice("ground:".length);
+    const doomed = new Set(cells.map(([r, c]) => groundAt[r]?.[c]).filter(Boolean));
+    PUZZLE.ground = PUZZLE.ground.filter((o) => !doomed.has(groundAt[o.cells[0][0]]?.[o.cells[0][1]]));
+    PUZZLE.ground.push({ type, cells });
+  } else {
+    const doomed = new Set(cells.map(([r, c]) => objectAt[r]?.[c]).filter(Boolean));
+    PUZZLE.objects = PUZZLE.objects.filter((o) => !doomed.has(objectAt[o.cells[0][0]]?.[o.cells[0][1]]));
+    PUZZLE.objects.push({ type: paintKey, cells });
+  }
+
   EDIT.dirty = true;
   objectAt = buildObjectIndex(PUZZLE);
+  groundAt = buildGroundIndex(PUZZLE);
   renderStatic();
   renderMarks();
   applyHighlights();
@@ -4079,13 +4191,21 @@ function placeObject(r0, c0, r1, c1, type) {
   scheduleDraftSave();
 }
 
+// Top-down erase: an object covering the rect goes first; only if none did do we fall
+// through to erasing ground there — one eraser chip, predictable "erase what's on top".
 function eraseObjectsInRect(r0, c0, r1, c1) {
-  const doomed = new Set();
-  for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) if (objectAt[r]?.[c]) doomed.add(objectAt[r][c]);
-  if (doomed.size === 0) return;
-  PUZZLE.objects = PUZZLE.objects.filter((o) => !doomed.has(objectAt[o.cells[0][0]]?.[o.cells[0][1]]));
+  const doomedObjects = new Set();
+  for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) if (objectAt[r]?.[c]) doomedObjects.add(objectAt[r][c]);
+  const doomedGround = new Set();
+  if (doomedObjects.size === 0) {
+    for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) if (groundAt[r]?.[c]) doomedGround.add(groundAt[r][c]);
+  }
+  if (doomedObjects.size === 0 && doomedGround.size === 0) return;
+  PUZZLE.objects = PUZZLE.objects.filter((o) => !doomedObjects.has(objectAt[o.cells[0][0]]?.[o.cells[0][1]]));
+  PUZZLE.ground = PUZZLE.ground.filter((o) => !doomedGround.has(groundAt[o.cells[0][0]]?.[o.cells[0][1]]));
   EDIT.dirty = true;
   objectAt = buildObjectIndex(PUZZLE);
+  groundAt = buildGroundIndex(PUZZLE);
   renderStatic();
   renderMarks();
   applyHighlights();
@@ -4136,6 +4256,10 @@ function validateDraft() {
   const objErrors = [];
   buildObjectIndex(PUZZLE, objErrors);
   errors.push(...objErrors);
+
+  const groundErrors = [];
+  buildGroundIndex(PUZZLE, groundErrors);
+  errors.push(...groundErrors);
 
   const letters = PUZZLE.suspects || [];
   if (new Set(letters).size !== letters.length) errors.push("Suspect letters must be unique.");
@@ -4223,6 +4347,7 @@ function exportPuzzleJSON() {
     roomGrid: PUZZLE.roomGrid,
     objects: PUZZLE.objects,
   };
+  if (PUZZLE.ground?.length) ordered.ground = PUZZLE.ground;
   if (PUZZLE.customObjectTypes?.length) ordered.customObjectTypes = PUZZLE.customObjectTypes;
   if (PUZZLE.art) ordered.art = PUZZLE.art;
   return ordered;
@@ -4271,6 +4396,7 @@ async function loadPuzzleData(file) {
 function initPuzzle(data) {
   PUZZLE = normalizePuzzle(data);
   objectAt = buildObjectIndex(PUZZLE);
+  groundAt = buildGroundIndex(PUZZLE);
   grid = freshGrid();
   history = [];
   selection = null;

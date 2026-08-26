@@ -137,6 +137,17 @@ locally by an assistant that can already read images/PDFs directly.
 > renderer plus `label` and `occupiable` added to `OBJECT_TYPES` in
 > `murdoku/app.js` before the puzzle will render correctly.
 >
+> **Two things drawn on one square** (a statue standing on a carpet, a house
+> on sand) are a **ground + object pair**, not one object. Put the
+> floor/terrain type (`carpet`, `sand`, `path`, `water`, `mudpuddle`,
+> `oilslick`, `rubble`, `lilypad` — the types flagged `ground: true` in
+> `OBJECT_TYPES`) in the puzzle's `ground` array, and the thing standing on
+> it as a normal `objects` entry over the same cell. Don't use `ground` for
+> an object that's alone on its square with nothing on top — that's still
+> just a plain `objects` entry, exactly as before. A ground type keeps its
+> own occupiability (e.g. `water` is blocking even with nothing on it), and
+> unlike `objects`, `ground` cells don't need to form a rectangle.
+>
 > **5. Extract suspects and clues — verbatim, sourced from step 1's text.**
 > - List every named person, in the order their portrait appears in the
 >   image (use the image for reading order and name attribution even though
@@ -198,9 +209,14 @@ locally by an assistant that can already read images/PDFs directly.
 >   "objects": [
 >     { "type": "bed", "cells": [[0,0],[0,1]] },
 >     { "type": "chair", "cells": [[2,3]] }
+>   ],
+>   "ground": [
+>     { "type": "carpet", "cells": [[2,3]] }
 >   ]
 > }
 > ```
+>
+> Omit `ground` entirely if the puzzle has no stacked ground+object squares.
 >
 > **7. Save and register it:**
 > - Write the JSON to `murdoku/puzzles/<id>.json`.
@@ -228,6 +244,9 @@ locally by an assistant that can already read images/PDFs directly.
 > - Every `objects[].cells` entry is in-bounds, no cell is claimed by more
 >   than one object, no cell is `null` in `roomGrid`, and each object's cells
 >   form a filled rectangle.
+> - Every `ground[].cells` entry is in-bounds, no cell is claimed by more
+>   than one ground entry, no cell is `null` in `roomGrid`, and every
+>   `ground[].type` is flagged `ground: true` in `OBJECT_TYPES`.
 > - Every `refs.rooms` id exists in `rooms`, and every `refs.objects` type
 >   exists in `OBJECT_TYPES`.
 > - Every suspect letter is unique, `V` appears exactly once, and every

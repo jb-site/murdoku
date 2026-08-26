@@ -19,7 +19,7 @@
  "victim": "V",
  "murderer": "J",
  "asciiMapLegend": {
-  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "format": "each cell is <room-code><object-code-or-.><ground-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
   "roomCodes": {
    "summit": "S",
    "rangershut": "R",
@@ -31,9 +31,9 @@
    "lake": "L",
    "booth": "Bx1"
   },
-  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+  "note": "object-code is the object type's first letter lowercase, ground-code is the ground type's first letter uppercase (e.g. a statue on a carpet is s + C); see people[].onObjectType / onGroundType / besideObjectTypes for full type names instead of decoding the code"
  },
- "asciiMap": "#     #     #     #     S..   S..   S.G   S..   S..   S..   #     #    \n#     #     S..   S..   S..   S..   S..   S..   S..   S..   R..   R..  \n#     #     S..   S..   S..   W..   W..   W..   Rx1.. Rx1.. R.E   R..  \nP..   P..   P..   S..   S..   W.B   B..   B..   B..   Rx1.. G..   G..  \nP..   P..   P..   P..   P..   W..   B..   B..   B..   Rx1.. G..   G.K  \nP..   P..   P..   W..   W..   W..   B..   B..   B..   Rx1.F G..   G..  \nP..   P..   W..   W.A   B..   B..   B..   B..   B..   Rx1.. G..   G..  \nP..   P..   W..   B..   B..   B..   B..   B..   B..   Rx1.. Rx1.. G..  \nP..   W..   W..   B..   B..   B..   B..   B.V   B..   B..   Rx1.. G..  \nP.D   W..   B..   B..   B..   B..   B..   B..   B..   B..   Rx1.. L..  \nP..   W..   B..   B..   B.J   B..   B..   B..   B..   Rx1.. Rx1.. L..  \nP..   W..   Bx1.I Bx1.. Bx1.. Bx1.. B..   B..   Rx1.. Rx1.. L..   L..  \nW..   W..   Bx1.. Bx1.. Bx1.. Bx1.. B..   B..   Rx1.C L..   L..   L..  \nW..   W.H   Bx1.. Bx1.. Bx1.. Bx1.. Rx1.. Rx1.. Rx1.. L..   L..   L..  ",
+ "asciiMap": "#      #      #      #      S...   S...   S..G   S...   S...   S...   #      #     \n#      #      S...   S...   S...   S...   S...   S...   S...   S...   R...   R...  \n#      #      S...   S...   S...   W...   W...   W...   Rx1... Rx1... R..E   R...  \nP...   P...   P...   S...   S...   W..B   B...   B...   B...   Rx1... G...   G...  \nP...   P...   P...   P...   P...   W...   B...   B...   B...   Rx1... G...   G..K  \nP...   P...   P...   W...   W...   W...   B...   B...   B...   Rx1..F G...   G...  \nP...   P...   W...   W..A   B...   B...   B...   B...   B...   Rx1... G...   G...  \nP...   P...   W...   B...   B...   B...   B...   B...   B...   Rx1... Rx1... G...  \nP...   W...   W...   B...   B...   B...   B...   B..V   B...   B...   Rx1... G...  \nP..D   W...   B...   B...   B...   B...   B...   B...   B...   B...   Rx1... L...  \nP...   W...   B...   B...   B..J   B...   B...   B...   B...   Rx1... Rx1... L...  \nP...   W...   Bx1..I Bx1... Bx1... Bx1... B...   B...   Rx1... Rx1... L...   L...  \nW...   W...   Bx1... Bx1... Bx1... Bx1... B...   B...   Rx1..C L...   L...   L...  \nW...   W..H   Bx1... Bx1... Bx1... Bx1... Rx1... Rx1... Rx1... L...   L...   L...  ",
  "people": [
   {
    "letter": "A",
@@ -48,6 +48,7 @@
     "name": "Windy Trail"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [
@@ -78,6 +79,7 @@
     "name": "Windy Trail"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [
@@ -108,6 +110,7 @@
     "name": "Rocky Trail"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [
@@ -134,6 +137,7 @@
     "name": "Pine Forest"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [],
@@ -155,6 +159,7 @@
     "name": "Ranger's Hut"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [],
@@ -176,6 +181,7 @@
     "name": "Rocky Trail"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [
@@ -202,6 +208,7 @@
     "name": "Summit"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [],
@@ -223,6 +230,7 @@
     "name": "Windy Trail"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [
@@ -253,6 +261,7 @@
     "name": "Booth"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [],
@@ -274,6 +283,7 @@
     "name": "Bear Woods"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [
@@ -301,6 +311,7 @@
     "name": "Grove"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [],
@@ -322,6 +333,7 @@
     "name": "Bear Woods"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [

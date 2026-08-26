@@ -63,6 +63,19 @@ def on_phrase(obj_type):
     return f"on/at the {label}"
 
 
+def on_phrase_combined(obj_type, ground_type):
+    """An object phrase wins (it's the more specific fact); ground alone still says where
+    someone stands; both present reads as "<object phrase>, on the <ground label>"."""
+    if obj_type:
+        base = on_phrase(obj_type)
+        if ground_type:
+            return f"{base}, on the {object_label(ground_type)}"
+        return base
+    if ground_type:
+        return on_phrase(ground_type)
+    return on_phrase(None)
+
+
 def object_label(obj_type):
     return OBJECT_LABELS.get(obj_type, obj_type)
 
@@ -76,7 +89,16 @@ def build_object_at_map(puzzle):
     return obj_at
 
 
-def ascii_map(puzzle, obj_at, occupant_at):
+def build_ground_at_map(puzzle):
+    """cell "r,c" -> ground (floor/terrain) type, for every cell covered by ground."""
+    ground_at = {}
+    for obj in puzzle.get("ground", []):
+        for (r, c) in obj["cells"]:
+            ground_at[f"{r},{c}"] = obj["type"]
+    return ground_at
+
+
+def ascii_map(puzzle, obj_at, ground_at, occupant_at):
     rows, cols = puzzle["rows"], puzzle["cols"]
     room_grid = puzzle["roomGrid"]
 
@@ -112,8 +134,10 @@ def ascii_map(puzzle, obj_at, occupant_at):
             key = f"{r},{c}"
             obj = obj_at.get(key)
             oc = obj[0].lower() if obj else "."
+            ground = ground_at.get(key)
+            gc = ground[0].upper() if ground else "."
             occ = occupant_at.get(key, ".")
-            grid_tokens[r][c] = f"{room_code[room_id]}{oc}{occ}"
+            grid_tokens[r][c] = f"{room_code[room_id]}{oc}{gc}{occ}"
 
     width = max(len(tok) for row in grid_tokens for tok in row)
     lines = [" ".join(tok.ljust(width) for tok in row) for row in grid_tokens]
@@ -131,6 +155,7 @@ def build_context(puzzle_id):
     murderer = solution["murderer"]
 
     obj_at = build_object_at_map(puzzle)
+    ground_at = build_ground_at_map(puzzle)
     occupant_at = {f"{r},{c}": letter for letter, (r, c) in placements.items()}
     cell_of = {letter: tuple(rc) for letter, rc in placements.items()}
     room_of = {letter: room_grid[r][c] for letter, (r, c) in cell_of.items()}
@@ -143,13 +168,14 @@ def build_context(puzzle_id):
         else:
             general_clues.append(clue["text"])
 
-    amap, room_initial = ascii_map(puzzle, obj_at, occupant_at)
+    amap, room_initial = ascii_map(puzzle, obj_at, ground_at, occupant_at)
 
     people = []
     for letter in puzzle["suspects"]:
         r, c = cell_of[letter]
         room_id = room_of[letter]
         own_obj = obj_at.get(f"{r},{c}")
+        own_ground = ground_at.get(f"{r},{c}")
 
         beside_types = set()
         adjacent_people = []
@@ -162,6 +188,8 @@ def build_context(puzzle_id):
             key = f"{nr},{nc}"
             if key in obj_at:
                 beside_types.add(obj_at[key])
+            if key in ground_at:
+                beside_types.add(ground_at[key])
             if key in occupant_at:
                 adjacent_people.append({
                     "letter": occupant_at[key],
@@ -184,7 +212,8 @@ def build_context(puzzle_id):
             "position": [r, c],
             "room": {"id": room_id, "name": puzzle["rooms"].get(room_id, {}).get("name", room_id)},
             "onObjectType": own_obj,
-            "on": on_phrase(own_obj),
+            "onGroundType": own_ground,
+            "on": on_phrase_combined(own_obj, own_ground),
             "besideObjectTypes": sorted(object_label(t) for t in beside_types),
             "withInRoom": with_in_room,
             "adjacentPeople": adjacent_people,
@@ -195,6 +224,8 @@ def build_context(puzzle_id):
             nearby = set(beside_types)
             if own_obj:
                 nearby.add(own_obj)
+            if own_ground:
+                nearby.add(own_ground)
             entry["nearbyObjectTypesForMethod"] = sorted(object_label(t) for t in nearby)
 
         people.append(entry)
@@ -208,9 +239,9 @@ def build_context(puzzle_id):
         "victim": "V",
         "murderer": murderer,
         "asciiMapLegend": {
-            "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+            "format": "each cell is <room-code><object-code-or-.><ground-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
             "roomCodes": room_initial,
-            "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code",
+            "note": "object-code is the object type's first letter lowercase, ground-code is the ground type's first letter uppercase (e.g. a statue on a carpet is s + C); see people[].onObjectType / onGroundType / besideObjectTypes for full type names instead of decoding the code",
         },
         "asciiMap": amap,
         "people": people,

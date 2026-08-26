@@ -17,7 +17,7 @@
  "victim": "V",
  "murderer": "M",
  "asciiMapLegend": {
-  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "format": "each cell is <room-code><object-code-or-.><ground-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
   "roomCodes": {
    "desert": "D",
    "forest": "F",
@@ -26,9 +26,9 @@
    "lonely": "L",
    "sea": "S"
   },
-  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+  "note": "object-code is the object type's first letter lowercase, ground-code is the ground type's first letter uppercase (e.g. a statue on a carpet is s + C); see people[].onObjectType / onGroundType / besideObjectTypes for full type names instead of decoding the code"
  },
- "asciiMap": "S.. S.. S.. S.. S.. S.. S.. S.. D.. D.. D.. Dc. D.. Dc. D.D D..\nS.. S.. Fs. Fs. Fs. S.. S.. Ss. S.. D.A Dc. D.. Dh. Dc. D.. Dc.\nS.. Fs. FhK Ft. F.. Fs. S.. S.. S.. S.. Dc. D.. Dc. D.. Dc. S..\nS.. Fs. Ft. F.. F.. Ft. Fs. Fs. S.. S.. D.. D.. D.E D.. D.. S..\nFs. Ft. F.. F.. Ft. Ft. F.. Ft. FsJ S.. S.. Dc. D.. Dc. D.. S..\nF.. F.. Ft. Ft. Fh. F.. Ft. F.. Fs. S.. S.. D.B Dc. D.. S.. S..\nFt. Ft. F.. F.. F.. Fs. Fs. Fs. S.. S.. S.. S.. Dh. D.H S.. Ss.\nF.. F.. F.. Ft. Fs. S.. S.. S.. S.. S.. S.. S.. S.. S.. Ss. S.C\nF.. Ft. F.. Fs. S.. S.. T.. T.L T.. T.. S.. S.. S.. E.. S.. S..\nF.. Ft. Fs. S.. S.. T.. Th. Tt. Th. T.. T.I Ss. E.. E.. E.. S..\nFs. FsG S.. S.. S.. T.. T.. T.. Tt. T.. T.. S.. E.. E.. E.. S..\nSs. S.. S.. S.. S.. T.N Th. T.. Th. T.. S.. S.. E.. E.. E.. Ss.\nL.. L.. L.. S.. S.. T.. T.F T.. T.. T.. S.. E.. E.. E.. E.. S..\nLs. L.. L.. L.. S.O S.. T.. T.. T.. S.. S.. E.. E.. E.. E.. S..\nL.M Lh. Ls. L.. L.. S.. S.. S.. S.. S.. S.. S.. E.. E.. S.. S..\nLt. Ls. L.. L.V L.. L.. S.. S.. S.. S.. Ss. S.. S.. S.. S.. S..",
+ "asciiMap": "S... S... S... S... S... S... S... S... D... D... D... Dc.. D... Dc.. D..D D...\nS... S... Fs.. Fs.. Fs.. S... S... Ss.. S... D..A Dc.. D... Dh.. Dc.. D... Dc..\nS... Fs.. Fh.K Ft.. F... Fs.. S... S... S... S... Dc.. D... Dc.. D... Dc.. S...\nS... Fs.. Ft.. F... F... Ft.. Fs.. Fs.. S... S... D... D... D..E D... D... S...\nFs.. Ft.. F... F... Ft.. Ft.. F... Ft.. Fs.J S... S... Dc.. D... Dc.. D... S...\nF... F... Ft.. Ft.. Fh.. F... Ft.. F... Fs.. S... S... D..B Dc.. D... S... S...\nFt.. Ft.. F... F... F... Fs.. Fs.. Fs.. S... S... S... S... Dh.. D..H S... Ss..\nF... F... F... Ft.. Fs.. S... S... S... S... S... S... S... S... S... Ss.. S..C\nF... Ft.. F... Fs.. S... S... T... T..L T... T... S... S... S... E... S... S...\nF... Ft.. Fs.. S... S... T... Th.. Tt.. Th.. T... T..I Ss.. E... E... E... S...\nFs.. Fs.G S... S... S... T... T... T... Tt.. T... T... S... E... E... E... S...\nSs.. S... S... S... S... T..N Th.. T... Th.. T... S... S... E... E... E... Ss..\nL... L... L... S... S... T... T..F T... T... T... S... E... E... E... E... S...\nLs.. L... L... L... S..O S... T... T... T... S... S... E... E... E... E... S...\nL..M Lh.. Ls.. L... L... S... S... S... S... S... S... S... E... E... S... S...\nLt.. Ls.. L... L..V L... L... S... S... S... S... Ss.. S... S... S... S... S...",
  "people": [
   {
    "letter": "A",
@@ -43,6 +43,7 @@
     "name": "Desert Island"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "cactus"
@@ -83,6 +84,7 @@
     "name": "Desert Island"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "cactus"
@@ -123,6 +125,7 @@
     "name": "Sea"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "shark"
@@ -151,6 +154,7 @@
     "name": "Desert Island"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "cactus"
@@ -191,6 +195,7 @@
     "name": "Desert Island"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "cactus"
@@ -231,6 +236,7 @@
     "name": "Town Island"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "house"
@@ -267,6 +273,7 @@
     "name": "Forest Island"
    },
    "onObjectType": "sand",
+   "onGroundType": null,
    "on": "standing in the sand",
    "besideObjectTypes": [
     "sand",
@@ -300,6 +307,7 @@
     "name": "Desert Island"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "house"
@@ -340,6 +348,7 @@
     "name": "Town Island"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "shark"
@@ -376,6 +385,7 @@
     "name": "Forest Island"
    },
    "onObjectType": "sand",
+   "onGroundType": null,
    "on": "standing in the sand",
    "besideObjectTypes": [
     "sand",
@@ -409,6 +419,7 @@
     "name": "Forest Island"
    },
    "onObjectType": "house",
+   "onGroundType": null,
    "on": "inside the house",
    "besideObjectTypes": [
     "sand",
@@ -442,6 +453,7 @@
     "name": "Town Island"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "tree"
@@ -478,6 +490,7 @@
     "name": "Lonely Island"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "house",
@@ -513,6 +526,7 @@
     "name": "Town Island"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "house"
@@ -549,6 +563,7 @@
     "name": "Sea"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [
@@ -575,6 +590,7 @@
     "name": "Lonely Island"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [
@@ -589,6 +605,6 @@
    ]
   }
  ],
- "hasPortraits": false,
+ "hasPortraits": true,
  "sourceFile": "source/the-mystery-islands-color.pdf"
 }

@@ -44,9 +44,12 @@ def check(puzzle_id):
     suspects = puz["suspects"]
     placements = sol.get("placements", {})
 
-    # Which cells are blocked by a non-occupiable object.
+    # Which cells are blocked by a non-occupiable object or ground tile.
     blocked = set()
     for obj in puz.get("objects", []):
+        if obj["type"] in BLOCKING:
+            blocked.update((r, c) for r, c in obj["cells"])
+    for obj in puz.get("ground", []):
         if obj["type"] in BLOCKING:
             blocked.update((r, c) for r, c in obj["cells"])
 

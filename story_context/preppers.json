@@ -16,7 +16,7 @@
  "victim": "V",
  "murderer": "A",
  "asciiMapLegend": {
-  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "format": "each cell is <room-code><object-code-or-.><ground-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
   "roomCodes": {
    "yard": "Y",
    "kitchen": "K",
@@ -27,9 +27,9 @@
    "saferoom": "Sx1",
    "supply": "Sx2"
   },
-  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+  "note": "object-code is the object type's first letter lowercase, ground-code is the ground type's first letter uppercase (e.g. a statue on a carpet is s + C); see people[].onObjectType / onGroundType / besideObjectTypes for full type names instead of decoding the code"
  },
- "asciiMap": "Y..   Y..   Y..   Y..   Y..   Y..   Yc.   Yc.   Y.A  \nY..   Kt.   Kt.   K..   Lc.   L..   L.F   Yb.   Y..  \nY..   Kt.   K..   Kt.   Lc.   L..   Lt.   Y.V   Ys.  \nYs.   K..   K..   KcG   L..   L..   Ls.   Y..   Y..  \nY..   B..   B..   Bx1t. Bx1b. Bx1bB Bx1.. Y..   Y..  \nY..   BcH   Bb.   Bx1s. Bx1.. Bx1.. Bx1.. Sx2s. Sx2b.\nSx1b. Sx1t. Sx1b. S..   Bx1.C Sx2s. Sx2b. Sx2.. Sx2..\nSx1bD Sx1c. Sx1b. S..   S..   Sx2.. Sx2.. Sx2b. Sx2b.\nSx1b. Sx1s. Sx1.E Sx1.. Sx1b. Sx2.. Sx2b. Sx2s. Sx2..",
+ "asciiMap": "Y...   Y...   Y...   Y...   Y...   Y...   Yc..   Yc..   Y..A  \nY...   Kt..   Kt..   K...   Lc..   L...   L..F   Yb..   Y...  \nY...   Kt..   K...   Kt..   Lc..   L...   Lt..   Y..V   Ys..  \nYs..   K...   K...   Kc.G   L...   L...   Ls..   Y...   Y...  \nY...   B...   B...   Bx1t.. Bx1b.. Bx1b.B Bx1... Y...   Y...  \nY...   Bc.H   Bb..   Bx1s.. Bx1... Bx1... Bx1... Sx2s.. Sx2b..\nSx1b.. Sx1t.. Sx1b.. S...   Bx1..C Sx2s.. Sx2b.. Sx2... Sx2...\nSx1b.D Sx1c.. Sx1b.. S...   S...   Sx2... Sx2... Sx2b.. Sx2b..\nSx1b.. Sx1s.. Sx1..E Sx1... Sx1b.. Sx2... Sx2b.. Sx2s.. Sx2...",
  "people": [
   {
    "letter": "A",
@@ -44,6 +44,7 @@
     "name": "Yard"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "car"
@@ -75,6 +76,7 @@
     "name": "Bedroom"
    },
    "onObjectType": "bed",
+   "onGroundType": null,
    "on": "on the bed",
    "besideObjectTypes": [
     "bed"
@@ -103,6 +105,7 @@
     "name": "Bedroom"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "shelf"
@@ -131,6 +134,7 @@
     "name": "Safe Room"
    },
    "onObjectType": "bed",
+   "onGroundType": null,
    "on": "on the bed",
    "besideObjectTypes": [
     "bed",
@@ -161,6 +165,7 @@
     "name": "Safe Room"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "box",
@@ -190,6 +195,7 @@
     "name": "Living Room"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "TV",
@@ -215,6 +221,7 @@
     "name": "Kitchen"
    },
    "onObjectType": "chair",
+   "onGroundType": null,
    "on": "sitting in a chair",
    "besideObjectTypes": [
     "table"
@@ -238,6 +245,7 @@
     "name": "Bathroom"
    },
    "onObjectType": "chair",
+   "onGroundType": null,
    "on": "sitting in a chair",
    "besideObjectTypes": [
     "TV",
@@ -262,6 +270,7 @@
     "name": "Yard"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "TV",
@@ -280,6 +289,6 @@
    ]
   }
  ],
- "hasPortraits": false,
+ "hasPortraits": true,
  "sourceFile": "source/preppers-color.pdf"
 }

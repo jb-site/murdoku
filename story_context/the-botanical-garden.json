@@ -16,7 +16,7 @@
  "victim": "V",
  "murderer": "J",
  "asciiMapLegend": {
-  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "format": "each cell is <room-code><object-code-or-.><ground-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
   "roomCodes": {
    "bonsai": "B",
    "gazebo": "G",
@@ -27,9 +27,9 @@
    "pond": "P",
    "restingarea": "R"
   },
-  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+  "note": "object-code is the object type's first letter lowercase, ground-code is the ground type's first letter uppercase (e.g. a statue on a carpet is s + C); see people[].onObjectType / onGroundType / besideObjectTypes for full type names instead of decoding the code"
  },
- "asciiMap": "Bc. B.. Bb. Bt. Bt. A.. I.. IcI Ap. A.. A.. At.\nB.. B.. Bb. B.G Bt. At. I.. It. Ap. Ac. At. At.\nBb. B.. B.. B.. B.. A.. A.. At. Ap. AcB At. A..\nBcE Bb. B.. B.. B.. Ac. A.. Ap. Ap. A.. A.. At.\nFf. Fp. Ff. Ff. F.. A.A At. Ap. A.. A.. At. At.\nFf. Fp. FpD Fc. Ff. At. A.. Ap. A.. At. At. A..\nG.. Gt. Fp. F.. Ff. R.. Rs. Rp. Rt. R.. Rs. R.H\nGc. G.F Fp. Fp. Fp. Rp. Rp. Rp. P.. Pl. Rt. Rs.\nG.. Gt. Fp. F.. Ff. Rp. P.J Pl. P.. P.. P.. Rc.\nFf. Ff. Fp. Ff. F.. Rp. Rp. P.. Pl. P.. P.V Rc.\nDc. D.. D.. D.. Dc. Rs. Rp. R.. RcC Rt. Rt. R..\nD.. Dc. D.. D.. D.K R.. Rp. R.. R.. R.. R.. R..",
+ "asciiMap": "Bc.. B... Bb.. Bt.. Bt.. A... I... Ic.I Ap.. A... A... At..\nB... B... Bb.. B..G Bt.. At.. I... It.. Ap.. Ac.. At.. At..\nBb.. B... B... B... B... A... A... At.. Ap.. Ac.B At.. A...\nBc.E Bb.. B... B... B... Ac.. A... Ap.. Ap.. A... A... At..\nFf.. Fp.. Ff.. Ff.. F... A..A At.. Ap.. A... A... At.. At..\nFf.. Fp.. Fp.D Fc.. Ff.. At.. A... Ap.. A... At.. At.. A...\nG... Gt.. Fp.. F... Ff.. R... Rs.. Rp.. Rt.. R... Rs.. R..H\nGc.. G..F Fp.. Fp.. Fp.. Rp.. Rp.. Rp.. P... Pl.. Rt.. Rs..\nG... Gt.. Fp.. F... Ff.. Rp.. P..J Pl.. P... P... P... Rc..\nFf.. Ff.. Fp.. Ff.. F... Rp.. Rp.. P... Pl.. P... P..V Rc..\nDc.. D... D... D... Dc.. Rs.. Rp.. R... Rc.C Rt.. Rt.. R...\nD... Dc.. D... D... D..K R... Rp.. R... R... R... R... R...",
  "people": [
   {
    "letter": "A",
@@ -44,6 +44,7 @@
     "name": "Arboretum"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "chair",
@@ -73,6 +74,7 @@
     "name": "Arboretum"
    },
    "onObjectType": "chair",
+   "onGroundType": null,
    "on": "sitting in a chair",
    "besideObjectTypes": [
     "chair",
@@ -103,6 +105,7 @@
     "name": "Resting Area"
    },
    "onObjectType": "chair",
+   "onGroundType": null,
    "on": "sitting in a chair",
    "besideObjectTypes": [
     "lily pad",
@@ -132,6 +135,7 @@
     "name": "Flower Garden"
    },
    "onObjectType": "path",
+   "onGroundType": null,
    "on": "standing on the path",
    "besideObjectTypes": [
     "chair",
@@ -157,6 +161,7 @@
     "name": "Bonsai Exhibit"
    },
    "onObjectType": "chair",
+   "onGroundType": null,
    "on": "sitting in a chair",
    "besideObjectTypes": [
     "bonsai",
@@ -186,6 +191,7 @@
     "name": "Gazebo"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "chair",
@@ -211,6 +217,7 @@
     "name": "Bonsai Exhibit"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "bonsai",
@@ -240,6 +247,7 @@
     "name": "Resting Area"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "shrub"
@@ -268,6 +276,7 @@
     "name": "Info Desk"
    },
    "onObjectType": "chair",
+   "onGroundType": null,
    "on": "sitting in a chair",
    "besideObjectTypes": [
     "path",
@@ -292,6 +301,7 @@
     "name": "Pond"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "lily pad",
@@ -325,6 +335,7 @@
     "name": "Desert Exhibit"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "cactus"
@@ -348,6 +359,7 @@
     "name": "Pond"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "chair",
@@ -365,6 +377,6 @@
    ]
   }
  ],
- "hasPortraits": false,
+ "hasPortraits": true,
  "sourceFile": "source/the-botanical-garden-color.pdf"
 }

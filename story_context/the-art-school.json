@@ -14,7 +14,7 @@
  "victim": "V",
  "murderer": "D",
  "asciiMapLegend": {
-  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "format": "each cell is <room-code><object-code-or-.><ground-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
   "roomCodes": {
    "office": "O",
    "modelplatform": "M",
@@ -23,9 +23,9 @@
    "gallery": "G",
    "sculptingstudio": "Sx1"
   },
-  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+  "note": "object-code is the object type's first letter lowercase, ground-code is the ground type's first letter uppercase (e.g. a statue on a carpet is s + C); see people[].onObjectType / onGroundType / besideObjectTypes for full type names instead of decoding the code"
  },
- "asciiMap": "Oc.   OfB   M..   Mc.   Mc.   Mc.   Ms.   Ss.   Ss.  \nOt.   O..   M..   Mc.   McF   Mc.   M..   S..   Se.  \nO..   Pc.   Pe.   P..   P..   P..   Pt.   Pc.   S.A  \nP..   Pc.   Pe.   Ps.   P..   P..   P.H   P..   P..  \nP..   P..   PcG   Pe.   Pe.   P..   Pe.   P..   P..  \nGf.   Gp.   P..   P.E   P..   P..   Pc.   Sx1c. Sx1..\nGs.   Gp.   Gf.   Gt.   Gf.   Sx1s. Sx1s. Sx1.V Sx1s.\nG.C   Gp.   Gp.   Gp.   Gp.   Sx1c. Sx1.. Sx1s. Sx1c.\nG..   G..   Gs.   G..   G..   Sx1.D Sx1c. Sx1t. Sx1..",
+ "asciiMap": "Oc..   Of.B   M...   Mc..   Mc..   Mc..   Ms..   Ss..   Ss..  \nOt..   O...   M...   Mc..   Mc.F   Mc..   M...   S...   Se..  \nO...   Pc..   Pe..   P...   P...   P...   Pt..   Pc..   S..A  \nP...   Pc..   Pe..   Ps..   P...   P...   P..H   P...   P...  \nP...   P...   Pc.G   Pe..   Pe..   P...   Pe..   P...   P...  \nGf..   Gp..   P...   P..E   P...   P...   Pc..   Sx1c.. Sx1...\nGs..   Gp..   Gf..   Gt..   Gf..   Sx1s.. Sx1s.. Sx1..V Sx1s..\nG..C   Gp..   Gp..   Gp..   Gp..   Sx1c.. Sx1... Sx1s.. Sx1c..\nG...   G...   Gs..   G...   G...   Sx1..D Sx1c.. Sx1t.. Sx1...",
  "people": [
   {
    "letter": "A",
@@ -40,6 +40,7 @@
     "name": "Supplies"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "chair",
@@ -64,6 +65,7 @@
     "name": "Office"
    },
    "onObjectType": "framedpainting",
+   "onGroundType": null,
    "on": "standing in front of a framed painting",
    "besideObjectTypes": [
     "chair"
@@ -87,6 +89,7 @@
     "name": "Gallery"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "path",
@@ -111,6 +114,7 @@
     "name": "Sculpting Studio"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "chair"
@@ -142,6 +146,7 @@
     "name": "Painting Studio"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "easel",
@@ -175,6 +180,7 @@
     "name": "Model Platform"
    },
    "onObjectType": "carpet",
+   "onGroundType": null,
    "on": "standing on the carpet",
    "besideObjectTypes": [
     "carpet",
@@ -199,6 +205,7 @@
     "name": "Painting Studio"
    },
    "onObjectType": "chair",
+   "onGroundType": null,
    "on": "sitting in a chair",
    "besideObjectTypes": [
     "easel"
@@ -231,6 +238,7 @@
     "name": "Painting Studio"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "easel",
@@ -264,6 +272,7 @@
     "name": "Sculpting Studio"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "chair",
@@ -281,6 +290,6 @@
    ]
   }
  ],
- "hasPortraits": false,
+ "hasPortraits": true,
  "sourceFile": "source/the-art-school-color.pdf"
 }

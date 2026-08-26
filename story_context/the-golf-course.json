@@ -20,7 +20,7 @@
  "victim": "V",
  "murderer": "B",
  "asciiMapLegend": {
-  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "format": "each cell is <room-code><object-code-or-.><ground-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
   "roomCodes": {
    "hole1": "H1",
    "hole2": "H2",
@@ -31,9 +31,9 @@
    "hole7": "H7",
    "hole8": "H8"
   },
-  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+  "note": "object-code is the object type's first letter lowercase, ground-code is the ground type's first letter uppercase (e.g. a statue on a carpet is s + C); see people[].onObjectType / onGroundType / besideObjectTypes for full type names instead of decoding the code"
  },
- "asciiMap": "H2s. H2s. H2s. H2t. H2.. H2.. H2.. H2t. H3t. H3t. H3.. H3.O H3.. H3w. H3w. H3w.\nH2s. H2s. H2.. H2.. H2.. H2s. H2f. H2t. H3t. H3t. H3.K H3.. H3.. H3.. H3t. H3w.\nH2s. H2t. H2.. H2.. H2s. H2s. H2s. H7.. H7.. H7t. H3w. H3w. H3.. H3.. H3fM H3..\nH2s. H2.. H2.. H2s. H2s. H2sC H7s. H7.. H7f. H7.. H3w. H3w. H3w. H4.. H4.. H4..\nH2.. H2tG H2.. H7s. H7s. H7s. H7s. H7.. H7t. H8t. H8.. H8.. H4.. H4.. H4t. H4..\nH2.. H2t. H7t. H7.. H7.. H7.. H7.. H7t. H8t. H8.. H8.. H8t. H4.. H4c. H4.. H4.V\nH1.. H1t. H7t. H7t. H7.. H7s. H7sN H8s. H8.. H8.. H8.. H8t. H4.. H4.. H4t. H4..\nH1f. H1t. H7t. H7.. H7s. H7s. H8s. H8sL H8c. H8.. H8t. H8t. H4.. H4t. H4t. H4t.\nH1.. H1.. H1t. H7t. H7.. H7s. H8s. H8.. H8.. H8.. H8t. H4t. H4.. H4.B H4t. H4t.\nH1t. H1.. H1.I H1t. H7.. H7.. H8.. H8.. H8.. H8.. H8t. H4.. H4s. H4.. H4.. H4..\nH1t. H1.. H1.. H1.. H7t. H7.. H8w. H8w. H8f. H8.D H8.. H4s. H4s. H4s. H4.. H4t.\nH1c. H1.. H1.. H1cF H6.. H6w. H6w. H8w. H8w. H5f. H5s. H5s. H5s. H4s. H4f. H4t.\nH1.. H1.. H1.. H1t. H6fE H6t. H6t. H6w. H6.. H5.. H5.. H5s. H5s. H4.. H4.. H4..\nH1.. H1t. H1.. H6t. H6.. H6.. H6t. H6.. H6tJ H5.. H5.. H5.. H5.. H5.. H5.. H5..\nH1.H H1t. H1t. H6t. H6.. H6.. H6.. H6.. H6w. H5w. H5w. H5.. H5.. H5c. H5.. H5t.\nH1t. H1t. H1t. H6.. H6.. H6t. H6w. H6w. H6w. H5.. H5.. H5w. H5.A H5.. H5.. H5..",
+ "asciiMap": "H2s.. H2s.. H2s.. H2t.. H2... H2... H2... H2t.. H3t.. H3t.. H3... H3..O H3... H3w.. H3w.. H3w..\nH2s.. H2s.. H2... H2... H2... H2s.. H2f.. H2t.. H3t.. H3t.. H3..K H3... H3... H3... H3t.. H3w..\nH2s.. H2t.. H2... H2... H2s.. H2s.. H2s.. H7... H7... H7t.. H3w.. H3w.. H3... H3... H3f.M H3...\nH2s.. H2... H2... H2s.. H2s.. H2s.C H7s.. H7... H7f.. H7... H3w.. H3w.. H3w.. H4... H4... H4...\nH2... H2t.G H2... H7s.. H7s.. H7s.. H7s.. H7... H7t.. H8t.. H8... H8... H4... H4... H4t.. H4...\nH2... H2t.. H7t.. H7... H7... H7... H7... H7t.. H8t.. H8... H8... H8t.. H4... H4c.. H4... H4..V\nH1... H1t.. H7t.. H7t.. H7... H7s.. H7s.N H8s.. H8... H8... H8... H8t.. H4... H4... H4t.. H4...\nH1f.. H1t.. H7t.. H7... H7s.. H7s.. H8s.. H8s.L H8c.. H8... H8t.. H8t.. H4... H4t.. H4t.. H4t..\nH1... H1... H1t.. H7t.. H7... H7s.. H8s.. H8... H8... H8... H8t.. H4t.. H4... H4..B H4t.. H4t..\nH1t.. H1... H1..I H1t.. H7... H7... H8... H8... H8... H8... H8t.. H4... H4s.. H4... H4... H4...\nH1t.. H1... H1... H1... H7t.. H7... H8w.. H8w.. H8f.. H8..D H8... H4s.. H4s.. H4s.. H4... H4t..\nH1c.. H1... H1... H1c.F H6... H6w.. H6w.. H8w.. H8w.. H5f.. H5s.. H5s.. H5s.. H4s.. H4f.. H4t..\nH1... H1... H1... H1t.. H6f.E H6t.. H6t.. H6w.. H6... H5... H5... H5s.. H5s.. H4... H4... H4...\nH1... H1t.. H1... H6t.. H6... H6... H6t.. H6... H6t.J H5... H5... H5... H5... H5... H5... H5...\nH1..H H1t.. H1t.. H6t.. H6... H6... H6... H6... H6w.. H5w.. H5w.. H5... H5... H5c.. H5... H5t..\nH1t.. H1t.. H1t.. H6... H6... H6t.. H6w.. H6w.. H6w.. H5... H5... H5w.. H5..A H5... H5... H5...",
  "people": [
   {
    "letter": "A",
@@ -48,6 +48,7 @@
     "name": "Hole 5"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "water"
@@ -71,6 +72,7 @@
     "name": "Hole 4"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "tree"
@@ -102,6 +104,7 @@
     "name": "Hole 2"
    },
    "onObjectType": "sand",
+   "onGroundType": null,
    "on": "standing in the sand",
    "besideObjectTypes": [
     "sand"
@@ -130,6 +133,7 @@
     "name": "Hole 8"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "flag"
@@ -158,6 +162,7 @@
     "name": "Hole 6"
    },
    "onObjectType": "flag",
+   "onGroundType": null,
    "on": "standing by the flag",
    "besideObjectTypes": [
     "tree"
@@ -186,6 +191,7 @@
     "name": "Hole 1"
    },
    "onObjectType": "cart",
+   "onGroundType": null,
    "on": "in the golf cart",
    "besideObjectTypes": [
     "tree"
@@ -218,6 +224,7 @@
     "name": "Hole 2"
    },
    "onObjectType": "tee",
+   "onGroundType": null,
    "on": "standing on the tee",
    "besideObjectTypes": [
     "tree"
@@ -246,6 +253,7 @@
     "name": "Hole 1"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "tree"
@@ -278,6 +286,7 @@
     "name": "Hole 1"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "tree"
@@ -310,6 +319,7 @@
     "name": "Hole 6"
    },
    "onObjectType": "tee",
+   "onGroundType": null,
    "on": "standing on the tee",
    "besideObjectTypes": [
     "water"
@@ -338,6 +348,7 @@
     "name": "Hole 3"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [
     "tree",
@@ -371,6 +382,7 @@
     "name": "Hole 8"
    },
    "onObjectType": "sand",
+   "onGroundType": null,
    "on": "standing in the sand",
    "besideObjectTypes": [
     "golf cart",
@@ -400,6 +412,7 @@
     "name": "Hole 3"
    },
    "onObjectType": "flag",
+   "onGroundType": null,
    "on": "standing by the flag",
    "besideObjectTypes": [
     "tree"
@@ -432,6 +445,7 @@
     "name": "Hole 7"
    },
    "onObjectType": "sand",
+   "onGroundType": null,
    "on": "standing in the sand",
    "besideObjectTypes": [
     "sand"
@@ -455,6 +469,7 @@
     "name": "Hole 3"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [
@@ -485,6 +500,7 @@
     "name": "Hole 4"
    },
    "onObjectType": null,
+   "onGroundType": null,
    "on": "on open floor",
    "besideObjectTypes": [],
    "withInRoom": [
@@ -499,6 +515,6 @@
    ]
   }
  ],
- "hasPortraits": false,
+ "hasPortraits": true,
  "sourceFile": "source/the-golf-course-color.pdf"
 }
