@@ -67,7 +67,7 @@ def check_one(puzzle_id, everyone_names):
     victim = ctx["victim"]
     suspects_for_escape = [l for l in letters if l not in (murderer, victim)]
 
-    for field in ("id", "title", "acts", "whereabouts", "reveal", "escape"):
+    for field in ("id", "title", "victoryHeadline", "acts", "whereabouts", "reveal", "escape"):
         if field not in story:
             errors.append(f"missing top-level field '{field}'")
     if errors:

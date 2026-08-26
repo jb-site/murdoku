@@ -1,47 +1,48 @@
 {
-  "id": "the-movie-studio",
-  "title": "The Movie Studio",
-  "acts": [
-    "Principal photography on \"Cutlass of the Damned\" was already eleven days behind when the lot's tannoy announced, in a voice of enormous calm, that nobody was to panic and also that nobody was to go anywhere near catering. Over on the Western Set, Falcon had spent the morning perfecting a quick-draw that ended, every single time, with him reversing into the same cactus and saying a word the studio's family rating did not permit; Johnny, blond, sunglassed and entirely indoors, kept the camera rolling on all nine takes because he said posterity deserved them. Two sets over, Cornelius — director, lattice-print shirt, sunglasses worn at all hours including inside a canvas love-seat — had reached take forty-one of a single kiss, and Damara, hat brim down, was sneezing helplessly into it, on account of props having sourced real flowers to save money on the fake ones.",
-    "The Epic Set was quieter, mainly because Mason's helmet visor had rusted shut and he had stopped trying to explain that he did not want to be loaded into the catapult a fourth time; Erik, bearded and bifocalled, was pressed flat against the painted backdrop trying to frame him without also filming the wall. In the trenches of the War Set the mud budget had been magnificent and everything else had not: Idris, the faceless stunt double who had never once been given a close-up, stood in his puddle for continuity while it slowly filled his boots; Leeroy lay in the rubble being extravagantly dead, twitching whenever a fly landed on his forehead makeup; and Kobe worked the camera from the corner, framing them both and quietly wondering when acting had come to this. On the Horror Set, Gilbert cued a wave of static across the haunted television for the ninth time, while Hadako, hair over her face, occupied the good chair beside the camera and refused all offers of a hairclip.",
-    "Antonio, meanwhile, stood to the left of the sci-fi camera because he had been told his beard interfered with the lens flare, and in Editing, Belah — green, tentacled, magnificent — watched her own dailies and demanded to know who had digitally shortened her tentacles. In Makeup, Olivia sat perfectly still under a hat the size of a card table while a technician reapplied her adventurer freckles one by one. Nobody, therefore, was watching the trailers when there was a noise like a wardrobe falling downstairs, followed by a sound the entire lot would later describe, independently and identically, as \"sproing\". The tannoy came on again. It suggested, in that same enormous calm, that everyone stay exactly where they were."
-  ],
-  "whereabouts": {
-    "A": "Antonio was operating the sci-fi camera from its left-hand side, having been ordered to keep his ginger beard out of the shot, with the console table at his elbow.",
-    "B": "Belah, still in full green tentacle makeup and fur collar, was parked in front of an Editing monitor watching her own dailies and counting her tentacles.",
-    "C": "Cornelius, sunglasses on indoors, was hunched over the Romance Set camera between chair and table, calling take forty-one of the same kiss.",
-    "D": "Damara, sun hat tipped over her eyes, was standing among the flowers and the potted tree, ruining every take by sneezing at the real roses props had bought.",
-    "E": "Erik, bearded and thick-lensed, was pinned against the painted backdrop wall working the Epic Set camera and trying to keep the matte painting out of frame.",
-    "F": "Falcon, in cowboy hat and moustache, was rehearsing his quick-draw between the barrel and the cactus, and losing to the cactus.",
-    "G": "Gilbert, hair in his eyes, was cueing static across the haunted TV prop and restacking the shelf of cursed knick-knacks between takes.",
-    "H": "Hadako, hair completely over her face, had claimed the chair beside the Horror Set camera and was eating crisps through it.",
-    "I": "Idris, the blank-faced stunt double in the olive vest, was standing in the mud puddle for continuity and had been for two and a half hours.",
-    "J": "Johnny, blond and sunglassed, was running the Western Set camera from a spot deliberately not in the corner, because the corner had bad light.",
-    "K": "Kobe, in his grey collared shirt, was wedged in the corner of the War Set working the camera and framing two men lying in filth.",
-    "L": "Leeroy, prop gash on his forehead, was lying beside the rubble playing dead, and playing it far too enthusiastically.",
-    "M": "Mason, sealed inside a knight's helmet with a sword he could not see, was standing beside the catapult and the tree hoping to be forgotten.",
-    "N": "Natalia, black bob, no costume, was reclining on the trailer's stunt bed with one hand resting very lightly on its release catch.",
-    "O": "Olivia, in explorer's hat and gem pendant, was sitting in the Makeup chair beside the table having her freckles reapplied individually.",
-    "V": "Vaughn, in pirate bandana and blond beard, was pacing the open floor of his trailer beside the table, rewriting his own death scene out loud."
-  },
-  "reveal": "It was Natalia, in the Star Trailer, by means of the bed. Vaughn had spent the whole shoot cutting her lines, taking her stunt credit, and — the last straw — having the trailer's fold-away bed hydraulically upgraded so he could be launched out of it for his big waking-nightmare shot, with a ballast crate strapped to the foot end for counterweight. Natalia lay on it, listened to him rehearse a monologue about legacy for the fourth time, and thumbed the catch. The bed went off like a mousetrap the size of a mousetrap factory. The ballast crate went the other way. Vaughn went through the trailer's rear wall in a Vaughn-shaped silhouette so clean that props kept it, and the bed folded itself shut over Natalia with a polite click, which is how she was found: horizontal, unbothered, and entirely alibi-free.",
-  "escape": {
-    "generic": "The case was written off as a props malfunction, the silhouette was repainted, and the killer got a producer credit on the reshoots.",
-    "byAccused": {
-      "A": "Antonio was led away still standing to the left of his camera, protesting that the beard was a character choice — while the real killer took a long lunch.",
-      "B": "Belah went quietly, mostly because nobody could take a green woman with tentacles entirely seriously, and the actual culprit strolled off the lot unphotographed.",
-      "C": "Cornelius directed his own arrest, insisted on a second take of it, and the real killer watched both from behind the catering truck.",
-      "D": "Damara was hauled off sneezing into her own sun hat, and the person who actually did it sent her flowers, which was in poor taste twice over.",
-      "E": "Erik was arrested against the backdrop wall, glasses fogged with indignation, while the guilty party quietly requested a wrap on the day.",
-      "F": "Falcon was marched off in cowboy boots, backing into the cactus one final time, and the real killer let the door close behind him.",
-      "G": "Gilbert was taken away mid-static, the haunted TV left hissing to nobody, and the culprit never even had to change their shoes.",
-      "H": "Hadako was led out with her hair still over her face, which meant nobody could tell she was innocent, and someone else counted on exactly that.",
-      "I": "Idris was arrested straight out of his mud puddle, finally got his close-up on the six o'clock news, and the real killer got the day off.",
-      "J": "Johnny was accused, kept his sunglasses on throughout, and the person who actually did it made sure the camera was rolling.",
-      "K": "Kobe was pulled out of his corner still holding the camera, and the real culprit made a note to buy the footage back later.",
-      "L": "Leeroy was arrested while playing dead, which delayed things considerably, and the guilty party used every minute of it.",
-      "M": "Mason was taken into custody inside a helmet nobody could open, and the real killer helpfully offered to hold his sword.",
-      "O": "Olivia was arrested with only half her freckles on, so the mugshot was unusable, and the person who actually did it was never photographed at all."
-    }
+ "id": "the-movie-studio",
+ "title": "The Movie Studio",
+ "victoryHeadline": "Caught! That's a wrap on the killer.",
+ "acts": [
+  "Principal photography on \"Cutlass of the Damned\" was already eleven days behind when the lot's tannoy announced, in a voice of enormous calm, that nobody was to panic and also that nobody was to go anywhere near catering. Over on the Western Set, Falcon had spent the morning perfecting a quick-draw that ended, every single time, with him reversing into the same cactus and saying a word the studio's family rating did not permit; Johnny, blond, sunglassed and entirely indoors, kept the camera rolling on all nine takes because he said posterity deserved them. Two sets over, Cornelius — director, lattice-print shirt, sunglasses worn at all hours including inside a canvas love-seat — had reached take forty-one of a single kiss, and Damara, hat brim down, was sneezing helplessly into it, on account of props having sourced real flowers to save money on the fake ones.",
+  "The Epic Set was quieter, mainly because Mason's helmet visor had rusted shut and he had stopped trying to explain that he did not want to be loaded into the catapult a fourth time; Erik, bearded and bifocalled, was pressed flat against the painted backdrop trying to frame him without also filming the wall. In the trenches of the War Set the mud budget had been magnificent and everything else had not: Idris, the faceless stunt double who had never once been given a close-up, stood in his puddle for continuity while it slowly filled his boots; Leeroy lay in the rubble being extravagantly dead, twitching whenever a fly landed on his forehead makeup; and Kobe worked the camera from the corner, framing them both and quietly wondering when acting had come to this. On the Horror Set, Gilbert cued a wave of static across the haunted television for the ninth time, while Hadako, hair over her face, occupied the good chair beside the camera and refused all offers of a hairclip.",
+  "Antonio, meanwhile, stood to the left of the sci-fi camera because he had been told his beard interfered with the lens flare, and in Editing, Belah — green, tentacled, magnificent — watched her own dailies and demanded to know who had digitally shortened her tentacles. In Makeup, Olivia sat perfectly still under a hat the size of a card table while a technician reapplied her adventurer freckles one by one. Nobody, therefore, was watching the trailers when there was a noise like a wardrobe falling downstairs, followed by a sound the entire lot would later describe, independently and identically, as \"sproing\". The tannoy came on again. It suggested, in that same enormous calm, that everyone stay exactly where they were."
+ ],
+ "whereabouts": {
+  "A": "Antonio was operating the sci-fi camera from its left-hand side, having been ordered to keep his ginger beard out of the shot, with the console table at his elbow.",
+  "B": "Belah, still in full green tentacle makeup and fur collar, was parked in front of an Editing monitor watching her own dailies and counting her tentacles.",
+  "C": "Cornelius, sunglasses on indoors, was hunched over the Romance Set camera between chair and table, calling take forty-one of the same kiss.",
+  "D": "Damara, sun hat tipped over her eyes, was standing among the flowers and the potted tree, ruining every take by sneezing at the real roses props had bought.",
+  "E": "Erik, bearded and thick-lensed, was pinned against the painted backdrop wall working the Epic Set camera and trying to keep the matte painting out of frame.",
+  "F": "Falcon, in cowboy hat and moustache, was rehearsing his quick-draw between the barrel and the cactus, and losing to the cactus.",
+  "G": "Gilbert, hair in his eyes, was cueing static across the haunted TV prop and restacking the shelf of cursed knick-knacks between takes.",
+  "H": "Hadako, hair completely over her face, had claimed the chair beside the Horror Set camera and was eating crisps through it.",
+  "I": "Idris, the blank-faced stunt double in the olive vest, was standing in the mud puddle for continuity and had been for two and a half hours.",
+  "J": "Johnny, blond and sunglassed, was running the Western Set camera from a spot deliberately not in the corner, because the corner had bad light.",
+  "K": "Kobe, in his grey collared shirt, was wedged in the corner of the War Set working the camera and framing two men lying in filth.",
+  "L": "Leeroy, prop gash on his forehead, was lying beside the rubble playing dead, and playing it far too enthusiastically.",
+  "M": "Mason, sealed inside a knight's helmet with a sword he could not see, was standing beside the catapult and the tree hoping to be forgotten.",
+  "N": "Natalia, black bob, no costume, was reclining on the trailer's stunt bed with one hand resting very lightly on its release catch.",
+  "O": "Olivia, in explorer's hat and gem pendant, was sitting in the Makeup chair beside the table having her freckles reapplied individually.",
+  "V": "Vaughn, in pirate bandana and blond beard, was pacing the open floor of his trailer beside the table, rewriting his own death scene out loud."
+ },
+ "reveal": "It was Natalia, in the Star Trailer, by means of the bed. Vaughn had spent the whole shoot cutting her lines, taking her stunt credit, and — the last straw — having the trailer's fold-away bed hydraulically upgraded so he could be launched out of it for his big waking-nightmare shot, with a ballast crate strapped to the foot end for counterweight. Natalia lay on it, listened to him rehearse a monologue about legacy for the fourth time, and thumbed the catch. The bed went off like a mousetrap the size of a mousetrap factory. The ballast crate went the other way. Vaughn went through the trailer's rear wall in a Vaughn-shaped silhouette so clean that props kept it, and the bed folded itself shut over Natalia with a polite click, which is how she was found: horizontal, unbothered, and entirely alibi-free.",
+ "escape": {
+  "generic": "The case was written off as a props malfunction, the silhouette was repainted, and the killer got a producer credit on the reshoots.",
+  "byAccused": {
+   "A": "Antonio was led away still standing to the left of his camera, protesting that the beard was a character choice — while the real killer took a long lunch.",
+   "B": "Belah went quietly, mostly because nobody could take a green woman with tentacles entirely seriously, and the actual culprit strolled off the lot unphotographed.",
+   "C": "Cornelius directed his own arrest, insisted on a second take of it, and the real killer watched both from behind the catering truck.",
+   "D": "Damara was hauled off sneezing into her own sun hat, and the person who actually did it sent her flowers, which was in poor taste twice over.",
+   "E": "Erik was arrested against the backdrop wall, glasses fogged with indignation, while the guilty party quietly requested a wrap on the day.",
+   "F": "Falcon was marched off in cowboy boots, backing into the cactus one final time, and the real killer let the door close behind him.",
+   "G": "Gilbert was taken away mid-static, the haunted TV left hissing to nobody, and the culprit never even had to change their shoes.",
+   "H": "Hadako was led out with her hair still over her face, which meant nobody could tell she was innocent, and someone else counted on exactly that.",
+   "I": "Idris was arrested straight out of his mud puddle, finally got his close-up on the six o'clock news, and the real killer got the day off.",
+   "J": "Johnny was accused, kept his sunglasses on throughout, and the person who actually did it made sure the camera was rolling.",
+   "K": "Kobe was pulled out of his corner still holding the camera, and the real culprit made a note to buy the footage back later.",
+   "L": "Leeroy was arrested while playing dead, which delayed things considerably, and the guilty party used every minute of it.",
+   "M": "Mason was taken into custody inside a helmet nobody could open, and the real killer helpfully offered to hold his sword.",
+   "O": "Olivia was arrested with only half her freckles on, so the mugshot was unusable, and the person who actually did it was never photographed at all."
   }
+ }
 }

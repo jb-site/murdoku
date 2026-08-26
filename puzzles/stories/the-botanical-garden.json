@@ -1,39 +1,40 @@
 {
-  "id": "the-botanical-garden",
-  "title": "The Botanical Garden",
-  "acts": [
-    "The Garden opened at nine, and by ten past it was already at war with itself. In the Bonsai Exhibit, Gary had cornered Evelyn — she had only sat down in that chair to rest her feet beside a flower, and forty minutes later she was still being told, in detail, about the correct pronunciation of \"bonsai\" and the nine-year training of a single branch. Evelyn had developed the fixed, glassy smile of a woman calculating how far she could get if she simply ran. Over at the Info Desk, Idara sat behind her table in her pink round glasses, stamping visitor maps with the violence of a woman who has been asked where the toilets are two hundred times, watching the path in front of her fill with people who would shortly ask again.",
-    "The rest of the Garden was no calmer. Della worked her way alone along the Flower Garden path with a pair of secateurs and a silver updo, deadheading with such surgical fury that a nearby chair sat empty out of sheer respect. One row north, in the Arboretum, Aveline paced the open turf with a stopwatch, timing the distance between a chair and a tree for a \"shade optimisation survey\" nobody had commissioned; further along, Brielle had folded herself into an Arboretum chair beside the path, sketchbook propped open at a tree she had not looked at once in an hour, asleep behind it. In the Gazebo, Florian sat alone with his enormous beard and a picnic laid out on the table for two, checking his phone, then the path, then his phone. In the Desert Exhibit, Kaela — wide straw hat, safari collar — was conducting a private and increasingly personal argument with a cactus that had put a spine through her thumb.",
-    "Then came the shriek from the water's edge, and the Garden emptied towards it like a plughole. In the Resting Area, Collin heaved himself out of his chair, elbows leaving the table, still mid-sentence about whether the lily pad beside him legally counted as seating; Harlow, sunglasses on, hair the colour of candyfloss, stopped pretending to admire the shrub she had spent the morning hiding behind and went too. Idara arrived with her stamp still in her hand. Gary arrived talking. Evelyn arrived first, running, and later insisted this was concern rather than escape. What they found was Veronica, damp, extremely still, and — the staff agreed with a shudder — arranged. Somebody in this garden had a great deal of upper-body strength and no sense of proportion whatsoever."
-  ],
-  "whereabouts": {
-    "A": "Aveline was pacing the Arboretum's open turf with a stopwatch, timing the walk from a chair to a tree for a shade survey nobody asked for — one row north of Della, and loudly.",
-    "B": "Brielle had folded her platinum crop into an Arboretum chair beside the path, sketchbook propped up at a tree, and was soundly asleep behind it.",
-    "C": "Collin sat in a Resting Area chair with his elbows on the table, delivering a lecture to nobody about whether the lily pad beside him counted as public seating.",
-    "D": "Della worked the Flower Garden path alone with her secateurs, deadheading a flower with the fury of a woman avenging something, an empty chair beside her.",
-    "E": "Evelyn was trapped in a Bonsai Exhibit chair beside a flower, forty minutes into being told about a bonsai by a man who had not yet paused for breath.",
-    "F": "Florian sat alone on the Gazebo floor beside the table and its spare chair, guarding a picnic for two that was rapidly becoming a picnic for one.",
-    "G": "Gary stood beside his prize bonsai with a misting bottle and a table of tiny tools, explaining it at length to a woman who had not asked.",
-    "H": "Harlow, in sunglasses she had no botanical reason to wear indoors or out, was crouched on the Resting Area's open ground behind a shrub, watching someone she should not have been watching.",
-    "I": "Idara sat in the Info Desk chair behind her table, stamping maps and glaring down the path at the next visitor about to ask where the toilets were.",
-    "J": "Joss stood at the water's edge on the open ground beside a lily pad and the path, leaning on a pole and calling it \"aerating the pond\".",
-    "K": "Kaela, straw hat askew, stood in the Desert Exhibit beside a cactus, conducting a bitter one-sided negotiation with the spine it had put through her thumb.",
-    "V": "Veronica was ankle-deep at the shallow edge of the water beside a chair and a tree, fishing out a phone somebody had dropped and complaining about it the entire time."
-  },
-  "reveal": "It was Joss, at the Pond, with the giant lily pad. He had spent eleven years growing that Victoria amazonica to the size of a paddling pool and precisely one morning listening to Veronica describe it as \"the big soggy plate\". So when she waded in beside the chair and the tree to fish out a dropped phone, Joss stepped off the path, jammed his aeration pole under the rim of the great lily pad, and levered it up and over like a man flipping the world's largest pancake. It came down flat, wet, and comprehensively, with a noise the Info Desk heard from twelve rows away. Veronica was found under it, unmarked, unimpressed, and entirely under the pad. Joss was still standing there holding the pole when the staff arrived, and — this is the part the Garden has never got over — asked whether anyone had a camera, because the pad had never looked better.",
-  "escape": {
-    "generic": "The case went cold, the Garden reopened on the Tuesday with a new leaflet about water safety, and the real killer stayed on, watering things, for another nineteen years.",
-    "byAccused": {
-      "A": "Aveline was led away still holding the stopwatch, timing her own arrest at four minutes eleven seconds, while the actual culprit stood in the crowd looking sombre and slightly damp.",
-      "B": "Brielle was arrested asleep, woke up in the van, and only asked what she was charged with somewhere near the second roundabout — by which time the real killer had gone back to work.",
-      "C": "Collin was hauled off mid-sentence about seating regulations and finished the sentence in the cell, while the person who actually did it made everyone a cup of tea.",
-      "D": "Della went quietly, secateurs confiscated, insisting she had been alone all morning — which was true, and useless, and the real killer knew it.",
-      "E": "Evelyn was taken in and, when told the interview might run to several hours, said that would still be an improvement on her morning; meanwhile the guilty party dried off and went home.",
-      "F": "Florian was arrested beside an untouched picnic for two, and the saddest part of the whole affair is that his date turned up nine minutes later, while the real killer was already whistling.",
-      "G": "Gary was charged, and spent the entire interview explaining bonsai cultivation to two officers who never recovered — leaving the actual murderer free to prune in peace.",
-      "H": "Harlow was arrested largely for the sunglasses, refused to remove them, and was photographed in them; the real killer, unphotographed, carried on as normal.",
-      "I": "Idara was taken away and, on principle, stamped the arrest warrant, while the person who actually did it walked out through the main gates with a visitor map.",
-      "K": "Kaela was led off still one cactus spine down, muttering that she'd been assaulted first, and the real killer waved her goodbye with a watering can."
-    }
+ "id": "the-botanical-garden",
+ "title": "The Botanical Garden",
+ "victoryHeadline": "Caught! The garden's blooming with justice.",
+ "acts": [
+  "The Garden opened at nine, and by ten past it was already at war with itself. In the Bonsai Exhibit, Gary had cornered Evelyn — she had only sat down in that chair to rest her feet beside a flower, and forty minutes later she was still being told, in detail, about the correct pronunciation of \"bonsai\" and the nine-year training of a single branch. Evelyn had developed the fixed, glassy smile of a woman calculating how far she could get if she simply ran. Over at the Info Desk, Idara sat behind her table in her pink round glasses, stamping visitor maps with the violence of a woman who has been asked where the toilets are two hundred times, watching the path in front of her fill with people who would shortly ask again.",
+  "The rest of the Garden was no calmer. Della worked her way alone along the Flower Garden path with a pair of secateurs and a silver updo, deadheading with such surgical fury that a nearby chair sat empty out of sheer respect. One row north, in the Arboretum, Aveline paced the open turf with a stopwatch, timing the distance between a chair and a tree for a \"shade optimisation survey\" nobody had commissioned; further along, Brielle had folded herself into an Arboretum chair beside the path, sketchbook propped open at a tree she had not looked at once in an hour, asleep behind it. In the Gazebo, Florian sat alone with his enormous beard and a picnic laid out on the table for two, checking his phone, then the path, then his phone. In the Desert Exhibit, Kaela — wide straw hat, safari collar — was conducting a private and increasingly personal argument with a cactus that had put a spine through her thumb.",
+  "Then came the shriek from the water's edge, and the Garden emptied towards it like a plughole. In the Resting Area, Collin heaved himself out of his chair, elbows leaving the table, still mid-sentence about whether the lily pad beside him legally counted as seating; Harlow, sunglasses on, hair the colour of candyfloss, stopped pretending to admire the shrub she had spent the morning hiding behind and went too. Idara arrived with her stamp still in her hand. Gary arrived talking. Evelyn arrived first, running, and later insisted this was concern rather than escape. What they found was Veronica, damp, extremely still, and — the staff agreed with a shudder — arranged. Somebody in this garden had a great deal of upper-body strength and no sense of proportion whatsoever."
+ ],
+ "whereabouts": {
+  "A": "Aveline was pacing the Arboretum's open turf with a stopwatch, timing the walk from a chair to a tree for a shade survey nobody asked for — one row north of Della, and loudly.",
+  "B": "Brielle had folded her platinum crop into an Arboretum chair beside the path, sketchbook propped up at a tree, and was soundly asleep behind it.",
+  "C": "Collin sat in a Resting Area chair with his elbows on the table, delivering a lecture to nobody about whether the lily pad beside him counted as public seating.",
+  "D": "Della worked the Flower Garden path alone with her secateurs, deadheading a flower with the fury of a woman avenging something, an empty chair beside her.",
+  "E": "Evelyn was trapped in a Bonsai Exhibit chair beside a flower, forty minutes into being told about a bonsai by a man who had not yet paused for breath.",
+  "F": "Florian sat alone on the Gazebo floor beside the table and its spare chair, guarding a picnic for two that was rapidly becoming a picnic for one.",
+  "G": "Gary stood beside his prize bonsai with a misting bottle and a table of tiny tools, explaining it at length to a woman who had not asked.",
+  "H": "Harlow, in sunglasses she had no botanical reason to wear indoors or out, was crouched on the Resting Area's open ground behind a shrub, watching someone she should not have been watching.",
+  "I": "Idara sat in the Info Desk chair behind her table, stamping maps and glaring down the path at the next visitor about to ask where the toilets were.",
+  "J": "Joss stood at the water's edge on the open ground beside a lily pad and the path, leaning on a pole and calling it \"aerating the pond\".",
+  "K": "Kaela, straw hat askew, stood in the Desert Exhibit beside a cactus, conducting a bitter one-sided negotiation with the spine it had put through her thumb.",
+  "V": "Veronica was ankle-deep at the shallow edge of the water beside a chair and a tree, fishing out a phone somebody had dropped and complaining about it the entire time."
+ },
+ "reveal": "It was Joss, at the Pond, with the giant lily pad. He had spent eleven years growing that Victoria amazonica to the size of a paddling pool and precisely one morning listening to Veronica describe it as \"the big soggy plate\". So when she waded in beside the chair and the tree to fish out a dropped phone, Joss stepped off the path, jammed his aeration pole under the rim of the great lily pad, and levered it up and over like a man flipping the world's largest pancake. It came down flat, wet, and comprehensively, with a noise the Info Desk heard from twelve rows away. Veronica was found under it, unmarked, unimpressed, and entirely under the pad. Joss was still standing there holding the pole when the staff arrived, and — this is the part the Garden has never got over — asked whether anyone had a camera, because the pad had never looked better.",
+ "escape": {
+  "generic": "The case went cold, the Garden reopened on the Tuesday with a new leaflet about water safety, and the real killer stayed on, watering things, for another nineteen years.",
+  "byAccused": {
+   "A": "Aveline was led away still holding the stopwatch, timing her own arrest at four minutes eleven seconds, while the actual culprit stood in the crowd looking sombre and slightly damp.",
+   "B": "Brielle was arrested asleep, woke up in the van, and only asked what she was charged with somewhere near the second roundabout — by which time the real killer had gone back to work.",
+   "C": "Collin was hauled off mid-sentence about seating regulations and finished the sentence in the cell, while the person who actually did it made everyone a cup of tea.",
+   "D": "Della went quietly, secateurs confiscated, insisting she had been alone all morning — which was true, and useless, and the real killer knew it.",
+   "E": "Evelyn was taken in and, when told the interview might run to several hours, said that would still be an improvement on her morning; meanwhile the guilty party dried off and went home.",
+   "F": "Florian was arrested beside an untouched picnic for two, and the saddest part of the whole affair is that his date turned up nine minutes later, while the real killer was already whistling.",
+   "G": "Gary was charged, and spent the entire interview explaining bonsai cultivation to two officers who never recovered — leaving the actual murderer free to prune in peace.",
+   "H": "Harlow was arrested largely for the sunglasses, refused to remove them, and was photographed in them; the real killer, unphotographed, carried on as normal.",
+   "I": "Idara was taken away and, on principle, stamped the arrest warrant, while the person who actually did it walked out through the main gates with a visitor map.",
+   "K": "Kaela was led off still one cactus spine down, muttering that she'd been assaulted first, and the real killer waved her goodbye with a watering can."
   }
+ }
 }

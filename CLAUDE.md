@@ -188,14 +188,15 @@ On a `correct` verdict, the terse "Case closed" text is replaced by a short cosy
 story instead — the same `#verdictPanel`/`#verdictBackdrop` overlay becomes the story panel
 (`.story-panel` class added for a wider layout), rather than being a separate UI surface.
 
-- **`puzzles/stories/<id>.json`** holds the story: `title`, `acts` (3 short prose paragraphs),
+- **`puzzles/stories/<id>.json`** holds the story: `title`, `victoryHeadline` (a short, tailored
+  "you caught the murderer!"-style panel title shown only on a correct solve — playful and
+  specific to that puzzle's premise, not a repeated template), `acts` (3 short prose paragraphs),
   `whereabouts` (one line per suspect, keyed by letter — "what were they doing"), `reveal` (a
   paragraph naming the murderer/room/method), and `escape` (`generic` plus one `byAccused[letter]`
-  line per non-murderer suspect, used by the not-yet-built Phase E wrong-arrest reveal). Like the
-  solution files, this is a separate file from `puzzles/<id>.json` for the same reason: it must
-  never ride along on the editor's `Download JSON` export, and lazy-fetching it (`storyCache`,
-  same pattern as `solutionCache`) only works if it isn't already sitting in the puzzle's own
-  load response.
+  line per non-murderer suspect, used by the Phase E wrong-arrest reveal below). Like the solution
+  files, this is a separate file from `puzzles/<id>.json` for the same reason: it must never ride
+  along on the editor's `Download JSON` export, and lazy-fetching it (`storyCache`, same pattern
+  as `solutionCache`) only works if it isn't already sitting in the puzzle's own load response.
 - **`tools/story_context.py <id>`** (or `--all`) builds `story_context/<id>.json` by joining a
   puzzle and its solution file — every spatial fact a story needs (who shares a room with whom,
   who's orthogonally adjacent, what someone's on/beside, each clue verbatim, an ASCII map of the
@@ -211,16 +212,32 @@ story instead — the same `#verdictPanel`/`#verdictBackdrop` overlay becomes th
   API call, nothing at runtime — this keeps the app 100% static.
 - **`tools/check_stories.py <id>`** (or `--all`) audits a finished story back against its
   `story_context/<id>.json`: every suspect must have a `whereabouts` line and (if not the
-  murderer or victim) an `escape.byAccused` line, no name from a *different* puzzle's cast may
-  leak in, and no `escape` line may name the real murderer or the murder-scene room (the
-  spoiler rule — a player who guessed wrong and reads the escape copy must not be spoiled). It
-  also flags (as non-blocking warnings, since these are text heuristics) a `whereabouts` line
-  that just restates the room instead of naming an activity, and two characters named in the
-  same act paragraph when the context never puts them in the same room or adjacent.
+  murderer or victim) an `escape.byAccused` line, `victoryHeadline`/`title`/`acts`/`reveal` must
+  all be present, no name from a *different* puzzle's cast may leak in, and no `escape` line may
+  name the real murderer or the murder-scene room (the spoiler rule — a player who guessed wrong
+  and reads the escape copy must not be spoiled). It also flags (as non-blocking warnings, since
+  these are text heuristics) a `whereabouts` line that just restates the room instead of naming
+  an activity, and two characters named in the same act paragraph when the context never puts
+  them in the same room or adjacent.
 - **`murdoku:solved`** (localStorage) is the set of puzzle ids ever solved correctly
   (`markSolved()`), independent of per-puzzle progress. It drives a `📖 The story` button
   (`storyBtn`, next to `Solved!?`) that reopens the story panel for any already-solved puzzle
   without re-running the solve checks.
+
+### Phase E — the escape reveal
+
+Strictly opt-in, so a player who wants to keep trying is never spoiled: a `Show me what happened
+anyway` button (`verdictEscapeBtn`) appears alongside `Keep trying` on any *legal-but-wrong*
+verdict (`body`, `wrong-arrest`, `no-accusation`, `generic` — never on `conflict`, since a
+scrambled grid never even reached a solution comparison, and never on `no-solution`, since
+there's nothing to fetch). Clicking it lazily fetches the story and opens the same story panel
+used for a correct solve, but topped with an escape-framing intro paragraph
+(`.story-escape-intro`) instead of a victory headline: `escape.byAccused[<accused letter>]` for a
+`wrong-arrest` verdict, `escape.generic` otherwise. Reading it is purely informational — it never
+calls `markSolved()`, so the puzzle can still be solved properly afterwards, and `verdict` itself
+is untouched (the wrong-cell rings stay exactly as they were once the panel closes). Both the
+verdict clear at the top of `renderMarks()` and every `showVerdict()` call re-hide
+`verdictEscapeBtn`, so a stale escape offer from a since-mutated grid can never linger.
 
 ## Status / Next up
 
@@ -229,11 +246,11 @@ erase, undo), room/object rendering with SVG art and multi-cell spans, room labe
 hover status, clue-ref highlighting, irregular/non-rectangular grids (void cells), the row/column
 bulk-fill headers, the side-by-side clues layout, the multi-puzzle library, the in-app puzzle
 editor mode (rows/cols, rooms, objects, JSON import/export/validation), completion detection plus
-the two-check verdict, and the cosy-comic reveal story on a correct solve are all working for all
-12 puzzles. Not yet built: structured suspects/clues editing in the editor (currently a raw-JSON
-textarea), the opt-in "show me what happened anyway" escape path after a wrong solve (Phase E —
-the `escape` data already exists in every story file), and importing the two puzzles still sitting
-unimported in `puzzles/source/` (`a-walk-in-the-park`, `the-backyard-garden`).
+the two-check verdict, the cosy-comic reveal story with a tailored victory headline on a correct
+solve, and the opt-in escape reveal on a wrong-but-legal solve are all working for all 12 puzzles,
+11 of which now also have suspect portraits. Not yet built: structured suspects/clues editing in
+the editor (currently a raw-JSON textarea), and importing the two puzzles still sitting unimported
+in `puzzles/source/` (`a-walk-in-the-park`, `the-backyard-garden`).
 
 ## Conventions
 

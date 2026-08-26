@@ -560,6 +560,7 @@ const verdictPanelEl = document.getElementById("verdictPanel");
 const verdictTitleEl = document.getElementById("verdictTitle");
 const verdictBodyEl = document.getElementById("verdictBody");
 const verdictDismissBtn = document.getElementById("verdictDismissBtn");
+const verdictEscapeBtn = document.getElementById("verdictEscapeBtn");
 
 clearBtn.addEventListener("click", () => {
   if (!confirm("Clear the whole grid?")) return;
@@ -1103,6 +1104,7 @@ function renderMarks() {
   // cell the player has since changed would be actively misleading) and any in-flight
   // Solved!? check that started before this mutation (see onSolveClick's generation guard).
   verdict = null;
+  verdictEscapeBtn.hidden = true;
   gridGeneration++;
 
   for (let r = 0; r < PUZZLE.rows; r++) {
@@ -1423,18 +1425,23 @@ function buildWhereaboutsHtml(story, murdererLetter) {
   return `<ul class="story-whereabouts">${rows.join("")}</ul>`;
 }
 
-function buildStoryHtml(story, murdererLetter) {
+// escapeLine (Phase E, only passed on the "show me what happened anyway" path) renders as
+// a distinct intro paragraph above the acts, framing this as the wrong-arrest/unsolved
+// reveal rather than the on-solve victory reading.
+function buildStoryHtml(story, murdererLetter, escapeLine) {
+  const escapeIntro = escapeLine ? `<p class="story-escape-intro">${escapeHtml(escapeLine)}</p>` : "";
   const acts = (story.acts || []).map((a) => `<p>${escapeHtml(a)}</p>`).join("");
   const reveal = story.reveal ? `<p class="story-reveal">${escapeHtml(story.reveal)}</p>` : "";
-  return `${acts}${reveal}
+  return `${escapeIntro}${acts}${reveal}
     <h3 class="story-whereabouts-title">Where everyone was</h3>
     ${buildWhereaboutsHtml(story, murdererLetter)}`;
 }
 
-function openStoryPanel(title, story, murdererLetter) {
+function openStoryPanel(title, story, murdererLetter, escapeLine) {
   verdictTitleEl.textContent = title;
-  verdictBodyEl.innerHTML = buildStoryHtml(story, murdererLetter);
+  verdictBodyEl.innerHTML = buildStoryHtml(story, murdererLetter, escapeLine);
   verdictPanelEl.classList.add("story-panel");
+  verdictEscapeBtn.hidden = true; // already showing the full story — nothing left to opt into
   verdictDismissBtn.textContent = "Close";
   openVerdictPanel();
 }
@@ -1445,7 +1452,7 @@ async function onStoryClick() {
   const [story, solution] = await Promise.all([fetchStory(puzzleId), fetchSolution(puzzleId)]);
   if (!PUZZLE || PUZZLE.id !== puzzleId) return;
   if (story === "none") return;
-  openStoryPanel(story.title || PUZZLE.title, story, solution === "none" ? null : solution.murderer);
+  openStoryPanel(story.victoryHeadline || story.title || PUZZLE.title, story, solution === "none" ? null : solution.murderer);
 }
 
 storyBtn.addEventListener("click", onStoryClick);
@@ -1565,6 +1572,7 @@ function closeVerdictPanel() {
 
 function showVerdict(v) {
   verdict = v;
+  verdictEscapeBtn.hidden = true; // re-shown explicitly by onSolveClick for wrong-but-legal statuses
   applyHighlights();
   renderVerdictContent(v);
   openVerdictPanel();
@@ -1607,11 +1615,36 @@ async function onSolveClick() {
     verdict = v;
     applyHighlights();
     if (story !== "none") {
-      openStoryPanel(story.title || PUZZLE.title, story, v.murderer);
+      openStoryPanel(story.victoryHeadline || story.title || PUZZLE.title, story, v.murderer);
       return;
     }
   }
   showVerdict(v);
+
+  // Phase E: every remaining status here (body / wrong-arrest / no-accusation / generic —
+  // "correct" already returned above, and "conflict"/"no-solution" never reach this point,
+  // see their own early returns) reached a real solution comparison, so there's a coherent
+  // escape line to show. Opt-in only, per PLAN-solve-and-story.md's Phase E — a player who
+  // wants to keep trying is never shown this unless they click for it.
+  verdictEscapeBtn.hidden = false;
+  verdictEscapeBtn.onclick = async () => {
+    const story = await fetchStory(puzzleId);
+    if (!PUZZLE || PUZZLE.id !== puzzleId) return;
+    if (story === "none") {
+      verdictTitleEl.textContent = "Nothing to show yet.";
+      verdictBodyEl.innerHTML = `<p>This puzzle doesn't have a recorded story yet.</p>`;
+      verdictEscapeBtn.hidden = true;
+      verdictDismissBtn.textContent = "Fair enough";
+      return;
+    }
+    const escapeLine =
+      v.status === "wrong-arrest"
+        ? story.escape?.byAccused?.[v.accusedLetter] || story.escape?.generic
+        : story.escape?.generic;
+    // Showing the reveal is purely informational — it must never mark the puzzle solved,
+    // so a player who peeked can still come back and solve it properly afterwards.
+    openStoryPanel("Here's what actually happened...", story, solution.murderer, escapeLine);
+  };
 }
 
 solveBtn.addEventListener("click", onSolveClick);

@@ -1,47 +1,48 @@
 {
-  "id": "the-golf-course",
-  "title": "The Golf Course",
-  "acts": [
-    "The Bunkerdown Municipal Invitational was, by long tradition, less a golf tournament than a grudge with scorecards. Vinny Prewitt — club captain, blond, permanently in a pressed lavender polo — had spent the season rewriting the handicap table in his own favour and had announced, at the pre-round breakfast, a brand-new rule about 'gimmes' that applied to precisely one player. Eight holes. Fifteen suspects. One squirrel who saw everything and isn't talking. The starter's horn went off at nine, and within four minutes the entire field had scattered across the course like startled geese.",
-    "Hole 2 was already a war of attrition: Carson stood shin-deep in a bunker taking his fourth practice swing at a ball that was, technically, in a different bunker, while Gerald — the only man to bag a tee that morning, sunglasses on, plaid shirt untucked — teed up, addressed the ball, and drove it directly into the sky at an angle nobody has ever recovered from. Over on Hole 1, Flor sat in the cart with the handbrake off and one shoe on the pedal, revving at Harry, who was busy hiding behind a trunk pretending to look for a ball he had not lost; Iris, up the fairway, was quietly kicking her own ball into a better lie and daring anyone to say so. Hole 3 had become a committee: Kent, Mona and Oscar arguing about a ruling nobody could find in the book. Naomi hadn't been seen out of a sand pit since the eighth of June.",
-    "Then, somewhere off to the east, there was a noise. Witnesses disagree wildly. Lars, wedged in a bunker with his glasses fogged, described 'a sort of BOING, then a whistling.' Drew, standing sentry by a flagstick in his flat cap, said it was more of a THWOCK followed by what he called 'a man-shaped silence.' Edna and Jana, on Hole 6, both looked up at once. Anna, out by the water on Hole 5, reported a large pale object arcing overhead, apologising as it went. By the time the marshals arrived, Vinny's ball was on the green, his putter was on the ground, and Vinny was in the rough — the very deep rough — with an expression of pure captaincy interrupted. The scorecard in his back pocket, damningly, had already been filled in for a hole he had not yet played."
-  ],
-  "whereabouts": {
-    "A": "Anna was down at the water's edge on Hole 5, fishing three of her own balls out of the drink with a telescopic scoop and pretending it was one.",
-    "B": "Berta, silver-bobbed and serene, was standing beside a tree on Hole 4 doing absolutely nothing suspicious with a young springy sapling she had bent all the way back to the ground.",
-    "C": "Carson was thrashing away in the sand on Hole 2, moving a great deal of bunker and almost no golf ball, careful — as ever — never to be seen at either edge of anything.",
-    "D": "Drew, in flat cap and camo jacket, was tending the flag on Hole 8 like a man guarding a border crossing, refusing to release it until everyone had putted out properly.",
-    "E": "Edna had planted herself on the flag on Hole 6, one hand on the pin and one shoulder against a tree, adjudicating a dispute nobody had asked her to adjudicate.",
-    "F": "Flor sat in the golf cart on Hole 1, parked beside a tree, sunglasses on the ginger bob, revving the little motor to hurry along everyone in front of her.",
-    "G": "Gerald, sunglasses and orange plaid, was hogging the tee on Hole 2 beside a tree, on his ninth waggle of a pre-shot routine that had by then outlasted two weather systems.",
-    "H": "Harry was skulking behind a tree on Hole 1, ostensibly hunting a lost ball, actually hiding from the woman in the cart who kept revving at him.",
-    "I": "Iris was up the fairway on Hole 1 beside a tree, improving her lie with the toe of her shoe and giving her playing partners a look that dared them to comment.",
-    "J": "Jana, braids swinging, had claimed the tee on Hole 6 right beside the water, lining up the exact carry shot that had ruined her round for four consecutive years.",
-    "K": "Kent was on Hole 3 between a tree and the water, chairing an impromptu rules tribunal with the confidence of a man who has never read the rules.",
-    "L": "Lars, bearded and fogging up his glasses, was buried in the sand on Hole 8 next to the cart he had driven into it, taking his eleventh swing at a face-height wall of bunker.",
-    "M": "Mona had taken possession of the flag on Hole 3, standing beside a tree and holding the pin hostage until the tribunal reached a verdict.",
-    "N": "Naomi was alone in a sand pit on Hole 7, sunglasses on, no longer playing golf so much as sunbathing in a hazard and refusing all offers of rescue.",
-    "O": "Oscar was pacing the top edge of Hole 3, moustache bristling, pacing out a drop zone by heel-to-toe measurement while the other two argued.",
-    "V": "Vinny was on Hole 4, alone but for one other player, marking a scorecard for a hole he hadn't finished and explaining his new gimme rule to the only person still willing to listen."
-  },
-  "reveal": "It was Berta, on Hole 4, and the tree did it for her. She had spent a patient minute bending that sapling back to the turf and hooking Vinny's own golf bag into the crook of it — fourteen clubs, a bag of tees and a thermos — while he stood there detailing the gimme rule with his back to the scenery. Then she let go. The sapling snapped upright with a noise Lars still describes as a BOING, the bag went off like a trebuchet, and Vinny went with it, still holding the pencil. Berta, who had a higher hole number than Harry and a longer memory than anyone, waited for the whistling to stop, said 'fore,' and walked calmly to her ball. She had, she noted, an excellent lie.",
-  "escape": {
-    "generic": "Nobody could agree on what the noise had been, the case was quietly filed under 'course conditions,' and the real killer finished the round two under par.",
-    "byAccused": {
-      "A": "Anna was led away still holding her ball scoop, protesting that she'd only ever taken things OUT of the water, while somewhere behind her the real killer marked a very tidy scorecard.",
-      "C": "Carson was arrested in a bunker, which spared everyone the wait for his fifth practice swing, and the actual culprit strolled through unchallenged.",
-      "D": "Drew was hauled off with the flag still clutched in both hands, insisting he'd never left his post — which was, unhelpfully for him, entirely true.",
-      "E": "Edna went quietly, only pausing to rule that the arrest was procedurally improper, while the genuine article slipped away down the fairway.",
-      "F": "Flor was collared at the wheel of her cart and charged with everything up to and including speeding, and the person who actually did it never even had to run.",
-      "G": "Gerald was taken from the tee mid-waggle, which he considered a far greater crime than the one alleged, and the true offender teed off in peace.",
-      "H": "Harry was found behind his tree and immediately assumed to be hiding for the worst reason rather than the embarrassing one, while the real killer looked on sympathetically.",
-      "I": "Iris was arrested chiefly because she was caught nudging her ball, which is a different offence entirely, and the actual murderer let her take the fall.",
-      "J": "Jana was marched off the tee before she could attempt the carry, which she maintained to the end was the cruellest part, and the guilty party never had to explain a thing.",
-      "K": "Kent's rules tribunal was dissolved by his own arrest, an irony he appreciated even as the real killer quietly agreed with the verdict.",
-      "L": "Lars was extracted from the bunker by two officers and a rope and confessed to nothing except the state of his short game, while the culprit walked free.",
-      "M": "Mona was taken away still holding the pin, and the flag went with her as evidence, while the person who actually did it declined to correct anyone.",
-      "N": "Naomi was arrested in her sand pit, which required no chase whatsoever as she had no intention of leaving it, and the real killer got away clean.",
-      "O": "Oscar was accused on the strength of his measuring, his moustache and his sunglasses, in roughly that order, while the genuine murderer nodded along gravely."
-    }
+ "id": "the-golf-course",
+ "title": "The Golf Course",
+ "victoryHeadline": "Caught! You've sunk this one in one.",
+ "acts": [
+  "The Bunkerdown Municipal Invitational was, by long tradition, less a golf tournament than a grudge with scorecards. Vinny Prewitt — club captain, blond, permanently in a pressed lavender polo — had spent the season rewriting the handicap table in his own favour and had announced, at the pre-round breakfast, a brand-new rule about 'gimmes' that applied to precisely one player. Eight holes. Fifteen suspects. One squirrel who saw everything and isn't talking. The starter's horn went off at nine, and within four minutes the entire field had scattered across the course like startled geese.",
+  "Hole 2 was already a war of attrition: Carson stood shin-deep in a bunker taking his fourth practice swing at a ball that was, technically, in a different bunker, while Gerald — the only man to bag a tee that morning, sunglasses on, plaid shirt untucked — teed up, addressed the ball, and drove it directly into the sky at an angle nobody has ever recovered from. Over on Hole 1, Flor sat in the cart with the handbrake off and one shoe on the pedal, revving at Harry, who was busy hiding behind a trunk pretending to look for a ball he had not lost; Iris, up the fairway, was quietly kicking her own ball into a better lie and daring anyone to say so. Hole 3 had become a committee: Kent, Mona and Oscar arguing about a ruling nobody could find in the book. Naomi hadn't been seen out of a sand pit since the eighth of June.",
+  "Then, somewhere off to the east, there was a noise. Witnesses disagree wildly. Lars, wedged in a bunker with his glasses fogged, described 'a sort of BOING, then a whistling.' Drew, standing sentry by a flagstick in his flat cap, said it was more of a THWOCK followed by what he called 'a man-shaped silence.' Edna and Jana, on Hole 6, both looked up at once. Anna, out by the water on Hole 5, reported a large pale object arcing overhead, apologising as it went. By the time the marshals arrived, Vinny's ball was on the green, his putter was on the ground, and Vinny was in the rough — the very deep rough — with an expression of pure captaincy interrupted. The scorecard in his back pocket, damningly, had already been filled in for a hole he had not yet played."
+ ],
+ "whereabouts": {
+  "A": "Anna was down at the water's edge on Hole 5, fishing three of her own balls out of the drink with a telescopic scoop and pretending it was one.",
+  "B": "Berta, silver-bobbed and serene, was standing beside a tree on Hole 4 doing absolutely nothing suspicious with a young springy sapling she had bent all the way back to the ground.",
+  "C": "Carson was thrashing away in the sand on Hole 2, moving a great deal of bunker and almost no golf ball, careful — as ever — never to be seen at either edge of anything.",
+  "D": "Drew, in flat cap and camo jacket, was tending the flag on Hole 8 like a man guarding a border crossing, refusing to release it until everyone had putted out properly.",
+  "E": "Edna had planted herself on the flag on Hole 6, one hand on the pin and one shoulder against a tree, adjudicating a dispute nobody had asked her to adjudicate.",
+  "F": "Flor sat in the golf cart on Hole 1, parked beside a tree, sunglasses on the ginger bob, revving the little motor to hurry along everyone in front of her.",
+  "G": "Gerald, sunglasses and orange plaid, was hogging the tee on Hole 2 beside a tree, on his ninth waggle of a pre-shot routine that had by then outlasted two weather systems.",
+  "H": "Harry was skulking behind a tree on Hole 1, ostensibly hunting a lost ball, actually hiding from the woman in the cart who kept revving at him.",
+  "I": "Iris was up the fairway on Hole 1 beside a tree, improving her lie with the toe of her shoe and giving her playing partners a look that dared them to comment.",
+  "J": "Jana, braids swinging, had claimed the tee on Hole 6 right beside the water, lining up the exact carry shot that had ruined her round for four consecutive years.",
+  "K": "Kent was on Hole 3 between a tree and the water, chairing an impromptu rules tribunal with the confidence of a man who has never read the rules.",
+  "L": "Lars, bearded and fogging up his glasses, was buried in the sand on Hole 8 next to the cart he had driven into it, taking his eleventh swing at a face-height wall of bunker.",
+  "M": "Mona had taken possession of the flag on Hole 3, standing beside a tree and holding the pin hostage until the tribunal reached a verdict.",
+  "N": "Naomi was alone in a sand pit on Hole 7, sunglasses on, no longer playing golf so much as sunbathing in a hazard and refusing all offers of rescue.",
+  "O": "Oscar was pacing the top edge of Hole 3, moustache bristling, pacing out a drop zone by heel-to-toe measurement while the other two argued.",
+  "V": "Vinny was on Hole 4, alone but for one other player, marking a scorecard for a hole he hadn't finished and explaining his new gimme rule to the only person still willing to listen."
+ },
+ "reveal": "It was Berta, on Hole 4, and the tree did it for her. She had spent a patient minute bending that sapling back to the turf and hooking Vinny's own golf bag into the crook of it — fourteen clubs, a bag of tees and a thermos — while he stood there detailing the gimme rule with his back to the scenery. Then she let go. The sapling snapped upright with a noise Lars still describes as a BOING, the bag went off like a trebuchet, and Vinny went with it, still holding the pencil. Berta, who had a higher hole number than Harry and a longer memory than anyone, waited for the whistling to stop, said 'fore,' and walked calmly to her ball. She had, she noted, an excellent lie.",
+ "escape": {
+  "generic": "Nobody could agree on what the noise had been, the case was quietly filed under 'course conditions,' and the real killer finished the round two under par.",
+  "byAccused": {
+   "A": "Anna was led away still holding her ball scoop, protesting that she'd only ever taken things OUT of the water, while somewhere behind her the real killer marked a very tidy scorecard.",
+   "C": "Carson was arrested in a bunker, which spared everyone the wait for his fifth practice swing, and the actual culprit strolled through unchallenged.",
+   "D": "Drew was hauled off with the flag still clutched in both hands, insisting he'd never left his post — which was, unhelpfully for him, entirely true.",
+   "E": "Edna went quietly, only pausing to rule that the arrest was procedurally improper, while the genuine article slipped away down the fairway.",
+   "F": "Flor was collared at the wheel of her cart and charged with everything up to and including speeding, and the person who actually did it never even had to run.",
+   "G": "Gerald was taken from the tee mid-waggle, which he considered a far greater crime than the one alleged, and the true offender teed off in peace.",
+   "H": "Harry was found behind his tree and immediately assumed to be hiding for the worst reason rather than the embarrassing one, while the real killer looked on sympathetically.",
+   "I": "Iris was arrested chiefly because she was caught nudging her ball, which is a different offence entirely, and the actual murderer let her take the fall.",
+   "J": "Jana was marched off the tee before she could attempt the carry, which she maintained to the end was the cruellest part, and the guilty party never had to explain a thing.",
+   "K": "Kent's rules tribunal was dissolved by his own arrest, an irony he appreciated even as the real killer quietly agreed with the verdict.",
+   "L": "Lars was extracted from the bunker by two officers and a rope and confessed to nothing except the state of his short game, while the culprit walked free.",
+   "M": "Mona was taken away still holding the pin, and the flag went with her as evidence, while the person who actually did it declined to correct anyone.",
+   "N": "Naomi was arrested in her sand pit, which required no chase whatsoever as she had no intention of leaving it, and the real killer got away clean.",
+   "O": "Oscar was accused on the strength of his measuring, his moustache and his sunglasses, in roughly that order, while the genuine murderer nodded along gravely."
   }
+ }
 }

@@ -80,6 +80,12 @@ full design rationale; this file is the literal prompt, kept in sync with it.
 >   consistent with the story's established characterisation and tone. **These lines must
 >   never name the real murderer or the real room/cell** — a player who reads a wrong-arrest
 >   escape line and keeps trying must not be spoiled.
+> - **Write a `victoryHeadline`** — a short, punchy, tailored "you caught the murderer!"
+>   style headline shown as the panel title on a correct solve, in place of the plain puzzle
+>   title. Playful and specific to this puzzle's premise/method (a golf pun for the golf
+>   course, a wrap/film pun for the movie studio), not a generic template repeated across
+>   puzzles. One line, no spoiler concerns — the player has already solved it correctly by
+>   the time they see this.
 >
 > **Output exactly this JSON shape and nothing else** (no markdown fence commentary, no
 > preamble) — write it to `puzzles/stories/<id>.json`:
@@ -88,6 +94,7 @@ full design rationale; this file is the literal prompt, kept in sync with it.
 > {
 >   "id": "<puzzle id>",
 >   "title": "<puzzle title>",
+>   "victoryHeadline": "<short tailored 'caught!' headline>",
 >   "acts": ["act one prose", "act two prose", "act three prose"],
 >   "whereabouts": { "<letter>": "one-line triangulated activity", "...": "..." },
 >   "reveal": "paragraph naming the murderer, room, and method",
