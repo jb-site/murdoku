@@ -1,1724 +1,1774 @@
 {
- "id": "the-golf-course",
- "title": "The Golf Course",
- "difficulty": "expert",
- "sourceFile": "source/the-golf-course-color.pdf",
- "rows": 16,
- "cols": 16,
- "suspects": [
-  "A",
-  "B",
-  "C",
-  "D",
-  "E",
-  "F",
-  "G",
-  "H",
-  "I",
-  "J",
-  "K",
-  "L",
-  "M",
-  "N",
-  "O",
-  "V"
- ],
- "names": {
-  "A": "Anna",
-  "B": "Berta",
-  "C": "Carson",
-  "D": "Drew",
-  "E": "Edna",
-  "F": "Flor",
-  "G": "Gerald",
-  "H": "Harry",
-  "I": "Iris",
-  "J": "Jana",
-  "K": "Kent",
-  "L": "Lars",
-  "M": "Mona",
-  "N": "Naomi",
-  "O": "Oscar",
-  "V": "Vinny"
- },
- "clues": [
-  {
-   "suspect": null,
-   "text": "The killer was alone with the victim, in the same area.",
-   "refs": {
-    "rooms": [],
-    "objects": []
-   }
-  },
-  {
-   "suspect": "A",
-   "text": "Anna (A) was beside a water square.",
-   "refs": {
-    "rooms": [],
-    "objects": [
-     "water"
-    ]
-   }
-  },
-  {
-   "suspect": "B",
-   "text": "Berta (B) was beside a tree in Hole 4. She had a higher hole number than Harry.",
-   "refs": {
-    "rooms": [
-     "hole4"
-    ],
-    "objects": [
-     "tree"
-    ]
-   }
-  },
-  {
-   "suspect": "C",
-   "text": "Carson (C) was not in the first or the last column.",
-   "refs": {
-    "rooms": [],
-    "objects": []
-   }
-  },
-  {
-   "suspect": "D",
-   "text": "Drew (D) was beside a flag.",
-   "refs": {
-    "rooms": [],
-    "objects": [
-     "flag"
-    ]
-   }
-  },
-  {
-   "suspect": "E",
-   "text": "Edna (E) occupied the flag in an even-numbered hole.",
-   "refs": {
-    "rooms": [],
-    "objects": [
-     "flag"
-    ]
-   }
-  },
-  {
-   "suspect": "F",
-   "text": "Flor (F) did not occupy the hole immediately before Naomi's hole.",
-   "refs": {
-    "rooms": [],
-    "objects": []
-   }
-  },
-  {
-   "suspect": "G",
-   "text": "Gerald (G) was the only man to occupy a golf tee.",
-   "refs": {
-    "rooms": [],
-    "objects": [
-     "tee"
-    ]
-   }
-  },
-  {
-   "suspect": "H",
-   "text": "Harry (H): in his hole, there was a woman in a cart.",
-   "refs": {
-    "rooms": [],
-    "objects": [
-     "cart"
-    ]
-   }
-  },
-  {
-   "suspect": "I",
-   "text": "Iris (I) was northwest of Flor, and in the same hole.",
-   "refs": {
-    "rooms": [],
-    "objects": []
-   }
-  },
-  {
-   "suspect": "J",
-   "text": "Jana (J) occupied the golf tee on either the Hole 6, 7 or 8.",
-   "refs": {
-    "rooms": [
-     "hole6",
-     "hole7",
-     "hole8"
-    ],
-    "objects": [
-     "tee"
-    ]
-   }
-  },
-  {
-   "suspect": "K",
-   "text": "Kent (K): he was in the same hole as Mona.",
-   "refs": {
-    "rooms": [],
-    "objects": []
-   }
-  },
-  {
-   "suspect": "L",
-   "text": "Lars (L): his hole number is greater than Naomi's hole number.",
-   "refs": {
-    "rooms": [],
-    "objects": []
-   }
-  },
-  {
-   "suspect": "M",
-   "text": "Mona (M) was on the flag for either Hole 3, 4 or 5.",
-   "refs": {
-    "rooms": [
-     "hole3",
-     "hole4",
-     "hole5"
-    ],
-    "objects": [
-     "flag"
-    ]
-   }
-  },
-  {
-   "suspect": "N",
-   "text": "Naomi (N) was within a sand pit.",
-   "refs": {
-    "rooms": [],
-    "objects": [
-     "sand"
-    ]
-   }
-  },
-  {
-   "suspect": "O",
-   "text": "Oscar (O) was in the northmost row and beside a tree.",
-   "refs": {
-    "rooms": [],
-    "objects": [
-     "tree"
-    ]
-   }
-  },
-  {
-   "suspect": "V",
-   "text": "Vinny (V): the Victim. He was alone with the murderer.",
-   "refs": {
-    "rooms": [],
-    "objects": []
-   }
-  },
-  {
-   "suspect": null,
-   "text": "Even-numbered holes have an even number of occupants (this includes zero occupants).",
-   "refs": {
-    "rooms": [],
-    "objects": []
-   }
-  },
-  {
-   "suspect": null,
-   "text": "Odd-numbered holes have an odd number of occupants.",
-   "refs": {
-    "rooms": [],
-    "objects": []
-   }
-  }
- ],
- "rooms": {
-  "hole1": {
-   "name": "Hole 1"
-  },
-  "hole2": {
-   "name": "Hole 2"
-  },
-  "hole3": {
-   "name": "Hole 3"
-  },
-  "hole4": {
-   "name": "Hole 4"
-  },
-  "hole5": {
-   "name": "Hole 5"
-  },
-  "hole6": {
-   "name": "Hole 6"
-  },
-  "hole7": {
-   "name": "Hole 7"
-  },
-  "hole8": {
-   "name": "Hole 8"
-  }
- },
- "roomGrid": [
-  [
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole3",
-   "hole3",
-   "hole3",
-   "hole4",
-   "hole4",
-   "hole4",
-   "hole4",
-   "hole4",
-   "hole4"
+  "id": "the-golf-course",
+  "title": "The Golf Course",
+  "difficulty": "expert",
+  "sourceFile": "source/the-golf-course-color.pdf",
+  "rows": 16,
+  "cols": 16,
+  "suspects": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "V"
   ],
-  [
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole3",
-   "hole3",
-   "hole3",
-   "hole4",
-   "hole4",
-   "hole4",
-   "hole4",
-   "hole4",
-   "hole4"
+  "names": {
+    "A": "Anna",
+    "B": "Berta",
+    "C": "Carson",
+    "D": "Drew",
+    "E": "Edna",
+    "F": "Flor",
+    "G": "Gerald",
+    "H": "Harry",
+    "I": "Iris",
+    "J": "Jana",
+    "K": "Kent",
+    "L": "Lars",
+    "M": "Mona",
+    "N": "Naomi",
+    "O": "Oscar",
+    "V": "Vinny"
+  },
+  "clues": [
+    {
+      "suspect": null,
+      "text": "The killer was alone with the victim, in the same area.",
+      "refs": {
+        "rooms": [],
+        "objects": [],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "A",
+      "text": "Anna (A) was beside a water square.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "water"
+        ],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "B",
+      "text": "Berta (B) was beside a tree in Hole 4. She had a higher hole number than Harry.",
+      "refs": {
+        "rooms": [
+          "hole4"
+        ],
+        "objects": [
+          "tree"
+        ],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "C",
+      "text": "Carson (C) was not in the first or the last column.",
+      "refs": {
+        "rooms": [],
+        "objects": [],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "D",
+      "text": "Drew (D) was beside a flag.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "flag"
+        ],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "E",
+      "text": "Edna (E) occupied the flag in an even-numbered hole.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "flag"
+        ],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "F",
+      "text": "Flor (F) did not occupy the hole immediately before Naomi's hole.",
+      "refs": {
+        "rooms": [],
+        "objects": [],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "G",
+      "text": "Gerald (G) was the only man to occupy a golf tee.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "tee"
+        ],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "H",
+      "text": "Harry (H): in his hole, there was a woman in a cart.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "cart"
+        ],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "I",
+      "text": "Iris (I) was northwest of Flor, and in the same hole.",
+      "refs": {
+        "rooms": [],
+        "objects": [],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "J",
+      "text": "Jana (J) occupied the golf tee on either the Hole 6, 7 or 8.",
+      "refs": {
+        "rooms": [
+          "hole6",
+          "hole7",
+          "hole8"
+        ],
+        "objects": [
+          "tee"
+        ],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "K",
+      "text": "Kent (K): he was in the same hole as Mona.",
+      "refs": {
+        "rooms": [],
+        "objects": [],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "L",
+      "text": "Lars (L): his hole number is greater than Naomi's hole number.",
+      "refs": {
+        "rooms": [],
+        "objects": [],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "M",
+      "text": "Mona (M) was on the flag for either Hole 3, 4 or 5.",
+      "refs": {
+        "rooms": [
+          "hole3",
+          "hole4",
+          "hole5"
+        ],
+        "objects": [
+          "flag"
+        ],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "N",
+      "text": "Naomi (N) was within a sand pit.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "sand"
+        ],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "O",
+      "text": "Oscar (O) was in the northmost row and beside a tree.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "tree"
+        ],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "V",
+      "text": "Vinny (V): the Victim. He was alone with the murderer.",
+      "refs": {
+        "rooms": [],
+        "objects": [],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": null,
+      "text": "Even-numbered holes have an even number of occupants (this includes zero occupants).",
+      "refs": {
+        "rooms": [],
+        "objects": [],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": null,
+      "text": "Odd-numbered holes have an odd number of occupants.",
+      "refs": {
+        "rooms": [],
+        "objects": [],
+        "suspects": []
+      }
+    }
   ],
-  [
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole3",
-   "hole3",
-   "hole3",
-   "hole3",
-   "hole4",
-   "hole4",
-   "hole4",
-   "hole4",
-   "hole4",
-   "hole4"
-  ],
-  [
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole3",
-   "hole3",
-   "hole3",
-   "hole3",
-   "hole4",
-   "hole4",
-   "hole4",
-   "hole4",
-   "hole4",
-   "hole4"
-  ],
-  [
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole3",
-   "hole3",
-   "hole3",
-   "hole8",
-   "hole8",
-   "hole8",
-   "hole4",
-   "hole4",
-   "hole4"
-  ],
-  [
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole3",
-   "hole3",
-   "hole3",
-   "hole8",
-   "hole8",
-   "hole8",
-   "hole4",
-   "hole4",
-   "hole4"
-  ],
-  [
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole3",
-   "hole3",
-   "hole3",
-   "hole8",
-   "hole8",
-   "hole8",
-   "hole4",
-   "hole4",
-   "hole4"
-  ],
-  [
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole3",
-   "hole3",
-   "hole3",
-   "hole8",
-   "hole8",
-   "hole8",
-   "hole4",
-   "hole4",
-   "hole4"
-  ],
-  [
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole3",
-   "hole3",
-   "hole3",
-   "hole8",
-   "hole8",
-   "hole8",
-   "hole4",
-   "hole4",
-   "hole4"
-  ],
-  [
-   "hole2",
-   "hole2",
-   "hole2",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole8",
-   "hole8",
-   "hole8",
-   "hole8",
-   "hole8",
-   "hole8",
-   "hole8"
-  ],
-  [
-   "hole1",
-   "hole1",
-   "hole1",
-   "hole1",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole6",
-   "hole8",
-   "hole8",
-   "hole8",
-   "hole8",
-   "hole8",
-   "hole5",
-   "hole5",
-   "hole5"
-  ],
-  [
-   "hole1",
-   "hole1",
-   "hole1",
-   "hole1",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole6",
-   "hole6",
-   "hole6",
-   "hole6",
-   "hole5",
-   "hole5",
-   "hole5",
-   "hole5",
-   "hole5"
-  ],
-  [
-   "hole1",
-   "hole1",
-   "hole1",
-   "hole1",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole6",
-   "hole6",
-   "hole6",
-   "hole6",
-   "hole5",
-   "hole5",
-   "hole5",
-   "hole5",
-   "hole5"
-  ],
-  [
-   "hole1",
-   "hole1",
-   "hole1",
-   "hole1",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole6",
-   "hole6",
-   "hole6",
-   "hole6",
-   "hole5",
-   "hole5",
-   "hole5",
-   "hole5",
-   "hole5"
-  ],
-  [
-   "hole1",
-   "hole1",
-   "hole1",
-   "hole1",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole6",
-   "hole6",
-   "hole6",
-   "hole6",
-   "hole5",
-   "hole5",
-   "hole5",
-   "hole5",
-   "hole5"
-  ],
-  [
-   "hole1",
-   "hole1",
-   "hole1",
-   "hole1",
-   "hole7",
-   "hole7",
-   "hole7",
-   "hole6",
-   "hole6",
-   "hole6",
-   "hole6",
-   "hole5",
-   "hole5",
-   "hole5",
-   "hole5",
-   "hole5"
-  ]
- ],
- "objects": [
-  {
-   "type": "water",
-   "cells": [
+  "rooms": {
+    "hole1": {
+      "name": "Hole 1",
+      "color": "#cce8b5"
+    },
+    "hole2": {
+      "name": "Hole 2",
+      "color": "#96d35f"
+    },
+    "hole3": {
+      "name": "Hole 3",
+      "color": "#669c35"
+    },
+    "hole4": {
+      "name": "Hole 4",
+      "color": "#38571a"
+    },
+    "hole5": {
+      "name": "Hole 5",
+      "color": "#b1dd8c"
+    },
+    "hole6": {
+      "name": "Hole 6",
+      "color": "#77bb41"
+    },
+    "hole7": {
+      "name": "Hole 7",
+      "color": "#4f7a28"
+    },
+    "hole8": {
+      "name": "Hole 8",
+      "color": "#e0edd4"
+    }
+  },
+  "roomGrid": [
     [
-     2,
-     10
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole3",
+      "hole3",
+      "hole3",
+      "hole3",
+      "hole3",
+      "hole3",
+      "hole3",
+      "hole3"
     ],
     [
-     2,
-     11
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole3",
+      "hole3",
+      "hole3",
+      "hole3",
+      "hole3",
+      "hole3",
+      "hole3",
+      "hole3"
     ],
     [
-     3,
-     10
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole7",
+      "hole7",
+      "hole7",
+      "hole3",
+      "hole3",
+      "hole3",
+      "hole3",
+      "hole3",
+      "hole3"
     ],
     [
-     3,
-     11
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     0,
-     0
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     0,
-     1
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     0,
-     2
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     0,
-     3
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     0,
-     7
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     0,
-     8
-    ]
-   ]
-  },
-  {
-   "type": "tee",
-   "cells": [
-    [
-     0,
-     9
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     0,
-     13
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     0,
-     14
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     0,
-     15
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     1,
-     0
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     1,
-     1
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     1,
-     5
-    ]
-   ]
-  },
-  {
-   "type": "flag",
-   "cells": [
-    [
-     1,
-     6
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     1,
-     7
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     1,
-     8
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     1,
-     9
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     1,
-     14
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     1,
-     15
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     2,
-     0
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     2,
-     1
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     2,
-     4
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     2,
-     5
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     2,
-     6
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     2,
-     9
-    ]
-   ]
-  },
-  {
-   "type": "flag",
-   "cells": [
-    [
-     2,
-     14
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     3,
-     0
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     3,
-     3
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     3,
-     4
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     3,
-     5
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     3,
-     6
-    ]
-   ]
-  },
-  {
-   "type": "flag",
-   "cells": [
-    [
-     3,
-     8
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     3,
-     12
-    ]
-   ]
-  },
-  {
-   "type": "tee",
-   "cells": [
-    [
-     4,
-     1
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     4,
-     3
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     4,
-     4
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     4,
-     5
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     4,
-     6
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     4,
-     8
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     4,
-     9
-    ]
-   ]
-  },
-  {
-   "type": "tee",
-   "cells": [
-    [
-     4,
-     14
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     5,
-     1
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     5,
-     2
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     5,
-     7
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     5,
-     8
-    ]
-   ]
-  },
-  {
-   "type": "tee",
-   "cells": [
-    [
-     5,
-     11
-    ]
-   ]
-  },
-  {
-   "type": "cart",
-   "cells": [
-    [
-     5,
-     13
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     6,
-     1
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     6,
-     2
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     6,
-     3
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     6,
-     5
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     6,
-     6
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     6,
-     7
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     6,
-     11
-    ]
-   ]
-  },
-  {
-   "type": "flag",
-   "cells": [
-    [
-     7,
-     0
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     7,
-     1
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     7,
-     2
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     7,
-     4
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     7,
-     5
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     7,
-     6
-    ]
-   ]
-  },
-  {
-   "type": "cart",
-   "cells": [
-    [
-     7,
-     8
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     7,
-     10
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     7,
-     11
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     7,
-     13
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     7,
-     14
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     7,
-     15
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     8,
-     2
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     8,
-     3
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     8,
-     5
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     8,
-     6
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     8,
-     10
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     8,
-     11
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     8,
-     14
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     8,
-     15
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     9,
-     0
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     9,
-     3
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     9,
-     10
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     9,
-     12
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     10,
-     0
-    ]
-   ]
-  },
-  {
-   "type": "tee",
-   "cells": [
-    [
-     10,
-     4
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     10,
-     6
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     10,
-     7
-    ]
-   ]
-  },
-  {
-   "type": "flag",
-   "cells": [
-    [
-     10,
-     8
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     10,
-     11
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     10,
-     12
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     10,
-     13
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     10,
-     15
-    ]
-   ]
-  },
-  {
-   "type": "cart",
-   "cells": [
-    [
-     11,
-     0
-    ]
-   ]
-  },
-  {
-   "type": "cart",
-   "cells": [
-    [
-     11,
-     3
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     11,
-     5
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     11,
-     6
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     11,
-     7
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     11,
-     8
-    ]
-   ]
-  },
-  {
-   "type": "flag",
-   "cells": [
-    [
-     11,
-     9
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     11,
-     10
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     11,
-     11
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     11,
-     12
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     11,
-     13
-    ]
-   ]
-  },
-  {
-   "type": "flag",
-   "cells": [
-    [
-     11,
-     14
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     11,
-     15
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     12,
-     3
-    ]
-   ]
-  },
-  {
-   "type": "flag",
-   "cells": [
-    [
-     12,
-     4
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     12,
-     5
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     12,
-     6
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     12,
-     7
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     12,
-     11
-    ]
-   ]
-  },
-  {
-   "type": "sand",
-   "cells": [
-    [
-     12,
-     12
-    ]
-   ]
-  },
-  {
-   "type": "tee",
-   "cells": [
-    [
-     13,
-     1
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     13,
-     3
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     13,
-     6
-    ]
-   ]
-  },
-  {
-   "type": "tee",
-   "cells": [
-    [
-     13,
-     8
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     14,
-     0
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     14,
-     1
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     14,
-     2
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     14,
-     3
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     14,
-     8
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     14,
-     9
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     14,
-     10
-    ]
-   ]
-  },
-  {
-   "type": "cart",
-   "cells": [
-    [
-     14,
-     13
-    ]
-   ]
-  },
-  {
-   "type": "tee",
-   "cells": [
-    [
-     14,
-     15
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     15,
-     0
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     15,
-     1
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     15,
-     2
-    ]
-   ]
-  },
-  {
-   "type": "tree",
-   "cells": [
-    [
-     15,
-     5
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     15,
-     6
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     15,
-     7
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     15,
-     8
-    ]
-   ]
-  },
-  {
-   "type": "water",
-   "cells": [
-    [
-     15,
-     11
-    ]
-   ]
-  }
- ],
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole7",
+      "hole7",
+      "hole7",
+      "hole7",
+      "hole3",
+      "hole3",
+      "hole3",
+      "hole4",
+      "hole4",
+      "hole4"
+    ],
+    [
+      "hole2",
+      "hole2",
+      "hole2",
+      "hole7",
+      "hole7",
+      "hole7",
+      "hole7",
+      "hole7",
+      "hole7",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole4",
+      "hole4",
+      "hole4",
+      "hole4"
+    ],
+    [
+      "hole2",
+      "hole2",
+      "hole7",
+      "hole7",
+      "hole7",
+      "hole7",
+      "hole7",
+      "hole7",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole4",
+      "hole4",
+      "hole4",
+      "hole4"
+    ],
+    [
+      "hole1",
+      "hole1",
+      "hole7",
+      "hole7",
+      "hole7",
+      "hole7",
+      "hole7",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole4",
+      "hole4",
+      "hole4",
+      "hole4"
+    ],
+    [
+      "hole1",
+      "hole1",
+      "hole7",
+      "hole7",
+      "hole7",
+      "hole7",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole4",
+      "hole4",
+      "hole4",
+      "hole4"
+    ],
+    [
+      "hole1",
+      "hole1",
+      "hole1",
+      "hole7",
+      "hole7",
+      "hole7",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole4",
+      "hole4",
+      "hole4",
+      "hole4",
+      "hole4"
+    ],
+    [
+      "hole1",
+      "hole1",
+      "hole1",
+      "hole1",
+      "hole7",
+      "hole7",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole4",
+      "hole4",
+      "hole4",
+      "hole4",
+      "hole4"
+    ],
+    [
+      "hole1",
+      "hole1",
+      "hole1",
+      "hole1",
+      "hole7",
+      "hole7",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole8",
+      "hole4",
+      "hole4",
+      "hole4",
+      "hole4",
+      "hole4"
+    ],
+    [
+      "hole1",
+      "hole1",
+      "hole1",
+      "hole1",
+      "hole6",
+      "hole6",
+      "hole6",
+      "hole8",
+      "hole8",
+      "hole5",
+      "hole5",
+      "hole5",
+      "hole5",
+      "hole4",
+      "hole4",
+      "hole4"
+    ],
+    [
+      "hole1",
+      "hole1",
+      "hole1",
+      "hole1",
+      "hole6",
+      "hole6",
+      "hole6",
+      "hole6",
+      "hole6",
+      "hole5",
+      "hole5",
+      "hole5",
+      "hole5",
+      "hole4",
+      "hole4",
+      "hole4"
+    ],
+    [
+      "hole1",
+      "hole1",
+      "hole1",
+      "hole6",
+      "hole6",
+      "hole6",
+      "hole6",
+      "hole6",
+      "hole6",
+      "hole5",
+      "hole5",
+      "hole5",
+      "hole5",
+      "hole5",
+      "hole5",
+      "hole5"
+    ],
+    [
+      "hole1",
+      "hole1",
+      "hole1",
+      "hole6",
+      "hole6",
+      "hole6",
+      "hole6",
+      "hole6",
+      "hole6",
+      "hole5",
+      "hole5",
+      "hole5",
+      "hole5",
+      "hole5",
+      "hole5",
+      "hole5"
+    ],
+    [
+      "hole1",
+      "hole1",
+      "hole1",
+      "hole6",
+      "hole6",
+      "hole6",
+      "hole6",
+      "hole6",
+      "hole6",
+      "hole5",
+      "hole5",
+      "hole5",
+      "hole5",
+      "hole5",
+      "hole5",
+      "hole5"
+    ]
+  ],
+  "objects": [
+    {
+      "type": "water",
+      "cells": [
+        [
+          2,
+          10
+        ],
+        [
+          2,
+          11
+        ],
+        [
+          3,
+          10
+        ],
+        [
+          3,
+          11
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          0,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          0,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          0,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          0,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "tee",
+      "cells": [
+        [
+          0,
+          9
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          0,
+          13
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          0,
+          14
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          0,
+          15
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "flag",
+      "cells": [
+        [
+          1,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          1,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          1,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          1,
+          9
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          1,
+          14
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          1,
+          15
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          2,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          2,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          2,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          2,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          2,
+          9
+        ]
+      ]
+    },
+    {
+      "type": "flag",
+      "cells": [
+        [
+          2,
+          14
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          3,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          3,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          3,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "flag",
+      "cells": [
+        [
+          3,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          3,
+          12
+        ]
+      ]
+    },
+    {
+      "type": "tee",
+      "cells": [
+        [
+          4,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          4,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          4,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          4,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          4,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          4,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          4,
+          9
+        ]
+      ]
+    },
+    {
+      "type": "tee",
+      "cells": [
+        [
+          4,
+          14
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          5,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          5,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          5,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          5,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "tee",
+      "cells": [
+        [
+          5,
+          11
+        ]
+      ]
+    },
+    {
+      "type": "cart",
+      "cells": [
+        [
+          5,
+          13
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          6,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          6,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          6,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          6,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          6,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          6,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          6,
+          11
+        ]
+      ]
+    },
+    {
+      "type": "flag",
+      "cells": [
+        [
+          7,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          7,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          7,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          7,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          7,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          7,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "cart",
+      "cells": [
+        [
+          7,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          7,
+          10
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          7,
+          11
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          7,
+          13
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          7,
+          14
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          7,
+          15
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          8,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          8,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          8,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          8,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          8,
+          10
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          8,
+          11
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          8,
+          14
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          8,
+          15
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          9,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          9,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          9,
+          10
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          9,
+          12
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          10,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "tee",
+      "cells": [
+        [
+          10,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          10,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          10,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "flag",
+      "cells": [
+        [
+          10,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          10,
+          11
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          10,
+          12
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          10,
+          13
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          10,
+          15
+        ]
+      ]
+    },
+    {
+      "type": "cart",
+      "cells": [
+        [
+          11,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "cart",
+      "cells": [
+        [
+          11,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          11,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          11,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          11,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          11,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "flag",
+      "cells": [
+        [
+          11,
+          9
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          11,
+          10
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          11,
+          11
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          11,
+          12
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          11,
+          13
+        ]
+      ]
+    },
+    {
+      "type": "flag",
+      "cells": [
+        [
+          11,
+          14
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          11,
+          15
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          12,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "flag",
+      "cells": [
+        [
+          12,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          12,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          12,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          12,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          12,
+          11
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          12,
+          12
+        ]
+      ]
+    },
+    {
+      "type": "tee",
+      "cells": [
+        [
+          13,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          13,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          13,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "tee",
+      "cells": [
+        [
+          13,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          14,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          14,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          14,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          14,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          14,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          14,
+          9
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          14,
+          10
+        ]
+      ]
+    },
+    {
+      "type": "cart",
+      "cells": [
+        [
+          14,
+          13
+        ]
+      ]
+    },
+    {
+      "type": "tee",
+      "cells": [
+        [
+          14,
+          15
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          15,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          15,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          15,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          15,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          15,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          15,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          15,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "water",
+      "cells": [
+        [
+          15,
+          11
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          6,
+          14
+        ]
+      ]
+    },
+    {
+      "type": "sand",
+      "cells": [
+        [
+          7,
+          7
+        ]
+      ]
+    }
+  ],
   "art": {
     "board": "art/the-golf-course/board.png",
-    "boardCrop": { "x": 0.2025, "y": 0.1324, "w": 0.7693, "h": 0.744 },
+    "boardCrop": {
+      "x": 0.2025,
+      "y": 0.1324,
+      "w": 0.7693,
+      "h": 0.744
+    },
     "calibratedFor": {
       "rows": 16,
       "cols": 16
