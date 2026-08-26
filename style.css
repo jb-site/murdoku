@@ -233,6 +233,22 @@ body.resizing { cursor: col-resize; }
 }
 .room-chip.selected { outline: 2px solid var(--accent); outline-offset: 1px; }
 
+.room-chip-wrap { display: inline-flex; align-items: center; gap: 4px; }
+.room-color-swatch {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+}
+/* Native color-input chrome varies a lot; strip the inner padding/border so the
+   swatch reads as a flat colour square matching the room chip beside it. */
+.room-color-swatch::-webkit-color-swatch-wrapper { padding: 0; }
+.room-color-swatch::-webkit-color-swatch { border: none; border-radius: 3px; }
+.room-color-swatch::-moz-color-swatch { border: none; border-radius: 3px; }
+
 .object-chip {
   width: 44px;
   height: 44px;
@@ -636,6 +652,29 @@ body.art-mode.art-calibrate .layer-cells .cell {
    mode: outside .art-calibrate this is simply always 1 (no slider sets the variable). */
 body.art-mode.art-calibrate .layer-art img {
   opacity: var(--calib-art-opacity, 1);
+}
+/* Grid/Objects opacity sliders also work in edit mode when there's no artwork shown
+   (Board art off, or the puzzle has none) — a separate persisted slider set
+   (editorLayerView in app.js, defaulting to 1/1) drives the same two CSS vars in that
+   case, applied here instead of under .art-calibrate. Deliberately excludes .art-mode:
+   the .art-calibrate rules above already cover every case where art is showing, and
+   this must never touch that path, nor player mode (no .edit-mode there at all) — the
+   previously-verified "art off looks exactly like play mode" parity depends on the 1/1
+   default staying inert here. */
+body.edit-mode:not(.art-mode) .layer-cells .cell {
+  opacity: var(--calib-grid-opacity, 1);
+}
+/* Multiplicative, not a flat override: play mode already ghosts objects to
+   distinguish occupiable (0.45) from blocking (0.9), and a ref-highlighted object
+   always jumps to full opacity regardless of that base (see .ref-object above) — the
+   1/1 default has to reduce to exactly those numbers or the parity requirement above
+   breaks the moment a puzzle has any objects. :not(.ref-object) keeps the highlight
+   rule winning, matching play mode's own source-order precedence. */
+body.edit-mode:not(.art-mode) .object-cell.occupiable:not(.ref-object) .object-art {
+  opacity: calc(0.45 * var(--calib-obj-opacity, 1));
+}
+body.edit-mode:not(.art-mode) .object-cell.blocking:not(.ref-object) .object-art {
+  opacity: calc(0.9 * var(--calib-obj-opacity, 1));
 }
 /* Pan affordance is Art-tab-only (the JS pan/drag handlers are gated on
    EDIT.tool === "art"), NOT tied to .art-calibrate generally — .art-calibrate now also

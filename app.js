@@ -497,6 +497,17 @@ const ROOM_COLORS = {
 };
 const DEFAULT_ROOM_COLOR = "#2f313a";
 
+// Resolution order for a room's base tint: an explicit per-puzzle override
+// (PUZZLE.rooms[id].color, round-trips through Download JSON with no exporter change
+// since exportPuzzleJSON() passes PUZZLE.rooms through wholesale) beats the shared
+// built-in map (keeps every puzzle authored before this feature looking as it does
+// today) beats the flat default grey. Both existing call sites (renderStatic()'s cell
+// background, and the editor's Rooms-tab chips) go through this one helper so play mode
+// and the editor can never disagree about a room's colour.
+function roomColor(roomId) {
+  return PUZZLE?.rooms?.[roomId]?.color || ROOM_COLORS[roomId] || DEFAULT_ROOM_COLOR;
+}
+
 // --- Per-suspect colour coding -----------------------------------------
 // Indexed by letter (A=0, B=1, ...), not array position, so a given letter always
 // gets the same colour across puzzles. 13 entries covers the max non-victim cast
@@ -1205,7 +1216,7 @@ function renderStatic() {
         cellEl.dataset.c = c;
         cellEl.style.gridRow = r + 2;
         cellEl.style.gridColumn = c + 2;
-        cellEl.style.background = ROOM_COLORS[PUZZLE.roomGrid[r][c]] || DEFAULT_ROOM_COLOR;
+        cellEl.style.background = roomColor(PUZZLE.roomGrid[r][c]);
         cellEl.style.borderTop = borderStyle(r, c, -1, 0);
         cellEl.style.borderBottom = borderStyle(r, c, 1, 0);
         cellEl.style.borderLeft = borderStyle(r, c, 0, -1);
@@ -2295,6 +2306,14 @@ function saveViewPrefs() {
 const ART_CALIB_DEFAULTS = { art: 1, grid: 0.5, objects: 1 };
 let artCalibView = { ...ART_CALIB_DEFAULTS };
 
+// Second, separate persisted set for the Grid/Objects sliders when there's no artwork
+// underneath (Board art off, or the puzzle has none). Defaults to 1/1 deliberately: that
+// makes the neutral, untouched state of this context bit-for-bit the same as play mode
+// with art off (a previously-verified requirement) — see isCalibrating()/
+// applyArtCalibView() below for how the two sets are switched between.
+const EDITOR_LAYER_DEFAULTS = { grid: 1, objects: 1 };
+let editorLayerView = { ...EDITOR_LAYER_DEFAULTS };
+
 function loadArtCalibView() {
   try {
     const raw = localStorage.getItem("murdoku:artCalibView");
@@ -2320,35 +2339,102 @@ function saveArtCalibView() {
   }
 }
 
+function loadEditorLayerView() {
+  try {
+    const raw = localStorage.getItem("murdoku:editorLayerView");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      const clamp01 = (v, d) => (typeof v === "number" && v >= 0 && v <= 1 ? v : d);
+      editorLayerView = {
+        grid: clamp01(parsed.grid, EDITOR_LAYER_DEFAULTS.grid),
+        objects: clamp01(parsed.objects, EDITOR_LAYER_DEFAULTS.objects),
+      };
+    }
+  } catch (err) {
+    console.warn("Couldn't load editor-layer opacity:", err);
+  }
+}
+
+function saveEditorLayerView() {
+  try {
+    localStorage.setItem("murdoku:editorLayerView", JSON.stringify(editorLayerView));
+  } catch (err) {
+    console.warn("Couldn't save editor-layer opacity:", err);
+  }
+}
+
+// True while the Art tab (or the "Board art" checkbox on Rooms/Objects) is actively
+// showing the underlying photo — i.e. the same condition applyViewPrefs() uses to add
+// body.art-calibrate. Kept as its own helper (rather than only inline in
+// applyViewPrefs()) because applyArtCalibView()/syncOpacityUI() need it independently,
+// from call sites (boot, buildArtPanel) that run outside applyViewPrefs' own flow.
+function isCalibrating() {
+  const hasBoard = !!PUZZLE?.art?.board;
+  if (!EDIT || !hasBoard) return false;
+  return EDIT.tool === "art" || viewPrefs.artMode;
+}
+
+// Picks which persisted slider set is "live" right now and writes it into the three CSS
+// custom properties on #grid. Art always reads artCalibView (the slider is disabled, not
+// meaningful, when there's no artwork to fade). Grid/Objects read artCalibView while
+// calibrating against art, or editorLayerView otherwise — see the two-set design above.
 function applyArtCalibView() {
+  const calibrating = isCalibrating();
   gridEl.style.setProperty("--calib-art-opacity", artCalibView.art);
-  gridEl.style.setProperty("--calib-grid-opacity", artCalibView.grid);
-  gridEl.style.setProperty("--calib-obj-opacity", artCalibView.objects);
+  gridEl.style.setProperty("--calib-grid-opacity", calibrating ? artCalibView.grid : editorLayerView.grid);
+  gridEl.style.setProperty("--calib-obj-opacity", calibrating ? artCalibView.objects : editorLayerView.objects);
 }
 
 // The three opacity sliders + reset button live in a single persistent editor-bar row
 // (#editorArtView, just below the tab strip) rather than being rebuilt per-tab inside
 // buildArtPanel() — they now apply on Rooms/Objects too (see applyViewPrefs()), so
 // there's exactly one set of these controls, wired once here at boot.
+const artOpResetBtn = document.getElementById("artOpResetBtn");
+const artOpInputEl = editorOpacityRowEl.querySelector('[data-op="art"]');
+
 function syncOpacityUI() {
+  const calibrating = isCalibrating();
+  const values = { art: artCalibView.art, grid: calibrating ? artCalibView.grid : editorLayerView.grid, objects: calibrating ? artCalibView.objects : editorLayerView.objects };
   ["art", "grid", "objects"].forEach((k) => {
-    editorOpacityRowEl.querySelector(`[data-op="${k}"]`).value = Math.round(artCalibView[k] * 100);
-    editorOpacityRowEl.querySelector(`[data-op-value="${k}"]`).textContent = `${Math.round(artCalibView[k] * 100)}%`;
+    editorOpacityRowEl.querySelector(`[data-op="${k}"]`).value = Math.round(values[k] * 100);
+    editorOpacityRowEl.querySelector(`[data-op-value="${k}"]`).textContent = `${Math.round(values[k] * 100)}%`;
   });
+  // No artwork to fade when not calibrating — disable rather than hide, matching how
+  // the Board art checkbox itself is disabled (not hidden) on the Art tab.
+  artOpInputEl.disabled = !calibrating;
+  artOpInputEl.title = calibrating ? "" : "No artwork shown — turn on Board art to use this slider";
+  artOpResetBtn.title = calibrating
+    ? "Reset to defaults (Art 100%, Grid 50%, Objects 100%)"
+    : "Reset to defaults (Grid 100%, Objects 100%)";
 }
 editorOpacityRowEl.querySelectorAll("[data-op]").forEach((input) => {
   input.addEventListener("input", () => {
-    artCalibView[input.dataset.op] = input.valueAsNumber / 100;
-    editorOpacityRowEl.querySelector(`[data-op-value="${input.dataset.op}"]`).textContent = `${input.valueAsNumber}%`;
+    const key = input.dataset.op;
+    const calibrating = isCalibrating();
+    if (key === "art") {
+      artCalibView.art = input.valueAsNumber / 100;
+      saveArtCalibView();
+    } else if (calibrating) {
+      artCalibView[key] = input.valueAsNumber / 100;
+      saveArtCalibView();
+    } else {
+      editorLayerView[key] = input.valueAsNumber / 100;
+      saveEditorLayerView();
+    }
+    editorOpacityRowEl.querySelector(`[data-op-value="${key}"]`).textContent = `${input.valueAsNumber}%`;
     applyArtCalibView();
-    saveArtCalibView();
   });
 });
-document.getElementById("artOpResetBtn").addEventListener("click", () => {
-  artCalibView = { ...ART_CALIB_DEFAULTS };
+artOpResetBtn.addEventListener("click", () => {
+  if (isCalibrating()) {
+    artCalibView = { ...ART_CALIB_DEFAULTS };
+    saveArtCalibView();
+  } else {
+    editorLayerView = { ...EDITOR_LAYER_DEFAULTS };
+    saveEditorLayerView();
+  }
   syncOpacityUI();
   applyArtCalibView();
-  saveArtCalibView();
 });
 
 function applyViewPrefs() {
@@ -2398,6 +2484,10 @@ function applyViewPrefs() {
   editArtModeEl.disabled = onArtTab;
   editArtModeEl.title = onArtTab ? "Art is always shown while calibrating on the Art tab" : "";
   editorArtViewEl.hidden = !hasBoard;
+  // Refresh the CSS vars whenever the calibrating/non-calibrating context might have
+  // changed (tab switch, Board art toggle) — isCalibrating() reads the same state this
+  // function just derived `calibrating` from, so the two never disagree.
+  applyArtCalibView();
   syncOpacityUI();
 }
 
@@ -2727,13 +2817,47 @@ function addEditorChip(container, className, text, title, onClick, selected) {
   return chip;
 }
 
+// Evenly-spaced hues at a fixed saturation/lightness chosen to match the built-in
+// ROOM_COLORS map's own tones (measured ~20% sat / ~24% light across the map) rather
+// than light pastels — the board is dark and placed suspect letters are light, so a
+// genuine light pastel would wreck their contrast. See PLAN-editor-colours.md.
+const AUTO_ROOM_SAT = 22, AUTO_ROOM_LIGHT = 24;
+
+function hslToHex(h, s, l) {
+  s /= 100; l /= 100;
+  const k = (n) => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  const toHex = (x) => Math.round(255 * x).toString(16).padStart(2, "0");
+  return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`;
+}
+
+function autoRoomColors(count) {
+  return Array.from({ length: count }, (_, i) => hslToHex((i * 360) / count, AUTO_ROOM_SAT, AUTO_ROOM_LIGHT));
+}
+
+// Shared refresh after any room-colour change: the board tint (renderStatic), the
+// chip swatches (buildRoomPalette), validation (a bad manual hex is rejected on
+// export) and the draft autosave all need to stay in step.
+function refreshAfterRoomColorChange() {
+  EDIT.dirty = true;
+  buildRoomPalette();
+  renderStatic();
+  renderMarks();
+  applyHighlights();
+  validateDraft();
+  scheduleDraftSave();
+}
+
 function buildRoomPalette() {
   editorPaletteEl.innerHTML = "";
   Object.entries(PUZZLE.rooms).forEach(([id, room]) => {
-    const chip = addEditorChip(editorPaletteEl, "suspect-chip room-chip", room.name, "Click to select, double-click to rename",
+    const wrap = document.createElement("span");
+    wrap.className = "room-chip-wrap";
+    const chip = addEditorChip(wrap, "suspect-chip room-chip", room.name, "Click to select, double-click to rename",
       () => { EDIT.roomPaint = id; buildRoomPalette(); }, EDIT.roomPaint === id);
-    chip.style.background = ROOM_COLORS[id] || DEFAULT_ROOM_COLOR;
-    chip.style.borderColor = ROOM_COLORS[id] || DEFAULT_ROOM_COLOR;
+    chip.style.background = roomColor(id);
+    chip.style.borderColor = roomColor(id);
     chip.addEventListener("dblclick", (e) => {
       e.stopPropagation();
       const name = prompt("Rename room:", room.name);
@@ -2747,6 +2871,21 @@ function buildRoomPalette() {
         scheduleDraftSave();
       }
     });
+    const swatch = document.createElement("input");
+    swatch.type = "color";
+    swatch.className = "room-color-swatch";
+    swatch.title = `${room.name} colour`;
+    swatch.value = roomColor(id);
+    // stopPropagation on both events: the swatch sits next to (not inside) the chip
+    // button, but a click still shouldn't also re-select the chip underneath it.
+    swatch.addEventListener("click", (e) => e.stopPropagation());
+    swatch.addEventListener("input", (e) => {
+      e.stopPropagation();
+      room.color = swatch.value;
+      refreshAfterRoomColorChange();
+    });
+    wrap.appendChild(swatch);
+    editorPaletteEl.appendChild(wrap);
   });
 
   addEditorChip(editorPaletteEl, "suspect-chip room-chip special-chip", "⊘ No room", "Paint cells as not part of the board",
@@ -2779,6 +2918,19 @@ function buildRoomPalette() {
     buildRoomPalette();
     validateDraft();
     scheduleDraftSave();
+  });
+
+  addEditorChip(editorPaletteEl, "suspect-chip room-chip special-chip", "🎨 Auto colours", "Assign an evenly-spaced colour to every room", () => {
+    const ids = Object.keys(PUZZLE.rooms);
+    if (!ids.length) return;
+    const colors = autoRoomColors(ids.length);
+    ids.forEach((id, i) => { PUZZLE.rooms[id].color = colors[i]; });
+    refreshAfterRoomColorChange();
+  });
+
+  addEditorChip(editorPaletteEl, "suspect-chip room-chip special-chip", "Clear colours", "Remove custom colours, falling back to the built-in palette", () => {
+    Object.values(PUZZLE.rooms).forEach((room) => { delete room.color; });
+    refreshAfterRoomColorChange();
   });
 }
 
@@ -3976,8 +4128,11 @@ function validateDraft() {
     warnings.push(`Board art was calibrated for a ${cal.rows}x${cal.cols} grid, but this puzzle is now ${PUZZLE.rows}x${PUZZLE.cols} — check the alignment in the Art tab.`);
   }
 
-  Object.keys(PUZZLE.rooms).forEach((id) => {
-    if (!PUZZLE.roomGrid.some((row) => row.includes(id))) warnings.push(`Room "${PUZZLE.rooms[id].name}" has no cells.`);
+  Object.entries(PUZZLE.rooms).forEach(([id, room]) => {
+    if (!PUZZLE.roomGrid.some((row) => row.includes(id))) warnings.push(`Room "${room.name}" has no cells.`);
+    if (room.color !== undefined && !/^#[0-9a-fA-F]{6}$/.test(room.color)) {
+      errors.push(`Room "${room.name}" has an invalid color "${room.color}" — expected a #rrggbb string.`);
+    }
   });
 
   const objErrors = [];
@@ -4160,6 +4315,7 @@ async function boot() {
   loadViewPrefs();
   applyViewPrefs();
   loadArtCalibView();
+  loadEditorLayerView();
   applyArtCalibView();
   buildLegend();
 
