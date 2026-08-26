@@ -696,3 +696,69 @@ to four decimal places.
   revalidating — a freshly extracted `art` block can appear to be missing entirely. If a
   puzzle with board art shows "This puzzle has no board art", hard-reload
   (Cmd+Shift+R) before believing it.
+
+### Follow-up (2026-08-26): a visible lattice, a two-corner mode, and a crop tool
+
+Author feedback after calibrating 11 of the 12 puzzles with the two-point mode: the grid
+half was *"just guessing where the gridlines are"*; picking the board's top-left and
+bottom-right would usually be enough; and dragging the crop's edges/corners like a normal
+image-editor crop tool would be quicker than either. All three are now in.
+
+1. **The grid lattice is drawn while the GRID half of a pair is being picked.** The snap
+   to the nearest intersection was supposed to make that half error-free, but the
+   guarantee was worthless while the author could not see where the intersections were
+   (pick mode fits the whole PNG and drops the room tints to 0.12, so there was nothing
+   to aim at). `renderArtLattice()` draws a full cell lattice over the cell area — white
+   1px lines ringed in black, so it reads over light and dark artwork alike, plus a dot
+   at every intersection — and `updateArtLatticeHover()` rings the intersection that
+   **will** be registered as the cursor moves, labelled with its `col,row`. Plain
+   positioned divs rather than SVG: `(cols+1)*(rows+1)` + `cols+rows+2` elements is about
+   200 at 12x12, and layer-art's box is exactly the cell area, so percentages are the
+   whole coordinate conversion. The hover ring is written to the DOM directly from the
+   bare pointer-move rather than through `scheduleEditRerender()`, so it tracks smoothly.
+
+2. **"Align by corners" — two clicks, and now the default entry point.** Click the
+   board's top-left corner in the artwork, then its bottom-right; the grid half is
+   implied, `(0,0)` and `(cols,rows)`, so it is two clicks rather than four. It feeds the
+   same closed-form solver, keeps the loupe (corner mode is image-picking throughout, so
+   it has no `pending` stage — `updateArtLoupe()` special-cases it), the fitted
+   whole-PNG view, Escape-cancels and the square-cell lock. Correspondence pairs stay,
+   for boards whose outer corner is ambiguous — The Hiking Trip's fuzzy mountain-scenery
+   edge is still the motivating case, and remains the reason corner-picking was not the
+   original design. The separation warning is skipped in corner mode (the separation is
+   always the whole board).
+
+3. **Crop tool** — the crop drawn as a rectangle over the fitted whole image, with
+   draggable corners, edges and interior. With the square lock on, corner drags scale
+   proportionally (driven by whichever axis the pointer moved further on, so the drag
+   never feels ignored) and single-edge drags derive the other axis about its own centre;
+   with the lock off, edges move freely and an edge dragged past its opposite flips.
+   The rectangle lives in `layer-art`, which is `pointer-events: none`, so the handles are
+   **purely visual** — hit-testing is done against the pointer position in
+   `onEditPointerDown`/`Move`, reusing the existing layer-cells pointer path and its
+   capture instead of adding a second gesture surface. Crop-tool drags replace panning
+   while the tool is on (dragging the interior *is* the pan), and hovering sets the
+   matching resize cursor.
+
+**Escape in a number input** (the known open issue) is fixed: the global keydown handler
+still bails on INPUT/SELECT/TEXTAREA — letter shortcuts must not fire mid-typing — so a
+panel-local keydown listener on `editorDetails` handles Escape for the Art tab only.
+
+**The Art School is now calibrated** — the last of the 12, and the hardest case (auto
+detection came out a third too narrow, so it was re-extracted with `--pad 0.9` and its
+720x788 `board.png` holds the board plus a lot of surrounding page):
+
+```json
+"boardCrop": { "x": 0.3548, "y": 0.3373, "w": 0.5798, "h": 0.5298 },
+```
+
+Cells 46.38 x 46.39 px (aspect 0.9999), in bounds on both axes. Corner mode alone landed
+on `{0.3551, 0.3375, 0.5793, 0.5293}` from two clicks, and the crop tool starting from the
+bad extracted crop reached `{0.3551, 0.3355, 0.582, 0.5318}` in two corner drags — both
+within about half an image pixel of the value above, which was refined from an offline
+least-squares fit of the PNG's own interior gridlines and then checked by eye in the app
+(the app's cell borders sit on the artwork's, and the room walls coincide with `roomGrid`).
+
+**Regression check** (this is the one that matters — the new modes add branches to the
+shared edit-mode pointer path): room drag-paint across three cells and multi-cell object
+place + erase both re-verified in the browser after the changes.
