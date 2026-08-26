@@ -1,0 +1,32 @@
+{
+  "puzzleId": "netflix-and-kill",
+  "sourceFile": "source/netflix-and-kill-solution.pdf",
+  "derivedBy": "pdf-text-extraction",
+  "placements": {
+    "A": [
+      5,
+      3
+    ],
+    "B": [
+      0,
+      0
+    ],
+    "C": [
+      2,
+      4
+    ],
+    "D": [
+      4,
+      1
+    ],
+    "E": [
+      3,
+      5
+    ],
+    "V": [
+      1,
+      2
+    ]
+  },
+  "murderer": "B"
+}

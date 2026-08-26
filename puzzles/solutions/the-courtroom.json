@@ -1,0 +1,44 @@
+{
+  "puzzleId": "the-courtroom",
+  "sourceFile": "source/the-courtroom-solution.pdf",
+  "derivedBy": "pdf-text-extraction",
+  "placements": {
+    "A": [
+      1,
+      3
+    ],
+    "B": [
+      7,
+      6
+    ],
+    "C": [
+      8,
+      2
+    ],
+    "D": [
+      5,
+      1
+    ],
+    "E": [
+      6,
+      4
+    ],
+    "F": [
+      4,
+      7
+    ],
+    "G": [
+      0,
+      5
+    ],
+    "H": [
+      3,
+      0
+    ],
+    "V": [
+      2,
+      8
+    ]
+  },
+  "murderer": "F"
+}

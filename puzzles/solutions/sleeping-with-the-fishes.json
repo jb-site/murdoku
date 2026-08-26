@@ -1,0 +1,44 @@
+{
+  "puzzleId": "sleeping-with-the-fishes",
+  "sourceFile": "source/sleeping-with-the-fishes-solution.pdf",
+  "derivedBy": "pdf-text-extraction",
+  "placements": {
+    "A": [
+      0,
+      3
+    ],
+    "B": [
+      8,
+      4
+    ],
+    "C": [
+      1,
+      6
+    ],
+    "D": [
+      7,
+      0
+    ],
+    "E": [
+      4,
+      9
+    ],
+    "F": [
+      2,
+      8
+    ],
+    "G": [
+      3,
+      10
+    ],
+    "H": [
+      6,
+      7
+    ],
+    "V": [
+      5,
+      5
+    ]
+  },
+  "murderer": "E"
+}
