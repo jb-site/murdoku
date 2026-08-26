@@ -148,15 +148,51 @@ or switching back to a smaller puzzle restores it exactly. `updateLayoutMode()` 
 the end of every `initPuzzle()` (after `renderStatic()`, since it needs a real rendered `.cell` to
 measure), and on window resize.
 
+## Solving and the verdict
+
+Once every suspect (including `V`) is placed — `isComplete()`, checked at the end of every
+`renderMarks()` call alongside the existing `updatePlacedStates()` — a `Solved!?` button appears
+below the grid, next to `#status`. Clicking it runs two checks, in order:
+
+1. **Structural check (`findConflicts()`), no fetch.** Two placements sharing a row, two sharing
+   a column, or the same letter placed twice (all genuinely reachable — see `placeDefinitely()`'s
+   auto-cross behaviour) short-circuit straight to a verdict. A scrambled grid never triggers a
+   solution fetch, so it can't leak the answer's shape.
+2. **Solution check**, only once the grid is structurally legal. `puzzles/solutions/<id>.json`
+   is fetched lazily — on click, never at puzzle load — and cached in memory per puzzle id
+   (`solutionCache`; a 404 or parse failure caches as the string `"none"`). It's kept as a
+   separate file from `puzzles/<id>.json`, not a key inside it, for two reasons: the in-app
+   editor round-trips the puzzle file through `enterEditMode()` → `Download JSON`, and a spoiler
+   key living inside that object would be one silent bug away from riding along on that export;
+   and lazy-fetching only works at all if the answer isn't already sitting in the response the
+   puzzle loaded from. Currently only `netflix-and-kill` has a solution file — the rest resolve
+   to `"none"` and show the "nothing to check against" verdict, which is an expected, honest gap
+   rather than a bug.
+
+The outcome is stored in a module-level `verdict` (`null` when there isn't one) and rendered two
+ways: a dismissible `#verdictPanel`/`#verdictBackdrop` overlay carries the cosy-comic verdict
+copy, and `applyHighlights()` reads `verdict.cells` / `verdict.accusedCell` on every pass to ring
+the wrongly-placed suspects (and, distinctly, a wrongly-accused one) directly on the grid. That
+highlighting is deliberately independent of the panel — dismissing the panel leaves the rings up
+so the player can go fix the flagged cells. The invariant that makes this safe: **`verdict` is
+cleared at the very top of `renderMarks()`**, the same choke-point every mutation already passes
+through (place, pencil, undo, Clear, file/localStorage load, edit-mode enter/exit), so a stale
+"you were wrong" ring can never survive a real change to the board. A `gridGeneration` counter is
+bumped alongside it so an in-flight solution fetch that outlives a mid-check mutation (or a
+puzzle switch) is detected and discarded when it resolves, rather than painted onto a different
+board.
+
 ## Status / Next up
 
 Core solving interactions (pencil marks, definitive placement via click/hold/drag, cross-out,
 erase, undo), room/object rendering with SVG art and multi-cell spans, room labels, a legend,
 hover status, clue-ref highlighting, irregular/non-rectangular grids (void cells), the row/column
 bulk-fill headers, the side-by-side clues layout, the multi-puzzle library, and the in-app puzzle
-editor mode (rows/cols, rooms, objects, JSON import/export/validation) are all working. Not yet
-built: structured suspects/clues editing in the editor (currently a raw-JSON textarea) and a
-"report the crime" fun/finishing feature once solving mechanics feel complete.
+editor mode (rows/cols, rooms, objects, JSON import/export/validation), and completion detection
+plus the two-check verdict (structural conflicts, then a solution comparison) are all working. Not
+yet built: structured suspects/clues editing in the editor (currently a raw-JSON textarea), the
+per-puzzle official solutions for 11 of the 12 puzzles, and the narrative "reveal" once a puzzle
+is solved correctly.
 
 ## Conventions
 

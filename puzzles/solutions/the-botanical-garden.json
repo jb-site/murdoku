@@ -1,0 +1,56 @@
+{
+  "puzzleId": "the-botanical-garden",
+  "sourceFile": "source/the-botanical-garden-solution.pdf",
+  "derivedBy": "pdf-grid-geometry",
+  "placements": {
+    "A": [
+      4,
+      5
+    ],
+    "B": [
+      2,
+      9
+    ],
+    "C": [
+      10,
+      8
+    ],
+    "D": [
+      5,
+      2
+    ],
+    "E": [
+      3,
+      0
+    ],
+    "F": [
+      7,
+      1
+    ],
+    "G": [
+      1,
+      3
+    ],
+    "H": [
+      6,
+      11
+    ],
+    "I": [
+      0,
+      7
+    ],
+    "J": [
+      8,
+      6
+    ],
+    "K": [
+      11,
+      4
+    ],
+    "V": [
+      9,
+      10
+    ]
+  },
+  "murderer": "J"
+}

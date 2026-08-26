@@ -1,0 +1,44 @@
+{
+  "puzzleId": "preppers",
+  "sourceFile": "source/preppers-solution.pdf",
+  "derivedBy": "pdf-text-extraction",
+  "placements": {
+    "A": [
+      0,
+      8
+    ],
+    "B": [
+      4,
+      5
+    ],
+    "C": [
+      6,
+      4
+    ],
+    "D": [
+      7,
+      0
+    ],
+    "E": [
+      8,
+      2
+    ],
+    "F": [
+      1,
+      6
+    ],
+    "G": [
+      3,
+      3
+    ],
+    "H": [
+      5,
+      1
+    ],
+    "V": [
+      2,
+      7
+    ]
+  },
+  "murderer": "A"
+}

@@ -1,0 +1,56 @@
+{
+  "puzzleId": "the-hiking-trip",
+  "sourceFile": "source/the-hiking-trip-solution.pdf",
+  "derivedBy": "pdf-text-extraction",
+  "placements": {
+    "A": [
+      6,
+      3
+    ],
+    "B": [
+      3,
+      5
+    ],
+    "C": [
+      12,
+      8
+    ],
+    "D": [
+      9,
+      0
+    ],
+    "E": [
+      2,
+      10
+    ],
+    "F": [
+      5,
+      9
+    ],
+    "G": [
+      0,
+      6
+    ],
+    "H": [
+      13,
+      1
+    ],
+    "I": [
+      11,
+      2
+    ],
+    "J": [
+      10,
+      4
+    ],
+    "K": [
+      4,
+      11
+    ],
+    "V": [
+      8,
+      7
+    ]
+  },
+  "murderer": "J"
+}
