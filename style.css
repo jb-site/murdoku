@@ -874,3 +874,101 @@ body.art-pick .layer-cells .cell {
 }
 .art-loupe .art-loupe-x { left: 0; right: 0; top: 50%; height: 1px; margin-top: -0.5px; }
 .art-loupe .art-loupe-y { top: 0; bottom: 0; left: 50%; width: 1px; margin-left: -0.5px; }
+
+/* --- Art tab: the grid lattice shown while picking the GRID half of a pair ---
+   The grid click snaps to the nearest intersection, so it carries zero human error —
+   but only if the author can see where the intersections are. White lines ringed in
+   black read over any artwork, light or dark; the pulsing ring follows the cursor on
+   the intersection that will actually be registered. */
+.art-lattice {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.art-lattice i {
+  position: absolute;
+  display: block;
+}
+.art-lat-v {
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  margin-left: -0.5px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8);
+}
+.art-lat-h {
+  left: 0;
+  right: 0;
+  height: 1px;
+  margin-top: -0.5px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8);
+}
+.art-lat-dot {
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.85);
+}
+.art-lat-hover {
+  width: 19px;
+  height: 19px;
+  margin: -9.5px 0 0 -9.5px;
+  border-radius: 50%;
+  border: 2px solid var(--accent, #6ea8fe);
+  background: rgba(110, 168, 254, 0.3);
+  box-shadow: 0 0 0 1px #000, 0 0 10px #000;
+  animation: art-marker-pulse 1.1s infinite;
+}
+.art-lat-hover[hidden] { display: none; }
+.art-lat-hover::after {
+  content: attr(data-label);
+  position: absolute;
+  left: 22px;
+  top: -1px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #fff;
+  white-space: nowrap;
+  text-shadow: 0 0 3px #000, 0 0 3px #000;
+}
+
+/* --- Art tab: the crop rectangle (drag its edges/corners/interior) ---
+   Drawn into layer-art, which is pointer-events:none — the handles are purely visual and
+   hit-testing happens against the pointer position in onEditPointerDown/Move, so the
+   whole interaction rides the existing layer-cells pointer path. */
+body.art-mode.art-calibrate.art-crop .layer-cells .cell {
+  opacity: 0.12;
+}
+/* The calibrate-mode grab cursor is set on .cell, so it would beat the resize cursor the
+   crop tool writes inline onto layer-cells. Let it inherit instead. */
+body.art-crop .layer-cells .cell {
+  cursor: inherit;
+}
+.art-croprect {
+  position: absolute;
+  border: 1px solid #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.85), 0 0 0 9999px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+.art-croprect .art-handle {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  margin: -6px 0 0 -6px;
+  background: var(--accent, #6ea8fe);
+  border: 1px solid #fff;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.85);
+}
+.art-croprect .h-nw { left: 0; top: 0; }
+.art-croprect .h-n { left: 50%; top: 0; }
+.art-croprect .h-ne { left: 100%; top: 0; }
+.art-croprect .h-e { left: 100%; top: 50%; }
+.art-croprect .h-se { left: 100%; top: 100%; }
+.art-croprect .h-s { left: 50%; top: 100%; }
+.art-croprect .h-sw { left: 0; top: 100%; }
+.art-croprect .h-w { left: 0; top: 50%; }

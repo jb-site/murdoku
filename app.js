@@ -1141,8 +1141,10 @@ function renderArtLayer() {
 
   // Two-point alignment abandons the crop and fits the WHOLE padded PNG into the cell
   // area, because the point being clicked is usually outside the current crop.
-  if (EDIT?.artPick) applyArtFit(img); else clearArtFit(img);
+  if (EDIT?.artPick || EDIT?.artCropTool) applyArtFit(img); else clearArtFit(img);
+  renderArtLattice();
   renderArtPickMarkers();
+  renderArtCropRect();
 }
 
 const IDENTITY_CROP = { x: 0, y: 0, w: 1, h: 1 };
@@ -2060,6 +2062,19 @@ const editResizeBtn = document.getElementById("editResizeBtn");
 const editorTabsEl = document.getElementById("editorTabs");
 const editorPaletteEl = document.getElementById("editorPalette");
 const editorDetailsEl = document.getElementById("editorDetails");
+
+// The global keydown handler deliberately bails when focus is in an INPUT/SELECT/TEXTAREA
+// (letter shortcuts must not fire while typing), which also swallowed Escape while the
+// caret sat in one of the Art panel's number inputs — the one place the author is most
+// likely to be when they want to bail out of a pick or the crop tool. A panel-local
+// listener restores it without loosening the global rule.
+editorDetailsEl.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape" || !EDIT || EDIT.tool !== "art") return;
+  if (!EDIT.artPick && !EDIT.artCropTool) return;
+  e.preventDefault();
+  e.stopPropagation();
+  onArtKey(e);
+});
 const editorValidationEl = document.getElementById("editorValidation");
 
 function blankPuzzle() {
@@ -2086,7 +2101,7 @@ function enterEditMode(sourcePuzzle) {
   const baseCrop = (sourcePuzzle ?? PUZZLE)?.art?.boardCrop;
   EDIT = { stash: { puzzle: PUZZLE, objectAt, grid, history, selection }, tool: "rooms", roomPaint: null, objPaint: null, drag: null, dirty: false,
     artBase: baseCrop ? { ...baseCrop } : { x: 0, y: 0, w: 1, h: 1 },
-    artSquareLock: true, artPick: null, artPickNote: "" };
+    artSquareLock: true, artPick: null, artPickNote: "", artCropTool: false };
   PUZZLE = normalizePuzzle(structuredClone(sourcePuzzle ?? PUZZLE));
   objectAt = buildObjectIndex(PUZZLE);
   grid = freshGrid();
@@ -2112,7 +2127,8 @@ function enterEditMode(sourcePuzzle) {
 }
 
 function exitEditMode(mode) {
-  endArtPick(); // clears the pick overlay/loupe and the art-pick body class
+  endArtPick();     // clears the pick overlay/loupe and the art-pick body class
+  endArtCropTool(); // and the crop rectangle's fitted view
   if (mode === "discard") {
     ({ puzzle: PUZZLE, objectAt, grid, history, selection } = EDIT.stash);
   } else {
@@ -2258,7 +2274,7 @@ editorTabsEl.querySelectorAll(".edit-tab").forEach((btn) => {
 });
 
 function setEditTab(tab) {
-  if (EDIT.tool === "art" && tab !== "art") endArtPick();
+  if (EDIT.tool === "art" && tab !== "art") { endArtPick(); endArtCropTool(); }
   EDIT.tool = tab;
   editorTabsEl.querySelectorAll(".edit-tab").forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
   // Both the Details and Art panels are column layouts and share .editor-details;
@@ -2543,7 +2559,9 @@ function buildArtPanel() {
   const controls = document.createElement("div");
   controls.className = "editor-row art-controls";
   controls.innerHTML = `
-    <button type="button" class="tool-btn" id="artPickBtn" title="Align by two correspondences: a grid intersection and its matching point in the artwork, twice">⌖ Align by 2 points</button>
+    <button type="button" class="tool-btn" id="artCornersBtn" title="Two clicks: the board's top-left corner in the artwork, then its bottom-right. The grid side is implied — (0,0) and (cols,rows).">⌖ Align by corners</button>
+    <button type="button" class="tool-btn" id="artCropBtn" title="Drag the crop rectangle's corners, edges or middle over the whole fitted image">⬚ Crop tool</button>
+    <button type="button" class="tool-btn" id="artPickBtn" title="Two correspondences — a grid intersection and its matching artwork point, twice. For boards whose outer corners are ambiguous.">⌖ Align by 2 points</button>
     <button type="button" class="tool-btn" data-zoom="0.99">Zoom −</button>
     <button type="button" class="tool-btn" data-zoom="1.01">Zoom +</button>
     <button type="button" class="tool-btn" data-zoom="0.95">− −</button>
@@ -2556,8 +2574,14 @@ function buildArtPanel() {
   controls.querySelectorAll("[data-zoom]").forEach((btn) => {
     btn.addEventListener("click", () => zoomArt(+btn.dataset.zoom));
   });
+  controls.querySelector("#artCornersBtn").addEventListener("click", () => {
+    if (EDIT.artPick?.mode === "corners") endArtPick(); else startArtPick("corners");
+  });
   controls.querySelector("#artPickBtn").addEventListener("click", () => {
-    if (EDIT.artPick) endArtPick(); else startArtPick();
+    if (EDIT.artPick?.mode === "pairs") endArtPick(); else startArtPick("pairs");
+  });
+  controls.querySelector("#artCropBtn").addEventListener("click", () => {
+    if (EDIT.artCropTool) endArtCropTool(); else startArtCropTool();
   });
   controls.querySelector("#artResetBtn").addEventListener("click", () => {
     endArtPick();
@@ -2614,23 +2638,47 @@ function buildArtPanel() {
   syncArtInputs();
   updateArtInstructions();
   updateArtCellNote();
+  updateArtButtons();
+}
+
+// The three modes are mutually exclusive, and the panel is rebuilt from scratch after a
+// commit, so the active state is derived here rather than toggled at each call site.
+function updateArtButtons() {
+  const set = (id, on) => document.getElementById(id)?.classList.toggle("active", !!on);
+  set("artCornersBtn", EDIT?.artPick?.mode === "corners");
+  set("artPickBtn", EDIT?.artPick?.mode === "pairs");
+  set("artCropBtn", EDIT?.artCropTool);
 }
 
 function updateArtInstructions() {
   const el = document.getElementById("artInstructions");
   if (!el) return;
   const pick = EDIT?.artPick;
-  el.classList.toggle("picking", !!pick);
+  el.classList.toggle("picking", !!pick || !!EDIT?.artCropTool);
+  if (pick && pick.mode === "corners") {
+    el.textContent = pick.pairs.length === 0
+      ? "CORNERS — click 1 of 2: the TOP-LEFT corner of the BOARD in the artwork. The loupe magnifies where you are pointing. (Esc cancels)"
+      : "CORNERS — click 2 of 2: now the BOTTOM-RIGHT corner of the BOARD. (Esc cancels)";
+    return;
+  }
   if (pick) {
     const n = pick.pairs.length + 1;
     el.textContent = pick.pending
       ? `ALIGN — pair ${n} of 2: now click the MATCHING point in the artwork. The loupe magnifies where you are pointing. (Esc cancels everything)`
-      : `ALIGN — pair ${n} of 2: click a GRID INTERSECTION (a cell corner); it snaps to the nearest one. Pick landmarks as far apart as you can. (Esc cancels everything)`;
+      : `ALIGN — pair ${n} of 2: click a GRID INTERSECTION on the highlighted lattice; it snaps to the nearest one, and the ring shows which. Pick landmarks as far apart as you can. (Esc cancels everything)`;
+    return;
+  }
+  if (EDIT?.artCropTool) {
+    el.textContent = "CROP — the whole image is fitted in view with the current crop drawn over it. " +
+      "Drag a corner or an edge to resize, drag inside to move. With the square-cell lock on, " +
+      "corners scale proportionally and a single edge derives the other axis. (Esc exits)";
     return;
   }
   el.textContent = "Drag on the grid to pan the artwork. Arrow keys nudge (hold Shift for a coarse step). " +
     "Zoom scales about the centre of the visible board. Room tints are shown at half opacity so " +
-    "misalignment against the art's own cell boundaries is obvious. For a big correction, use Align by 2 points.";
+    "misalignment against the art's own cell boundaries is obvious. For a big correction start with " +
+    "Align by corners (two clicks), or the Crop tool to drag the crop rectangle; Align by 2 points is " +
+    "for boards whose outer corners are too fuzzy to click.";
 }
 
 function updateArtCellNote() {
@@ -2721,6 +2769,7 @@ function panArt(dx, dy) {
 function onArtKey(e) {
   if (e.key === "Escape") {
     if (EDIT.artPick) endArtPick();
+    else if (EDIT.artCropTool) endArtCropTool();
     return;
   }
   if (!PUZZLE.art?.board || EDIT.artPick) return;
@@ -2786,12 +2835,18 @@ function clearArtFit(img) {
   ["width", "height", "left", "top"].forEach((prop) => img.style.removeProperty(prop));
 }
 
-function startArtPick() {
+// mode "corners" — two clicks, both in the artwork: the board's top-left corner, then
+// its bottom-right. The grid half is implied, (0,0) and (cols,rows), so it is half the
+// clicks of a correspondence pair and is the common case, hence the default entry point.
+// mode "pairs" — the original: a grid intersection then its artwork match, twice, for
+// boards whose outer corner is ambiguous (The Hiking Trip's fuzzy mountain-scenery edge).
+function startArtPick(mode = "corners") {
   if (!artImgDims()) { setStatus("The board artwork hasn't finished loading yet."); return; }
-  EDIT.artPick = { pairs: [], pending: null };
+  endArtCropTool();
+  EDIT.artPick = { mode, pairs: [], pending: null, hover: null };
   EDIT.artPickNote = "";
   document.body.classList.add("art-pick");
-  document.getElementById("artPickBtn")?.classList.add("active");
+  updateArtButtons();
   scheduleEditRerender();
   updateArtInstructions();
 }
@@ -2803,7 +2858,7 @@ function endArtPick() {
   EDIT.artPick = null;
   hideArtLoupe();
   document.body.classList.remove("art-pick");
-  document.getElementById("artPickBtn")?.classList.remove("active");
+  updateArtButtons();
   scheduleEditRerender();
   updateArtInstructions();
 }
@@ -2831,6 +2886,21 @@ function artGridPointFromEvent(e) {
 
 function onArtPickClick(e) {
   const pick = EDIT.artPick;
+  if (pick.mode === "corners") {
+    const p = artPointFromEvent(e);
+    if (!p) return;
+    // The grid side is not clicked at all: the board's outer corners ARE grid (0,0) and
+    // (cols,rows) by definition, so the pair is completed here and fed to the same
+    // closed-form solver the correspondence mode uses.
+    const first = pick.pairs.length === 0;
+    pick.pairs.push({ col: first ? 0 : PUZZLE.cols, row: first ? 0 : PUZZLE.rows,
+                      gx: first ? 0 : 1, gy: first ? 0 : 1, ix: p.u, iy: p.v });
+    hideArtLoupe();
+    if (pick.pairs.length >= 2) { commitArtPick(); return; }
+    scheduleEditRerender();
+    updateArtInstructions();
+    return;
+  }
   if (pick.pending) {
     const p = artPointFromEvent(e);
     if (!p) return;
@@ -2848,6 +2918,7 @@ function onArtPickClick(e) {
 }
 
 function commitArtPick() {
+  const mode = EDIT.artPick.mode;
   const [p, q] = EDIT.artPick.pairs;
   const dgx = q.gx - p.gx, dgy = q.gy - p.gy;
   if (Math.abs(dgx) < 1e-9 || Math.abs(dgy) < 1e-9) {
@@ -2866,7 +2937,7 @@ function commitArtPick() {
   let y = p.iy - p.gy * h;
 
   const notes = [];
-  if (Math.abs(dgx) < PICK_MIN_SEPARATION || Math.abs(dgy) < PICK_MIN_SEPARATION) {
+  if (mode !== "corners" && (Math.abs(dgx) < PICK_MIN_SEPARATION || Math.abs(dgy) < PICK_MIN_SEPARATION)) {
     notes.push("the two points were less than a third of the board apart, which amplifies click error — check the fit, or redo it with points further apart");
   }
 
@@ -2896,12 +2967,13 @@ function commitArtPick() {
     EDIT.artPickNote = "Square lock off — both axes taken exactly as picked.";
   }
 
+  const what = mode === "corners" ? "the board's two outer corners" : "2 correspondence pairs";
   endArtPick();
   setArtCrop({ x, y, w, h });
   buildArtPanel();
   setStatus(notes.length
-    ? "Aligned from 2 correspondence pairs. Note: " + notes.join("; ") + "."
-    : "Aligned from 2 correspondence pairs. Fine-tune with drag, the arrow keys or Zoom.");
+    ? `Aligned from ${what}. Note: ` + notes.join("; ") + "."
+    : `Aligned from ${what}. Fine-tune with the Crop tool, drag, the arrow keys or Zoom.`);
 }
 
 // Markers for what has been registered so far, drawn into layer-art (pointer-events:none,
@@ -2921,10 +2993,63 @@ function renderArtPickMarkers() {
     layerArtEl.appendChild(el);
   };
   pick.pairs.forEach((pair, i) => {
-    marker(pair.gx * WB, pair.gy * HB, "grid", `${i + 1}G`);
-    if (fit) marker(fit.left + pair.ix * fit.dw, fit.top + pair.iy * fit.dh, "image", `${i + 1}A`);
+    const label = pick.mode === "corners" ? (i === 0 ? "TL" : "BR") : `${i + 1}`;
+    if (pick.mode !== "corners") marker(pair.gx * WB, pair.gy * HB, "grid", `${label}G`);
+    if (fit) marker(fit.left + pair.ix * fit.dw, fit.top + pair.iy * fit.dh, "image", pick.mode === "corners" ? label : `${label}A`);
   });
   if (pick.pending) marker(pick.pending.gx * WB, pick.pending.gy * HB, "grid pending", `${pick.pairs.length + 1}G`);
+}
+
+// --- The grid lattice, drawn while the GRID half of a pair is being picked ---
+//
+// The grid click snaps to the nearest intersection, so that half of a correspondence is
+// meant to carry zero human error — but the snap guarantee is worthless if the author
+// cannot SEE where the intersections are. In pick mode the room tints drop to 0.12 and
+// the artwork underneath is arbitrary, so this draws its own high-contrast lattice:
+// white lines ringed in black (legible over any artwork, light or dark), a dot at every
+// intersection, and a ring following the cursor on the intersection that WILL be
+// registered. Elements, not SVG: the count is (cols+1)*(rows+1) + cols + rows + 2, about
+// 200 divs at 12x12, and layer-art's box is exactly the cell area so percentages are the
+// whole conversion.
+function renderArtLattice() {
+  layerArtEl.querySelectorAll(".art-lattice").forEach((el) => el.remove());
+  const pick = EDIT?.artPick;
+  if (!pick || pick.mode !== "pairs" || pick.pending) return;
+  const { rows, cols } = PUZZLE;
+  const box = document.createElement("div");
+  box.className = "art-lattice";
+  const parts = [];
+  for (let c = 0; c <= cols; c++) parts.push(`<i class="art-lat-v" style="left:${(c / cols) * 100}%"></i>`);
+  for (let r = 0; r <= rows; r++) parts.push(`<i class="art-lat-h" style="top:${(r / rows) * 100}%"></i>`);
+  for (let r = 0; r <= rows; r++) {
+    for (let c = 0; c <= cols; c++) {
+      parts.push(`<i class="art-lat-dot" style="left:${(c / cols) * 100}%;top:${(r / rows) * 100}%"></i>`);
+    }
+  }
+  parts.push(`<i class="art-lat-hover" hidden></i>`);
+  box.innerHTML = parts.join("");
+  layerArtEl.appendChild(box);
+  if (pick.hover) positionLatticeHover(pick.hover);
+}
+
+function positionLatticeHover(g) {
+  const el = layerArtEl.querySelector(".art-lat-hover");
+  if (!el) return;
+  el.style.left = `${g.gx * 100}%`;
+  el.style.top = `${g.gy * 100}%`;
+  el.dataset.label = `${g.col},${g.row}`;
+  el.hidden = false;
+}
+
+// Called from the bare pointer-move (no drag behind it), so it writes the DOM directly
+// rather than going through a re-render — the ring has to track the cursor smoothly.
+function updateArtLatticeHover(e) {
+  const pick = EDIT?.artPick;
+  if (!pick || pick.mode !== "pairs" || pick.pending) return;
+  const g = artGridPointFromEvent(e);
+  if (!g) return;
+  pick.hover = g;
+  positionLatticeHover(g);
 }
 
 // --- Magnifier loupe -------------------------------------------------------
@@ -2939,7 +3064,10 @@ let artLoupeEl = null;
 function updateArtLoupe(e) {
   const pick = EDIT?.artPick;
   const img = artImg();
-  if (!pick || !pick.pending || !img) { hideArtLoupe(); return; }
+  // Corner mode is image-picking all the way through, so it has no `pending` stage —
+  // both of its clicks want the loupe.
+  const wantsLoupe = pick && (pick.mode === "corners" || pick.pending);
+  if (!wantsLoupe || !img) { hideArtLoupe(); return; }
   const fit = artFitBox();
   const p = artPointFromEvent(e);
   if (!fit || !p) { hideArtLoupe(); return; }
@@ -2981,6 +3109,172 @@ function copyBoardCrop() {
   }
 }
 
+// --- Crop tool (drag the crop rectangle's edges and corners) ----------------
+//
+// The familiar image-editor crop interaction, and usually the fastest way to a
+// rough-but-close crop before the nudge controls take over for the last few pixels.
+// Like pick mode it fits the WHOLE padded PNG into the cell area (the crop is often
+// nowhere near the current view), then draws boardCrop as a rectangle over it.
+//
+// The rectangle lives in layer-art, which is pointer-events:none, so the handles are
+// purely visual — hit-testing happens against the pointer position in
+// onEditPointerDown/Move, reusing the existing layer-cells pointer path and its capture
+// rather than adding a second, parallel gesture surface.
+
+const ART_HANDLES = ["nw", "n", "ne", "e", "se", "s", "sw", "w"];
+const ART_HANDLE_HIT = 14; // px — generous, because the handles are small
+const ART_HANDLE_CURSORS = {
+  nw: "nwse-resize", se: "nwse-resize", ne: "nesw-resize", sw: "nesw-resize",
+  n: "ns-resize", s: "ns-resize", e: "ew-resize", w: "ew-resize", move: "move",
+};
+
+function startArtCropTool() {
+  if (!artImgDims()) { setStatus("The board artwork hasn't finished loading yet."); return; }
+  endArtPick();
+  EDIT.artCropTool = true;
+  document.body.classList.add("art-crop");
+  updateArtButtons();
+  scheduleEditRerender();
+  updateArtInstructions();
+}
+
+function endArtCropTool() {
+  if (!EDIT?.artCropTool) return;
+  EDIT.artCropTool = false;
+  document.body.classList.remove("art-crop");
+  layerCellsEl.style.cursor = "";
+  updateArtButtons();
+  scheduleEditRerender();
+  updateArtInstructions();
+}
+
+// The crop rect in layer-art-box pixels, under the contain-fit used by this mode.
+function artCropRectPx() {
+  const fit = artFitBox();
+  if (!fit) return null;
+  const c = artCrop();
+  return { fit, x0: fit.left + c.x * fit.dw, y0: fit.top + c.y * fit.dh,
+           x1: fit.left + (c.x + c.w) * fit.dw, y1: fit.top + (c.y + c.h) * fit.dh };
+}
+
+function renderArtCropRect() {
+  layerArtEl.querySelectorAll(".art-croprect").forEach((el) => el.remove());
+  if (!EDIT?.artCropTool || EDIT.artPick) return;
+  const r = artCropRectPx();
+  if (!r) return;
+  const box = document.createElement("div");
+  box.className = "art-croprect";
+  box.style.left = `${r.x0}px`;
+  box.style.top = `${r.y0}px`;
+  box.style.width = `${Math.max(r.x1 - r.x0, 0)}px`;
+  box.style.height = `${Math.max(r.y1 - r.y0, 0)}px`;
+  box.innerHTML = ART_HANDLES.map((h) => `<i class="art-handle h-${h}"></i>`).join("");
+  layerArtEl.appendChild(box);
+}
+
+// Which part of the crop rect the pointer is over: a named handle, "move" for the
+// interior, or null. Corners win over edges (they are tested first and by distance).
+function artHandleAt(e) {
+  const r = artCropRectPx();
+  if (!r) return null;
+  const box = layerArtEl.getBoundingClientRect();
+  const px = e.clientX - box.left, py = e.clientY - box.top;
+  const cx = (r.x0 + r.x1) / 2, cy = (r.y0 + r.y1) / 2;
+  const pts = { nw: [r.x0, r.y0], ne: [r.x1, r.y0], se: [r.x1, r.y1], sw: [r.x0, r.y1],
+                n: [cx, r.y0], s: [cx, r.y1], e: [r.x1, cy], w: [r.x0, cy] };
+  let best = null, bestD = ART_HANDLE_HIT;
+  for (const k of ART_HANDLES) {
+    const d = Math.hypot(px - pts[k][0], py - pts[k][1]);
+    if (d <= bestD) { bestD = d; best = k; }
+  }
+  if (best) return best;
+  const nearX = px >= r.x0 - ART_HANDLE_HIT && px <= r.x1 + ART_HANDLE_HIT;
+  const nearY = py >= r.y0 - ART_HANDLE_HIT && py <= r.y1 + ART_HANDLE_HIT;
+  if (nearY && Math.abs(px - r.x0) <= ART_HANDLE_HIT) return "w";
+  if (nearY && Math.abs(px - r.x1) <= ART_HANDLE_HIT) return "e";
+  if (nearX && Math.abs(py - r.y0) <= ART_HANDLE_HIT) return "n";
+  if (nearX && Math.abs(py - r.y1) <= ART_HANDLE_HIT) return "s";
+  if (px > r.x0 && px < r.x1 && py > r.y0 && py < r.y1) return "move";
+  return null;
+}
+
+// h = w * ART_RATIO is exactly the square-cell condition (w*W)/cols == (h*H)/rows
+// rearranged, in normalized crop units.
+function artSquareRatio() {
+  const d = artImgDims();
+  if (!d) return null;
+  return (d.W * PUZZLE.rows) / (d.H * PUZZLE.cols);
+}
+
+const CROP_MIN = 0.02;
+
+// Keep the rect inside the image without breaking squareness: shrink both axes by the
+// same factor first, then slide it back into bounds.
+function clampCropRect(c, square) {
+  let { x, y, w, h } = c;
+  w = Math.max(w, CROP_MIN);
+  h = Math.max(h, CROP_MIN);
+  if (w > 1 || h > 1) {
+    const k = Math.min(1 / w, 1 / h);
+    if (square) { w *= k; h *= k; } else { w = Math.min(w, 1); h = Math.min(h, 1); }
+  }
+  x = Math.min(Math.max(x, 0), 1 - w);
+  y = Math.min(Math.max(y, 0), 1 - h);
+  return { x, y, w, h };
+}
+
+// Resize from one handle. The dragged edge/corner follows the pointer exactly; the
+// OPPOSITE edge/corner is the anchor and never moves. With the square lock on, a corner
+// scales proportionally (driven by whichever axis the pointer moved further on) and a
+// single-edge drag derives the other axis about the rect's own centre on that axis, so
+// the two edges the author is not touching stay symmetric about where they were.
+function resizeArtCrop(handle, u, v) {
+  const c = artCrop();
+  let x0 = c.x, y0 = c.y, x1 = c.x + c.w, y1 = c.y + c.h;
+  const square = !!EDIT.artSquareLock;
+  const ratio = artSquareRatio();
+  const horiz = handle.includes("w") ? "w" : handle.includes("e") ? "e" : null;
+  const vert = handle.startsWith("n") ? "n" : handle.startsWith("s") ? "s" : null;
+
+  if (horiz === "w") x0 = u; else if (horiz === "e") x1 = u;
+  if (vert === "n") y0 = v; else if (vert === "s") y1 = v;
+
+  let w = x1 - x0, h = y1 - y0;
+
+  if (square && ratio) {
+    if (horiz && vert) {
+      // Corner: follow the axis that moved further, so the drag never feels ignored.
+      w = Math.max(Math.abs(w), Math.abs(h) / ratio);
+      h = w * ratio;
+      if (horiz === "w") x0 = x1 - w; else x1 = x0 + w;
+      if (vert === "n") y0 = y1 - h; else y1 = y0 + h;
+    } else if (horiz) {
+      w = Math.abs(w);
+      h = w * ratio;
+      const midY = (y0 + y1) / 2;
+      y0 = midY - h / 2; y1 = midY + h / 2;
+      if (horiz === "w") x0 = x1 - w; else x1 = x0 + w;
+    } else if (vert) {
+      h = Math.abs(h);
+      w = h / ratio;
+      const midX = (x0 + x1) / 2;
+      x0 = midX - w / 2; x1 = midX + w / 2;
+      if (vert === "n") y0 = y1 - h; else y1 = y0 + h;
+    }
+  } else {
+    // Unlocked: an edge dragged past its opposite just flips, as in any crop tool.
+    if (x1 < x0) [x0, x1] = [x1, x0];
+    if (y1 < y0) [y0, y1] = [y1, y0];
+  }
+
+  setArtCrop(clampCropRect({ x: x0, y: y0, w: x1 - x0, h: y1 - y0 }, square));
+}
+
+function moveArtCrop(du, dv) {
+  const c = artCrop();
+  setArtCrop(clampCropRect({ x: c.x + du, y: c.y + dv, w: c.w, h: c.h }, !!EDIT.artSquareLock));
+}
+
 // --- Edit-mode gestures (room paint / object rectangle place) --------------
 
 function onEditPointerDown(e) {
@@ -2993,6 +3287,18 @@ function onEditPointerDown(e) {
     if (!PUZZLE.art?.board) return;
     e.preventDefault();
     if (EDIT.artPick) { onArtPickClick(e); return; } // pick clicks, not a pan drag
+    if (EDIT.artCropTool) {
+      // Crop-tool drags replace panning entirely: dragging the rect's interior IS the
+      // pan, and a drag starting outside it would otherwise move the crop out from under
+      // the handle the author was aiming for.
+      const handle = artHandleAt(e);
+      if (!handle) return;
+      const p = artPointFromEvent(e);
+      if (!p) return;
+      layerCellsEl.setPointerCapture(e.pointerId);
+      EDIT.drag = { pointerId: e.pointerId, kind: "artcrop", handle, u: p.u, v: p.v };
+      return;
+    }
     layerCellsEl.setPointerCapture(e.pointerId);
     EDIT.drag = { pointerId: e.pointerId, kind: "art", px: e.clientX, py: e.clientY };
     return;
@@ -3020,8 +3326,30 @@ function onEditPointerDown(e) {
 function onEditPointerMove(e) {
   // The loupe follows the bare pointer — there is no drag behind it — so it has to be
   // handled before the drag guard below.
-  if (EDIT.tool === "art" && EDIT.artPick) { updateArtLoupe(e); return; }
+  if (EDIT.tool === "art" && EDIT.artPick) {
+    updateArtLoupe(e);          // image half of a pair, or either corner click
+    updateArtLatticeHover(e);   // grid half: ring the intersection that will be taken
+    return;
+  }
+  // Handle-proximity cursor feedback, also drag-free.
+  if (EDIT.tool === "art" && EDIT.artCropTool && !EDIT.drag) {
+    const handle = artHandleAt(e);
+    layerCellsEl.style.cursor = handle ? ART_HANDLE_CURSORS[handle] : "";
+  }
   if (!EDIT.drag || EDIT.drag.pointerId !== e.pointerId) return;
+
+  if (EDIT.drag.kind === "artcrop") {
+    const p = artPointFromEvent(e);
+    if (!p) return;
+    if (EDIT.drag.handle === "move") {
+      moveArtCrop(p.u - EDIT.drag.u, p.v - EDIT.drag.v);
+      EDIT.drag.u = p.u;
+      EDIT.drag.v = p.v;
+    } else {
+      resizeArtCrop(EDIT.drag.handle, p.u, p.v);
+    }
+    return;
+  }
 
   if (EDIT.drag.kind === "art") {
     panArt(e.clientX - EDIT.drag.px, e.clientY - EDIT.drag.py);
