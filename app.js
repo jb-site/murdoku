@@ -750,6 +750,7 @@ const editorArtViewEl = document.getElementById("editorArtView");
 const editorOpacityRowEl = document.getElementById("editorOpacityRow");
 const playerPanelEl = document.getElementById("playerPanel");
 const solveBtn = document.getElementById("solveBtn");
+const storyBtn = document.getElementById("storyBtn");
 const verdictBackdropEl = document.getElementById("verdictBackdrop");
 const verdictPanelEl = document.getElementById("verdictPanel");
 const verdictTitleEl = document.getElementById("verdictTitle");
@@ -1336,6 +1337,7 @@ function renderMarks() {
   }
   updatePlacedStates();
   updateSolveButton();
+  updateStoryButton();
 }
 
 // Suspects with a definite placement somewhere on the board right now. Derived from `grid`
@@ -1545,6 +1547,105 @@ async function fetchSolution(puzzleId) {
   return result;
 }
 
+// Same lazy-fetch-and-cache pattern as fetchSolution — a separate file, fetched only once
+// there's a correct solve (or the player reopens it via storyBtn), never at puzzle load.
+const storyCache = new Map();
+
+async function fetchStory(puzzleId) {
+  if (storyCache.has(puzzleId)) return storyCache.get(puzzleId);
+  let result = "none";
+  try {
+    const res = await fetch(`puzzles/stories/${puzzleId}.json`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.acts) result = data;
+    }
+  } catch (err) {
+    result = "none";
+  }
+  storyCache.set(puzzleId, result);
+  return result;
+}
+
+const SOLVED_KEY = "murdoku:solved";
+
+function getSolvedSet() {
+  try {
+    const raw = localStorage.getItem(SOLVED_KEY);
+    return new Set(raw ? JSON.parse(raw) : []);
+  } catch (err) {
+    return new Set();
+  }
+}
+
+function markSolved(puzzleId) {
+  const solved = getSolvedSet();
+  if (solved.has(puzzleId)) return;
+  solved.add(puzzleId);
+  localStorage.setItem(SOLVED_KEY, JSON.stringify([...solved]));
+}
+
+function updateStoryButton() {
+  if (!storyBtn) return;
+  storyBtn.hidden = EDIT || !PUZZLE || !getSolvedSet().has(PUZZLE.id);
+}
+
+// Builds the "where everyone was" list: one row per suspect (victim included, murderer
+// last, per PLAN-solve-and-story.md's Phase D4), reusing the same chip/portrait markup as
+// the clue list so a solved puzzle with portraits shows them here too.
+function buildWhereaboutsHtml(story, murdererLetter) {
+  const order = [
+    ...PUZZLE.suspects.filter((l) => l !== murdererLetter),
+    ...(murdererLetter ? [murdererLetter] : []),
+  ];
+  const rows = order.map((letter) => {
+    const line = story.whereabouts?.[letter];
+    if (!line) return "";
+    const isMurderer = letter === murdererLetter;
+    const portrait = PUZZLE.art?.portraits?.[letter];
+    let portraitHtml = "";
+    if (portrait) {
+      const crop = portrait.crop || { x: 0, y: 0, w: 1, h: 1 };
+      portraitHtml = `<span class="clue-portrait-wrap"><img class="clue-portrait" src="puzzles/${escapeHtml(portrait.src)}"
+        style="--pc-x:${crop.x};--pc-y:${crop.y};--pc-w:${crop.w};--pc-h:${crop.h}"
+        alt="${escapeHtml(PUZZLE.names[letter] || letter)}" loading="lazy"></span>`;
+    }
+    const chipClass = "suspect-chip chip-inline" + (letter === "V" ? " victim" : "");
+    return `<li class="${isMurderer ? "story-murderer" : ""}">
+      ${portraitHtml}<span class="${chipClass}">${escapeHtml(letter)}</span>
+      <span class="story-whereabouts-text">${escapeHtml(line)}</span>
+    </li>`;
+  });
+  return `<ul class="story-whereabouts">${rows.join("")}</ul>`;
+}
+
+function buildStoryHtml(story, murdererLetter) {
+  const acts = (story.acts || []).map((a) => `<p>${escapeHtml(a)}</p>`).join("");
+  const reveal = story.reveal ? `<p class="story-reveal">${escapeHtml(story.reveal)}</p>` : "";
+  return `${acts}${reveal}
+    <h3 class="story-whereabouts-title">Where everyone was</h3>
+    ${buildWhereaboutsHtml(story, murdererLetter)}`;
+}
+
+function openStoryPanel(title, story, murdererLetter) {
+  verdictTitleEl.textContent = title;
+  verdictBodyEl.innerHTML = buildStoryHtml(story, murdererLetter);
+  verdictPanelEl.classList.add("story-panel");
+  verdictDismissBtn.textContent = "Close";
+  openVerdictPanel();
+}
+
+async function onStoryClick() {
+  if (EDIT || !PUZZLE) return;
+  const puzzleId = PUZZLE.id;
+  const [story, solution] = await Promise.all([fetchStory(puzzleId), fetchSolution(puzzleId)]);
+  if (!PUZZLE || PUZZLE.id !== puzzleId) return;
+  if (story === "none") return;
+  openStoryPanel(story.title || PUZZLE.title, story, solution === "none" ? null : solution.murderer);
+}
+
+storyBtn.addEventListener("click", onStoryClick);
+
 // Compares the board cell-for-cell against the official solution and classifies the outcome,
 // most-specific-first (see CLAUDE.md / PLAN-solve-and-story.md Phase C for the table).
 function buildSolutionVerdict(solution) {
@@ -1655,6 +1756,7 @@ function openVerdictPanel() {
 
 function closeVerdictPanel() {
   verdictBackdropEl.hidden = true;
+  verdictPanelEl.classList.remove("story-panel");
 }
 
 function showVerdict(v) {
@@ -1692,7 +1794,20 @@ async function onSolveClick() {
     return;
   }
 
-  showVerdict(buildSolutionVerdict(solution));
+  const v = buildSolutionVerdict(solution);
+  if (v.status === "correct") {
+    markSolved(puzzleId);
+    updateStoryButton();
+    const story = await fetchStory(puzzleId);
+    if (!PUZZLE || PUZZLE.id !== puzzleId || gridGeneration !== generation) return;
+    verdict = v;
+    applyHighlights();
+    if (story !== "none") {
+      openStoryPanel(story.title || PUZZLE.title, story, v.murderer);
+      return;
+    }
+  }
+  showVerdict(v);
 }
 
 solveBtn.addEventListener("click", onSolveClick);

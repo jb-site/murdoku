@@ -1,0 +1,209 @@
+{
+ "id": "netflix-and-kill",
+ "title": "Netflix and Kill",
+ "difficulty": "easy",
+ "rooms": {
+  "bedroom": "Bedroom",
+  "bathroom": "Bathroom",
+  "kitchen": "Kitchen",
+  "livingroom": "Living Room"
+ },
+ "generalClues": [],
+ "victim": "V",
+ "murderer": "B",
+ "asciiMapLegend": {
+  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "roomCodes": {
+   "bedroom": "B",
+   "bathroom": "Bx1",
+   "kitchen": "K",
+   "livingroom": "L"
+  },
+  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+ },
+ "asciiMap": "BbB   Bb.   B..   B..   Bx1p. Bx1c.\nB..   B..   B.V   Bc.   Bx1.. Bx1..\nBs.   Bp.   L..   Lc.   LcC   Bx1..\nK..   K..   L..   L..   L..   L.E  \nKs.   K.D   Lc.   L..   Lc.   Lt.  \nKt.   Kt.   Ls.   L.A   L..   Lp.  ",
+ "people": [
+  {
+   "letter": "A",
+   "name": "Austin",
+   "role": "suspect",
+   "position": [
+    5,
+    3
+   ],
+   "room": {
+    "id": "livingroom",
+    "name": "Living Room"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "shelf"
+   ],
+   "withInRoom": [
+    {
+     "letter": "C",
+     "name": "Charlotte"
+    },
+    {
+     "letter": "E",
+     "name": "Enid"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Austin (A) was beside a shelf."
+   ]
+  },
+  {
+   "letter": "B",
+   "name": "Barbara",
+   "role": "murderer",
+   "position": [
+    0,
+    0
+   ],
+   "room": {
+    "id": "bedroom",
+    "name": "Bedroom"
+   },
+   "onObjectType": "bed",
+   "on": "on the bed",
+   "besideObjectTypes": [
+    "bed"
+   ],
+   "withInRoom": [
+    {
+     "letter": "V",
+     "name": "Vaughn (victim)"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Barbara (B) was on the bed."
+   ],
+   "nearbyObjectTypesForMethod": [
+    "bed"
+   ]
+  },
+  {
+   "letter": "C",
+   "name": "Charlotte",
+   "role": "suspect",
+   "position": [
+    2,
+    4
+   ],
+   "room": {
+    "id": "livingroom",
+    "name": "Living Room"
+   },
+   "onObjectType": "chair",
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "chair"
+   ],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Austin"
+    },
+    {
+     "letter": "E",
+     "name": "Enid"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Charlotte (C) was the only person sitting in a chair."
+   ]
+  },
+  {
+   "letter": "D",
+   "name": "Dean",
+   "role": "suspect",
+   "position": [
+    4,
+    1
+   ],
+   "room": {
+    "id": "kitchen",
+    "name": "Kitchen"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "chair",
+    "shelf",
+    "table"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Dean (D) was in the Kitchen."
+   ]
+  },
+  {
+   "letter": "E",
+   "name": "Enid",
+   "role": "suspect",
+   "position": [
+    3,
+    5
+   ],
+   "room": {
+    "id": "livingroom",
+    "name": "Living Room"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "TV"
+   ],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Austin"
+    },
+    {
+     "letter": "C",
+     "name": "Charlotte"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Enid (E) was beside the TV."
+   ]
+  },
+  {
+   "letter": "V",
+   "name": "Vaughn (victim)",
+   "role": "victim",
+   "position": [
+    1,
+    2
+   ],
+   "room": {
+    "id": "bedroom",
+    "name": "Bedroom"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "chair"
+   ],
+   "withInRoom": [
+    {
+     "letter": "B",
+     "name": "Barbara"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Vaughn (V), the victim, was alone with the murderer \u2014 the killer was in the same area (room) as him."
+   ]
+  }
+ ],
+ "hasPortraits": false,
+ "sourceFile": "source/netflix-and-kill-color.pdf"
+}

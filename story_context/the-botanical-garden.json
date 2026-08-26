@@ -1,0 +1,370 @@
+{
+ "id": "the-botanical-garden",
+ "title": "The Botanical Garden",
+ "difficulty": "hard",
+ "rooms": {
+  "bonsai": "Bonsai Exhibit",
+  "gazebo": "Gazebo",
+  "flowergarden": "Flower Garden",
+  "desert": "Desert Exhibit",
+  "infodesk": "Info Desk",
+  "arboretum": "Arboretum",
+  "pond": "Pond",
+  "restingarea": "Resting Area"
+ },
+ "generalClues": [],
+ "victim": "V",
+ "murderer": "J",
+ "asciiMapLegend": {
+  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "roomCodes": {
+   "bonsai": "B",
+   "gazebo": "G",
+   "flowergarden": "F",
+   "desert": "D",
+   "infodesk": "I",
+   "arboretum": "A",
+   "pond": "P",
+   "restingarea": "R"
+  },
+  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+ },
+ "asciiMap": "Bc. B.. Bb. Bt. Bt. A.. I.. IcI Ap. A.. A.. At.\nB.. B.. Bb. B.G Bt. At. I.. It. Ap. Ac. At. At.\nBb. B.. B.. B.. B.. A.. A.. At. Ap. AcB At. A..\nBcE Bb. B.. B.. B.. Ac. A.. Ap. Ap. A.. A.. At.\nFf. Fp. Ff. Ff. F.. A.A At. Ap. A.. A.. At. At.\nFf. Fp. FpD Fc. Ff. At. A.. Ap. A.. At. At. A..\nG.. Gt. Fp. F.. Ff. R.. Rs. Rp. Rt. R.. Rs. R.H\nGc. G.F Fp. Fp. Fp. Rp. Rp. Rp. P.. Pl. Rt. Rs.\nG.. Gt. Fp. F.. Ff. Rp. P.J Pl. P.. P.. P.. Rc.\nFf. Ff. Fp. Ff. F.. Rp. Rp. P.. Pl. P.. P.V Rc.\nDc. D.. D.. D.. Dc. Rs. Rp. R.. RcC Rt. Rt. R..\nD.. Dc. D.. D.. D.K R.. Rp. R.. R.. R.. R.. R..",
+ "people": [
+  {
+   "letter": "A",
+   "name": "Aveline",
+   "role": "suspect",
+   "position": [
+    4,
+    5
+   ],
+   "room": {
+    "id": "arboretum",
+    "name": "Arboretum"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "chair",
+    "tree"
+   ],
+   "withInRoom": [
+    {
+     "letter": "B",
+     "name": "Brielle"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Aveline (A) was one row north of Della (D)."
+   ]
+  },
+  {
+   "letter": "B",
+   "name": "Brielle",
+   "role": "suspect",
+   "position": [
+    2,
+    9
+   ],
+   "room": {
+    "id": "arboretum",
+    "name": "Arboretum"
+   },
+   "onObjectType": "chair",
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "chair",
+    "path",
+    "tree"
+   ],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Aveline"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Brielle (B) was sitting in a chair in the Arboretum."
+   ]
+  },
+  {
+   "letter": "C",
+   "name": "Collin",
+   "role": "suspect",
+   "position": [
+    10,
+    8
+   ],
+   "room": {
+    "id": "restingarea",
+    "name": "Resting Area"
+   },
+   "onObjectType": "chair",
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "lily pad",
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "H",
+     "name": "Harlow"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Collin (C) was beside a table."
+   ]
+  },
+  {
+   "letter": "D",
+   "name": "Della",
+   "role": "suspect",
+   "position": [
+    5,
+    2
+   ],
+   "room": {
+    "id": "flowergarden",
+    "name": "Flower Garden"
+   },
+   "onObjectType": "path",
+   "on": "standing on the path",
+   "besideObjectTypes": [
+    "chair",
+    "flower",
+    "path"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Della (D) was on a path. She was alone."
+   ]
+  },
+  {
+   "letter": "E",
+   "name": "Evelyn",
+   "role": "suspect",
+   "position": [
+    3,
+    0
+   ],
+   "room": {
+    "id": "bonsai",
+    "name": "Bonsai Exhibit"
+   },
+   "onObjectType": "chair",
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "bonsai",
+    "flower"
+   ],
+   "withInRoom": [
+    {
+     "letter": "G",
+     "name": "Gary"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Evelyn (E) was sitting in a chair. She was alone with a man."
+   ]
+  },
+  {
+   "letter": "F",
+   "name": "Florian",
+   "role": "suspect",
+   "position": [
+    7,
+    1
+   ],
+   "room": {
+    "id": "gazebo",
+    "name": "Gazebo"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "chair",
+    "path",
+    "table"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Florian (F) was alone."
+   ]
+  },
+  {
+   "letter": "G",
+   "name": "Gary",
+   "role": "suspect",
+   "position": [
+    1,
+    3
+   ],
+   "room": {
+    "id": "bonsai",
+    "name": "Bonsai Exhibit"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "bonsai",
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "E",
+     "name": "Evelyn"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Gary (G) was beside a bonsai."
+   ]
+  },
+  {
+   "letter": "H",
+   "name": "Harlow",
+   "role": "suspect",
+   "position": [
+    6,
+    11
+   ],
+   "room": {
+    "id": "restingarea",
+    "name": "Resting Area"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "shrub"
+   ],
+   "withInRoom": [
+    {
+     "letter": "C",
+     "name": "Collin"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Harlow (H) was beside a shrub."
+   ]
+  },
+  {
+   "letter": "I",
+   "name": "Idara",
+   "role": "suspect",
+   "position": [
+    0,
+    7
+   ],
+   "room": {
+    "id": "infodesk",
+    "name": "Info Desk"
+   },
+   "onObjectType": "chair",
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "path",
+    "table"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Idara (I) was sitting in a chair. She was alone."
+   ]
+  },
+  {
+   "letter": "J",
+   "name": "Joss",
+   "role": "murderer",
+   "position": [
+    8,
+    6
+   ],
+   "room": {
+    "id": "pond",
+    "name": "Pond"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "lily pad",
+    "path"
+   ],
+   "withInRoom": [
+    {
+     "letter": "V",
+     "name": "Veronica (victim)"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Joss (J) was beside a Lily pad."
+   ],
+   "nearbyObjectTypesForMethod": [
+    "lily pad",
+    "path"
+   ]
+  },
+  {
+   "letter": "K",
+   "name": "Kaela",
+   "role": "suspect",
+   "position": [
+    11,
+    4
+   ],
+   "room": {
+    "id": "desert",
+    "name": "Desert Exhibit"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "cactus"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Kaela (K) was beside a cactus."
+   ]
+  },
+  {
+   "letter": "V",
+   "name": "Veronica (victim)",
+   "role": "victim",
+   "position": [
+    9,
+    10
+   ],
+   "room": {
+    "id": "pond",
+    "name": "Pond"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "chair",
+    "tree"
+   ],
+   "withInRoom": [
+    {
+     "letter": "J",
+     "name": "Joss"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Veronica (V), the victim, was alone with the murderer \u2014 the killer was in the same area (room) as him."
+   ]
+  }
+ ],
+ "hasPortraits": false,
+ "sourceFile": "source/the-botanical-garden-color.pdf"
+}

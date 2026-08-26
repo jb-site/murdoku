@@ -1,0 +1,33 @@
+{
+  "id": "sleeping-with-the-fishes",
+  "title": "Sleeping with the Fishes",
+  "acts": [
+    "The Cortina family had run this harbour for forty years on three principles: never talk to the police, never trust a man in a fedora, and never, ever hold the annual meeting outdoors. Vincenza broke the third one. At four o'clock she came clacking down the Boardwalk in her good coat, hair doing that dark wavy thing it did when the wind was showing off, and announced that the summit would be held right here, in the fresh air, where nobody could bug the walls. Somebody else was already out there, comfortably seated, one leg crossed over the other, tipping their chair back and forth with the patience of a person who has all afternoon and exactly one thing to do with it. Vincenza did not look over. Vincenza never looked over.",
+    "Out on the water the alibis were arranging themselves. Antonio had taken a boat, because Antonio always took a boat — moustache like a shoe brush, little round glasses fogging, rowing at roughly one stroke a minute so that anyone asking could be told, truthfully, that he had been at sea. Some distance east of him, Claire had commandeered a second boat and turned it into a tanning salon: blonde curls, gold chain, one strap, feet up on the bow, conducting the entire negotiation by shouting across open water. \"ANTONIO. THE THING. IS IT DONE.\" \"WHAT THING.\" \"THE THING, ANTONIO.\" Over on Dock B, Franklin stood on bare planks in a pinstripe suit and a black fedora, guarding absolutely nothing with enormous dignity, while Graham — hood up, face mask on, visible surface area approximately zero — stood protectively beside a crate and told anyone who drifted past that it contained linguine. Nobody had asked. Nobody ever asked. That was rather the point.",
+    "Inland, business continued. In the Fish Market, Barry sat in a chair beside a box with his collar turned up, doing his one great party trick: noticing things. What he noticed, across the tiles, was Delilah — eighty if she was a day, enormous spectacles, ruffled blouse — standing beside a crate with the serene expression of a woman who has personally intimidated three generations of fishmongers and could go a fourth. In the Warehouse, alone, Hilton worked down a shelf with a clipboard and a suit two sizes too optimistic, counting crates that he was fairly sure counted themselves. Then, from the far end of the harbour, came a sound. Not a shout. A *sproing*, then a whistle, then a splash so magnificent that four seagulls resigned on the spot. When the water settled, there was a coat floating on it and the annual meeting was down one attendee."
+  ],
+  "whereabouts": {
+    "A": "Antonio was out in the boat rowing in ostentatious slow motion, manufacturing the most boring alibi in maritime history one stroke at a time.",
+    "B": "Barry was sitting in his chair beside a box in the Fish Market, cataloguing everyone who walked past — including the elderly woman planted beside a crate across the tiles.",
+    "C": "Claire was sunbathing in her boat east of Antonio, negotiating a major criminal arrangement entirely by yelling across open water.",
+    "D": "Delilah stood on the wet market floor beside a crate, arms folded, staring down a consignment of fish until it agreed to her price.",
+    "E": "Erin sat in her chair with all the stillness of someone waiting for a very specific moment, rocking it back on two legs, again, and again, and again.",
+    "F": "Franklin stood on the open planks of Dock B in his fedora and pinstripes, guarding no cargo whatsoever with the gravity of a man guarding the crown jewels.",
+    "G": "Graham, hooded and masked, hovered beside his crate on Dock B insisting to nobody in particular that it was full of linguine.",
+    "H": "Hilton worked alone beside a warehouse shelf with a clipboard, counting inventory that the family had explicitly told him not to count.",
+    "V": "Vincenza was pacing the open boards of the Boardwalk, chairing the family's annual meeting in the fresh air so the walls couldn't listen in."
+  },
+  "reveal": "It was Erin, on the Boardwalk, and she did it without ever standing up. All afternoon she had been rocking that chair backwards and forwards, walking it inch by inch into precisely the right spot and winding the whole deckchair mechanism tighter than a mousetrap. When Vincenza came pacing back along the boards mid-sentence, Erin simply leaned back one last time and let go. The chair went off like a catapult, the plank at the far end flipped up, and Vincenza was launched in a beautiful, unhurried arc over the rail and into the harbour, coat first, still talking. Erin sat back down, straightened the chair, and was reportedly still sitting in it when the seagulls came back. Vincenza, as they say around here, is now sleeping with the fishes.",
+  "escape": {
+    "generic": "The case went cold, the harbour got a new annual meeting policy, and somebody down there is still sitting very comfortably indeed.",
+    "byAccused": {
+      "A": "Antonio was hauled off mid-stroke, protesting that no man has ever rowed that slowly and committed a crime on the same afternoon — which was true, and did not help.",
+      "B": "Barry, who noticed everything, was carted away for noticing it, while the one person he somehow didn't clock strolled home unbothered.",
+      "C": "Claire was arrested with one strap and no shoes, still shouting unanswered questions at Antonio as the boat was towed in, and the real culprit never even got their feet wet.",
+      "D": "Delilah went quietly, mostly because she'd always wanted to see the inside of a cell and knew the whole thing would collapse before the tea got cold — meanwhile the actual killer took the scenic route home.",
+      "F": "Franklin was taken in wearing the fedora, which the officers agreed was basically a confession, and the guilty party watched the whole arrest without blinking.",
+      "G": "Graham was arrested largely for the hood, the mask and the crate of \"linguine\", none of which was evidence of anything except excellent instincts, and the real killer walked off free.",
+      "H": "Hilton was dragged away still clutching his clipboard, insisting the inventory would exonerate him, while the one person nobody counted slipped quietly out of the harbour."
+    }
+  }
+}

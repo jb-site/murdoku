@@ -1,0 +1,594 @@
+{
+ "id": "the-mystery-islands",
+ "title": "The Mystery Islands",
+ "difficulty": "expert",
+ "rooms": {
+  "desert": "Desert Island",
+  "forest": "Forest Island",
+  "town": "Town Island",
+  "empty": "Empty Island",
+  "lonely": "Lonely Island",
+  "sea": "Sea"
+ },
+ "generalClues": [
+  "The killer was alone with the victim, in the same area.",
+  "Every island had a unique number of people (0 is possible)."
+ ],
+ "victim": "V",
+ "murderer": "M",
+ "asciiMapLegend": {
+  "format": "each cell is <room-code><object-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "roomCodes": {
+   "desert": "D",
+   "forest": "F",
+   "town": "T",
+   "empty": "E",
+   "lonely": "L",
+   "sea": "S"
+  },
+  "note": "object-code is the object type's first letter, lowercase; see people[].onObjectType / besideObjectTypes for full type names instead of decoding the code"
+ },
+ "asciiMap": "S.. S.. S.. S.. S.. S.. S.. S.. D.. D.. D.. Dc. D.. Dc. D.D D..\nS.. S.. Fs. Fs. Fs. S.. S.. Ss. S.. D.A Dc. D.. Dh. Dc. D.. Dc.\nS.. Fs. FhK Ft. F.. Fs. S.. S.. S.. S.. Dc. D.. Dc. D.. Dc. S..\nS.. Fs. Ft. F.. F.. Ft. Fs. Fs. S.. S.. D.. D.. D.E D.. D.. S..\nFs. Ft. F.. F.. Ft. Ft. F.. Ft. FsJ S.. S.. Dc. D.. Dc. D.. S..\nF.. F.. Ft. Ft. Fh. F.. Ft. F.. Fs. S.. S.. D.B Dc. D.. S.. S..\nFt. Ft. F.. F.. F.. Fs. Fs. Fs. S.. S.. S.. S.. Dh. D.H S.. Ss.\nF.. F.. F.. Ft. Fs. S.. S.. S.. S.. S.. S.. S.. S.. S.. Ss. S.C\nF.. Ft. F.. Fs. S.. S.. T.. T.L T.. T.. S.. S.. S.. E.. S.. S..\nF.. Ft. Fs. S.. S.. T.. Th. Tt. Th. T.. T.I Ss. E.. E.. E.. S..\nFs. FsG S.. S.. S.. T.. T.. T.. Tt. T.. T.. S.. E.. E.. E.. S..\nSs. S.. S.. S.. S.. T.N Th. T.. Th. T.. S.. S.. E.. E.. E.. Ss.\nL.. L.. L.. S.. S.. T.. T.F T.. T.. T.. S.. E.. E.. E.. E.. S..\nLs. L.. L.. L.. S.O S.. T.. T.. T.. S.. S.. E.. E.. E.. E.. S..\nL.M Lh. Ls. L.. L.. S.. S.. S.. S.. S.. S.. S.. E.. E.. S.. S..\nLt. Ls. L.. L.V L.. L.. S.. S.. S.. S.. Ss. S.. S.. S.. S.. S..",
+ "people": [
+  {
+   "letter": "A",
+   "name": "Ayla",
+   "role": "suspect",
+   "position": [
+    1,
+    9
+   ],
+   "room": {
+    "id": "desert",
+    "name": "Desert Island"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "cactus"
+   ],
+   "withInRoom": [
+    {
+     "letter": "B",
+     "name": "Bastian"
+    },
+    {
+     "letter": "D",
+     "name": "Denise"
+    },
+    {
+     "letter": "E",
+     "name": "Emma"
+    },
+    {
+     "letter": "H",
+     "name": "Helena"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Ayla (A) was on Empty or Desert Island. There was a shark in her row."
+   ]
+  },
+  {
+   "letter": "B",
+   "name": "Bastian",
+   "role": "suspect",
+   "position": [
+    5,
+    11
+   ],
+   "room": {
+    "id": "desert",
+    "name": "Desert Island"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "cactus"
+   ],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Ayla"
+    },
+    {
+     "letter": "D",
+     "name": "Denise"
+    },
+    {
+     "letter": "E",
+     "name": "Emma"
+    },
+    {
+     "letter": "H",
+     "name": "Helena"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Bastian (B): the only man on Desert Island. He was beside exactly two cacti."
+   ]
+  },
+  {
+   "letter": "C",
+   "name": "Cassius",
+   "role": "suspect",
+   "position": [
+    7,
+    15
+   ],
+   "room": {
+    "id": "sea",
+    "name": "Sea"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "shark"
+   ],
+   "withInRoom": [
+    {
+     "letter": "O",
+     "name": "Olivia"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Cassius (C) was alone with someone in the sea. He was east of Olivia."
+   ]
+  },
+  {
+   "letter": "D",
+   "name": "Denise",
+   "role": "suspect",
+   "position": [
+    0,
+    14
+   ],
+   "room": {
+    "id": "desert",
+    "name": "Desert Island"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "cactus"
+   ],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Ayla"
+    },
+    {
+     "letter": "B",
+     "name": "Bastian"
+    },
+    {
+     "letter": "E",
+     "name": "Emma"
+    },
+    {
+     "letter": "H",
+     "name": "Helena"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Denise (D) was northeast of Ayla."
+   ]
+  },
+  {
+   "letter": "E",
+   "name": "Emma",
+   "role": "suspect",
+   "position": [
+    3,
+    12
+   ],
+   "room": {
+    "id": "desert",
+    "name": "Desert Island"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "cactus"
+   ],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Ayla"
+    },
+    {
+     "letter": "B",
+     "name": "Bastian"
+    },
+    {
+     "letter": "D",
+     "name": "Denise"
+    },
+    {
+     "letter": "H",
+     "name": "Helena"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Emma (E) was on a sand tile."
+   ]
+  },
+  {
+   "letter": "F",
+   "name": "Fred",
+   "role": "suspect",
+   "position": [
+    12,
+    6
+   ],
+   "room": {
+    "id": "town",
+    "name": "Town Island"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "house"
+   ],
+   "withInRoom": [
+    {
+     "letter": "I",
+     "name": "Irene"
+    },
+    {
+     "letter": "L",
+     "name": "Lyra"
+    },
+    {
+     "letter": "N",
+     "name": "Nikita"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Fred (F) was the southmost person on Town Island."
+   ]
+  },
+  {
+   "letter": "G",
+   "name": "Graham",
+   "role": "suspect",
+   "position": [
+    10,
+    1
+   ],
+   "room": {
+    "id": "forest",
+    "name": "Forest Island"
+   },
+   "onObjectType": "sand",
+   "on": "standing in the sand",
+   "besideObjectTypes": [
+    "sand",
+    "tree"
+   ],
+   "withInRoom": [
+    {
+     "letter": "J",
+     "name": "Joseph"
+    },
+    {
+     "letter": "K",
+     "name": "Kent"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Graham (G) was six rows south of Joseph, who was on the same island."
+   ]
+  },
+  {
+   "letter": "H",
+   "name": "Helena",
+   "role": "suspect",
+   "position": [
+    6,
+    13
+   ],
+   "room": {
+    "id": "desert",
+    "name": "Desert Island"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "house"
+   ],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Ayla"
+    },
+    {
+     "letter": "B",
+     "name": "Bastian"
+    },
+    {
+     "letter": "D",
+     "name": "Denise"
+    },
+    {
+     "letter": "E",
+     "name": "Emma"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Helena (H) was with Denise. Both were not beside a tree or cactus."
+   ]
+  },
+  {
+   "letter": "I",
+   "name": "Irene",
+   "role": "suspect",
+   "position": [
+    9,
+    10
+   ],
+   "room": {
+    "id": "town",
+    "name": "Town Island"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "shark"
+   ],
+   "withInRoom": [
+    {
+     "letter": "F",
+     "name": "Fred"
+    },
+    {
+     "letter": "L",
+     "name": "Lyra"
+    },
+    {
+     "letter": "N",
+     "name": "Nikita"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Irene (I) was north of Nikita and on the same island."
+   ]
+  },
+  {
+   "letter": "J",
+   "name": "Joseph",
+   "role": "suspect",
+   "position": [
+    4,
+    8
+   ],
+   "room": {
+    "id": "forest",
+    "name": "Forest Island"
+   },
+   "onObjectType": "sand",
+   "on": "standing in the sand",
+   "besideObjectTypes": [
+    "sand",
+    "tree"
+   ],
+   "withInRoom": [
+    {
+     "letter": "G",
+     "name": "Graham"
+    },
+    {
+     "letter": "K",
+     "name": "Kent"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Joseph (J) was beside a tree and east of Lyra."
+   ]
+  },
+  {
+   "letter": "K",
+   "name": "Kent",
+   "role": "suspect",
+   "position": [
+    2,
+    2
+   ],
+   "room": {
+    "id": "forest",
+    "name": "Forest Island"
+   },
+   "onObjectType": "house",
+   "on": "inside the house",
+   "besideObjectTypes": [
+    "sand",
+    "tree"
+   ],
+   "withInRoom": [
+    {
+     "letter": "G",
+     "name": "Graham"
+    },
+    {
+     "letter": "J",
+     "name": "Joseph"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Kent (K) was the only person in a house."
+   ]
+  },
+  {
+   "letter": "L",
+   "name": "Lyra",
+   "role": "suspect",
+   "position": [
+    8,
+    7
+   ],
+   "room": {
+    "id": "town",
+    "name": "Town Island"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "tree"
+   ],
+   "withInRoom": [
+    {
+     "letter": "F",
+     "name": "Fred"
+    },
+    {
+     "letter": "I",
+     "name": "Irene"
+    },
+    {
+     "letter": "N",
+     "name": "Nikita"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Lyra (L) was beside a tree on a four people island of exactly three women."
+   ]
+  },
+  {
+   "letter": "M",
+   "name": "Michael",
+   "role": "murderer",
+   "position": [
+    14,
+    0
+   ],
+   "room": {
+    "id": "lonely",
+    "name": "Lonely Island"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "house",
+    "shrub",
+    "tree"
+   ],
+   "withInRoom": [
+    {
+     "letter": "V",
+     "name": "Vincent (victim)"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Michael (M): there was at least one shark in his column. He was on an island."
+   ],
+   "nearbyObjectTypesForMethod": [
+    "house",
+    "shrub",
+    "tree"
+   ]
+  },
+  {
+   "letter": "N",
+   "name": "Nikita",
+   "role": "suspect",
+   "position": [
+    11,
+    5
+   ],
+   "room": {
+    "id": "town",
+    "name": "Town Island"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "house"
+   ],
+   "withInRoom": [
+    {
+     "letter": "F",
+     "name": "Fred"
+    },
+    {
+     "letter": "I",
+     "name": "Irene"
+    },
+    {
+     "letter": "L",
+     "name": "Lyra"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Nikita (N) was south of Irene and on the same island."
+   ]
+  },
+  {
+   "letter": "O",
+   "name": "Olivia",
+   "role": "suspect",
+   "position": [
+    13,
+    4
+   ],
+   "room": {
+    "id": "sea",
+    "name": "Sea"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "C",
+     "name": "Cassius"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Olivia (O): exactly two people were south of her."
+   ]
+  },
+  {
+   "letter": "V",
+   "name": "Vincent (victim)",
+   "role": "victim",
+   "position": [
+    15,
+    3
+   ],
+   "room": {
+    "id": "lonely",
+    "name": "Lonely Island"
+   },
+   "onObjectType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "M",
+     "name": "Michael"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Vincent (V): the victim. He was alone with the murderer."
+   ]
+  }
+ ],
+ "hasPortraits": false,
+ "sourceFile": "source/the-mystery-islands-color.pdf"
+}

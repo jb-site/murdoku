@@ -805,12 +805,24 @@ body.art-mode .object-cell.ref-object {
   overflow-y: auto;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
 }
+.verdict-panel.story-panel { max-width: 620px; }
 .verdict-panel h2 { margin: 0 0 12px; font-size: 1.3rem; color: var(--text); }
 .verdict-body { color: var(--text); font-size: 0.95rem; line-height: 1.5; }
 .verdict-body p { margin: 0 0 10px; }
 .verdict-body ul { margin: 0 0 10px; padding-left: 20px; }
 .verdict-body li { margin: 2px 0; }
 .verdict-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+
+.story-reveal { font-style: italic; border-top: 1px dashed var(--border); padding-top: 10px; margin-top: 14px; }
+.story-whereabouts-title { margin: 18px 0 8px; font-size: 1rem; color: var(--text); }
+.story-whereabouts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.story-whereabouts li { display: flex; align-items: center; gap: 8px; margin: 0; }
+.story-whereabouts li.story-murderer { border-top: 1px dashed var(--border); padding-top: 10px; margin-top: 4px; }
+.story-whereabouts .clue-portrait-wrap { flex: none; }
+.story-whereabouts-text { flex: 1; }
+
+.story-btn { background: #4a3f6b; border-color: #4a3f6b; }
+.story-btn:hover { background: #5a4d80; }
 
 .hint { color: var(--muted); font-size: 0.85rem; text-align: center; }
 
