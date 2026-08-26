@@ -253,7 +253,23 @@ The single biggest determinant of story quality is that the model gets an accura
 unambiguous picture of *who was where, next to what, and next to whom* — inferring that from
 raw JSON is exactly the kind of spatial reasoning that goes quietly wrong. So we build the
 brief mechanically with `tools/story_context.py`, which joins `puzzles/<id>.json` +
-`puzzles/solutions/<id>.json` and emits a markdown brief:
+`puzzles/solutions/<id>.json`.
+
+**It emits `story_context/<id>.json` — structured data, not prose.** Every fact below is
+derived by plain code and costs nothing: no model is asked to work out who shared a room,
+who stood next to whom, or what was within reach. That matters because those are precisely
+the derivations a model gets quietly wrong, and a story that puts two characters together
+who were in different rooms is the most likely way this whole feature fails.
+
+JSON rather than a markdown brief for a specific reason: it makes the facts **checkable
+after the fact, not just feedable**. With the facts on disk as data, `check_stories.py`
+(D3) can audit the finished story back against them — flagging a story that has two
+characters in conversation when the data puts them in different rooms, or has someone
+wielding an object that was nowhere near their cell. A prose brief can only be fed in; a
+structured one can also be used to mark the homework. Models read JSON perfectly well, and
+the ASCII map below rides along as a single string field for legibility.
+
+The fields:
 
 **Board level**
 - title, difficulty, room names.
@@ -360,7 +376,13 @@ Generate against two deliberately different puzzles first and read the output cr
   glasses, bears), sprawling outdoor board. The stress case; if the interweaving works here
   it works anywhere.
 
-Check specifically for: anyone silently relocated; furniture invented; a method that
+Run `check_stories.py` **against `story_context/<id>.json`** first — it should mechanically
+catch the factual failures: a `whereabouts` or act naming two characters as together when
+the context puts them in different rooms, a named object that isn't in or adjacent to that
+character's cell, a cast name that doesn't exist, and any suspect missing a `whereabouts`
+or an `escape.byAccused` line. Only the things code can't judge need reading by eye.
+
+Then check specifically for: anyone silently relocated; furniture invented; a method that
 contradicts the scene; characters mentioned only in a list rather than given business; the
 reveal spoiling itself in act one. And the D1b-specific failure to watch for — a
 `whereabouts` line that only restates the room ("Dean was in the Kitchen") instead of
