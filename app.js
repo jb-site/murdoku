@@ -698,7 +698,7 @@ const prefPortraitsLabelEl = document.getElementById("prefPortraitsLabel");
 const prefArtModeEl = document.getElementById("prefArtMode");
 const prefArtModeLabelEl = document.getElementById("prefArtModeLabel");
 const editArtModeEl = document.getElementById("editArtMode");
-const artOverlayEl = document.getElementById("artOverlay");
+const artStackEl = document.getElementById("artStack");
 const editorArtViewEl = document.getElementById("editorArtView");
 const editorOpacityRowEl = document.getElementById("editorOpacityRow");
 const playerPanelEl = document.getElementById("playerPanel");
@@ -710,6 +710,9 @@ const verdictTitleEl = document.getElementById("verdictTitle");
 const verdictBodyEl = document.getElementById("verdictBody");
 const verdictDismissBtn = document.getElementById("verdictDismissBtn");
 const verdictEscapeBtn = document.getElementById("verdictEscapeBtn");
+const controlsDockEl = document.getElementById("controlsDock");
+const controlsToggleEl = document.getElementById("controlsToggle");
+const statusDockEl = document.getElementById("statusDock");
 
 clearBtn.addEventListener("click", () => {
   if (!confirm("Clear the whole grid?")) return;
@@ -736,6 +739,7 @@ function updateHint() {
 
 function setStatus(text) {
   statusEl.textContent = text || "";
+  statusDockEl.classList.toggle("empty", !text);
 }
 
 // --- Palette (suspects + X + Erase, unified) -------------------------------
@@ -2356,6 +2360,50 @@ function syncLayerGeometry() {
   });
 }
 
+// Both docks overlay the page, so the sticky clues column and the body's bottom padding
+// have to reserve their real heights — which change with palette wrapping, edit mode, and
+// the collapse toggle. Measured rather than hard-coded for that reason.
+function observeDockHeights() {
+  const publish = () => {
+    const root = document.documentElement.style;
+    root.setProperty("--dock-top-h", `${controlsDockEl.offsetHeight}px`);
+    root.setProperty("--dock-bottom-h", `${statusDockEl.offsetHeight}px`);
+  };
+  new ResizeObserver(publish).observe(controlsDockEl);
+  new ResizeObserver(publish).observe(statusDockEl);
+  publish();
+}
+
+let controlsCollapsed = false;
+
+function loadControlsCollapsed() {
+  try {
+    const raw = localStorage.getItem("murdoku:controlsCollapsed");
+    // No stored preference on a narrow viewport: start collapsed, where the bar
+    // would otherwise eat most of the screen.
+    controlsCollapsed = raw === null ? window.innerWidth < 700 : raw === "1";
+  } catch (err) {
+    controlsCollapsed = false;
+  }
+}
+
+function applyControlsCollapsed() {
+  document.body.classList.toggle("controls-collapsed", controlsCollapsed);
+  controlsToggleEl.textContent = controlsCollapsed ? "▸" : "▾";
+  controlsToggleEl.setAttribute("aria-expanded", String(!controlsCollapsed));
+  controlsToggleEl.title = controlsCollapsed ? "Show all controls" : "Collapse the controls";
+}
+
+controlsToggleEl.addEventListener("click", () => {
+  controlsCollapsed = !controlsCollapsed;
+  applyControlsCollapsed();
+  try {
+    localStorage.setItem("murdoku:controlsCollapsed", controlsCollapsed ? "1" : "0");
+  } catch (err) {
+    console.warn("Couldn't save controls state:", err);
+  }
+});
+
 function attachSplitListeners() {
   resizeHandleEl.addEventListener("pointerdown", onHandleDown);
   resizeHandleEl.addEventListener("pointermove", onHandleMove);
@@ -2524,16 +2572,23 @@ function saveEditorLayerView() {
   }
 }
 
-// "Art on top" (edit mode only): lifts layer-art above the tint/object/label/mark layers
-// (see body.edit-mode.art-overlay in style.css) so misaligned room boundaries stand out
-// against the source photo. Off by default for every fresh install — this is an
-// authoring aid the player never sees and most authors won't need most of the time — but
-// persisted once chosen so it survives a reload, same treatment as the opacity sets above.
-let artOverlay = false;
+// Board-art stacking (edit mode only): where layer-art sits relative to the tint/object/
+// label/mark layers — "bottom" (below everything, the default), "mid" (above the room
+// tint but below objects/labels/marks — see body.edit-mode.art-stack-mid in style.css)
+// or "top" (above everything, art-stack-top). "bottom" for every fresh install — this is
+// an authoring aid the player never sees and most authors won't need most of the time —
+// but persisted once chosen so it survives a reload, same treatment as the opacity sets
+// above. Kept under the same "murdoku:artOverlay" key as the boolean control this
+// replaced; old "1"/"0" values are migrated to "top"/"bottom" on load so an existing
+// author's stored preference isn't silently reset.
+let artStack = "bottom";
 
 function loadArtOverlay() {
   try {
-    artOverlay = localStorage.getItem("murdoku:artOverlay") === "1";
+    const raw = localStorage.getItem("murdoku:artOverlay");
+    if (raw === "1") artStack = "top";
+    else if (raw === "0") artStack = "bottom";
+    else if (raw === "mid" || raw === "top" || raw === "bottom") artStack = raw;
   } catch (err) {
     console.warn("Couldn't load art-overlay preference:", err);
   }
@@ -2541,7 +2596,7 @@ function loadArtOverlay() {
 
 function saveArtOverlay() {
   try {
-    localStorage.setItem("murdoku:artOverlay", artOverlay ? "1" : "0");
+    localStorage.setItem("murdoku:artOverlay", artStack);
   } catch (err) {
     console.warn("Couldn't save art-overlay preference:", err);
   }
@@ -2668,14 +2723,15 @@ function applyViewPrefs() {
   editArtModeEl.disabled = onArtTab;
   editArtModeEl.title = onArtTab ? "Art is always shown while calibrating on the Art tab" : "";
   editorArtViewEl.hidden = !hasBoard;
-  // "Art on top": edit mode only (body.edit-mode is only ever present while EDIT is
+  // Art stacking: edit mode only (body.edit-mode is only ever present while EDIT is
   // active — see enterEditMode()/exitEditMode()), and only visually meaningful once
   // artwork is actually showing. Same `calibrating` gate as the Art slider just below,
   // for the same reason: nothing to lift above the tints when there's no photo under it.
-  document.body.classList.toggle("art-overlay", calibrating && artOverlay);
-  artOverlayEl.checked = artOverlay;
-  artOverlayEl.disabled = !calibrating;
-  artOverlayEl.title = calibrating ? "" : "No artwork shown — turn on Board art to use this";
+  document.body.classList.toggle("art-stack-mid", calibrating && artStack === "mid");
+  document.body.classList.toggle("art-stack-top", calibrating && artStack === "top");
+  artStackEl.value = artStack;
+  artStackEl.disabled = !calibrating;
+  artStackEl.title = calibrating ? "" : "No artwork shown — turn on Board art to use this";
   // Refresh the CSS vars whenever the calibrating/non-calibrating context might have
   // changed (tab switch, Board art toggle) — isCalibrating() reads the same state this
   // function just derived `calibrating` from, so the two never disagree.
@@ -2703,14 +2759,16 @@ editArtModeEl.addEventListener("change", () => {
   applyViewPrefs();
   saveViewPrefs();
 });
-artOverlayEl.addEventListener("change", () => {
-  artOverlay = artOverlayEl.checked;
-  // Usability call: at high Art opacity the overlay would just be a solid photo hiding
-  // the board, which looks broken rather than useful. Nudge it down to a value that
-  // shows both layers the moment the author turns the overlay ON — but only ever nudge
-  // downward and only on enabling; a value they already lowered themselves, or the
-  // reverse (turning the overlay back off), is left untouched.
-  if (artOverlay && artCalibView.art > 0.8) {
+artStackEl.addEventListener("change", () => {
+  const wasBottom = artStack === "bottom";
+  artStack = artStackEl.value;
+  // Usability call: at high Art opacity, art above the tint (mid or top) would just be a
+  // solid photo hiding the board, which looks broken rather than useful. Nudge it down to
+  // a value that shows both layers the moment the author lifts art off the bottom — but
+  // only ever nudge downward and only when leaving "bottom"; a value they already lowered
+  // themselves, or moving between "mid" and "top" (already lifted either way), is left
+  // untouched.
+  if (wasBottom && artStack !== "bottom" && artCalibView.art > 0.8) {
     artCalibView.art = 0.5;
     saveArtCalibView();
   }
@@ -4560,6 +4618,9 @@ async function selectPuzzle(id, manifest) {
 async function boot() {
   attachGestureListeners(); // element is reused across puzzle switches — attach exactly once
   attachSplitListeners();
+  observeDockHeights();
+  loadControlsCollapsed();
+  applyControlsCollapsed();
   loadSplitPref();
   loadViewPrefs();
   applyViewPrefs();

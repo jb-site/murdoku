@@ -157,6 +157,23 @@ or switching back to a smaller puzzle restores it exactly. `updateLayoutMode()` 
 the end of every `initPuzzle()` (after `renderStatic()`, since it needs a real rendered `.cell` to
 measure), and on window resize.
 
+Two page-level docks sit outside this split/stacked distinction, viewport-relative in both modes.
+`#controlsDock` (`position: sticky; top: 0`) wraps `.toolbar` and stays pinned while the page
+scrolls, with a `▾`/`▸` `#controlsToggle` button that collapses it down to just the suspect
+palette and Undo (`body.controls-collapsed`) — persisted as the bare-string `murdoku:controlsCollapsed`
+localStorage key (unset means "collapsed under 700px wide, expanded otherwise"), and hidden
+entirely in edit mode since `body.edit-mode` already empties the toolbar down to almost nothing.
+`#statusDock` (`position: fixed`, bottom of the viewport) holds `#status` so the hover/editor
+status line stays readable no matter how far the page has scrolled; it fades out via
+`.status-dock.empty` (toggled by `setStatus()`) rather than `display:none`, so its height — and
+therefore the space reserved for it — never jitters. Both docks' measured heights are published
+by `observeDockHeights()` (a `ResizeObserver` per dock) as the `--dock-top-h` / `--dock-bottom-h`
+custom properties on `<html>`, which `body`'s bottom padding and `main.split .clues`'s sticky
+`top`/`max-height` consume so neither dock ever permanently covers the grid's last row or the
+sticky clues column. Note `.grid-wrap` has `overflow-x: auto`, which per spec makes it a scroll
+container on *both* axes — `position: sticky` placed on anything inside it never activates, which
+is why `#status` lives in the page-level `#statusDock` rather than sticking in place.
+
 ## Solving and the verdict
 
 Once every suspect (including `V`) is placed — `isComplete()`, checked at the end of every

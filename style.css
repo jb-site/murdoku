@@ -23,7 +23,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24px 16px 60px;
+  padding: 24px 16px calc(60px + var(--dock-bottom-h, 0px));
   user-select: none;
 }
 
@@ -70,8 +70,8 @@ main.split .workspace {
 main.split .resize-handle { display: block; }
 main.split .clues {
   position: sticky;
-  top: 12px;
-  max-height: calc(100vh - 24px);
+  top: calc(var(--dock-top-h, 0px) + 12px);
+  max-height: calc(100vh - var(--dock-top-h, 0px) - var(--dock-bottom-h, 0px) - 24px);
   overflow-y: auto;
 }
 
@@ -105,6 +105,36 @@ body.resizing .resize-handle::before {
 }
 body.resizing { cursor: col-resize; }
 
+.controls-dock {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  width: 100%;
+  padding: 8px 0;
+  background: var(--bg);
+}
+
+.controls-toggle {
+  position: absolute;
+  top: 12px;
+  right: 4px;
+  z-index: 1;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2f3239;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+.controls-toggle:hover { color: var(--text); border-color: var(--accent); }
+.controls-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+body.edit-mode .controls-toggle { display: none; }
+
 .toolbar {
   width: 100%;
   display: flex;
@@ -114,7 +144,14 @@ body.resizing { cursor: col-resize; }
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 12px;
+  padding-right: 40px;
+  max-height: 45vh;
+  overflow-y: auto;
 }
+
+body.controls-collapsed .toolbar > .tool-group > :not(#undoBtn) { display: none; }
+body.controls-collapsed .toolbar > .view-options { display: none; }
+body.controls-collapsed .toolbar { gap: 6px; padding-top: 8px; padding-bottom: 8px; }
 
 .tool-group { display: flex; gap: 8px; flex-wrap: wrap; }
 
@@ -691,15 +728,31 @@ body.edit-mode:not(.art-mode) .object-cell.blocking:not(.ref-object) .object-art
    EDIT.tool === "art"), NOT tied to .art-calibrate generally — .art-calibrate now also
    applies on the Rooms/Objects tabs (see applyViewPrefs() in app.js), where nothing
    would actually pan. */
-/* "Art on top" (edit mode only): lifts layer-art above layer-cells/objects/labels/marks
-   so a misaligned room boundary shows up against the photo instead of being hidden under
-   it. Every other layer here still has z-index:auto, so any positive value wins; layer-art
-   stays pointer-events:none and inset from the header track (see .layer-art above), so
-   this changes paint order only — painting, room/object clicks and the header buttons
-   are completely unaffected. Scoped to .edit-mode: art-overlay is only ever toggled from
-   the editor bar, but the selector states the edit-only guarantee explicitly rather than
-   relying on that alone. */
-body.edit-mode.art-overlay .layer-art {
+/* Board-art stacking (edit mode only, chosen via the #artStack <select>, JS: artStack):
+     - "bottom" (default, no class added) — normal DOM order (see markup order in
+       index.html): layer-art paints first, so it sits beneath cells/ground/objects/
+       labels/marks/headers.
+     - "mid" (.art-stack-mid) — layer-art rises above layer-cells/layer-ground (the room
+       tint) but stays below layer-objects/labels/marks/headers, so a misplaced object or
+       mark still reads clearly against the photo while the tint underneath doesn't hide it.
+     - "top" (.art-stack-top) — lifts layer-art above every other layer, so a misaligned
+       room boundary shows up against the photo instead of being hidden under it.
+   Every other layer here still has z-index:auto except where set below, so any explicit
+   value wins; layer-art stays pointer-events:none and inset from the header track (see
+   .layer-art above), so this only ever changes paint order — painting, room/object clicks
+   and the header buttons are completely unaffected. Scoped to .edit-mode: the stacking
+   state is only ever set from the editor bar, but the selectors state the edit-only
+   guarantee explicitly rather than relying on that alone. */
+body.edit-mode.art-stack-mid .layer-art {
+  z-index: 3;
+}
+body.edit-mode.art-stack-mid .layer-objects,
+body.edit-mode.art-stack-mid .layer-labels,
+body.edit-mode.art-stack-mid .layer-marks,
+body.edit-mode.art-stack-mid .layer-headers {
+  z-index: 4;
+}
+body.edit-mode.art-stack-top .layer-art {
   z-index: 5;
 }
 
@@ -757,12 +810,27 @@ body.art-mode .object-cell.ref-object {
   border-radius: 4px;
 }
 
+.status-dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  pointer-events: none;
+  padding: 6px 16px;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  transition: opacity 0.12s;
+}
+.status-dock.empty { opacity: 0; }
+
 .status-line {
   min-height: 1.1em;
   color: var(--muted);
   font-size: 0.82rem;
   text-align: center;
-  margin: 0;
+  margin: 0 auto;
+  max-width: 1280px;
 }
 
 /* --- Solved!? button + verdict panel --- */

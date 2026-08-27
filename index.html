@@ -17,26 +17,31 @@
 </header>
 
 <main>
-  <section class="toolbar">
-    <div class="tool-group">
-      <button class="tool-btn" id="undoBtn" title="Undo last action">↶ Undo</button>
-      <button class="tool-btn" id="clearBtn" title="Clear the whole grid">🗑 Clear</button>
-      <button class="tool-btn" id="saveBtn" title="Save your progress to a file">💾 Save to file</button>
-      <button class="tool-btn" id="loadBtn" title="Load progress from a file">📂 Load from file</button>
-      <input type="file" id="loadInput" accept="application/json" hidden>
-      <span class="autosave-note" id="autosaveNote"></span>
-      <button class="tool-btn" id="editBtn" title="Edit this puzzle's grid, rooms and objects">✏️ Edit puzzle</button>
-    </div>
+  <div id="controlsDock" class="controls-dock">
+    <button type="button" id="controlsToggle" class="controls-toggle"
+            aria-controls="toolbar" aria-expanded="true"
+            title="Collapse the controls">▾</button>
+    <section class="toolbar" id="toolbar">
+      <div class="tool-group">
+        <button class="tool-btn" id="undoBtn" title="Undo last action">↶ Undo</button>
+        <button class="tool-btn" id="clearBtn" title="Clear the whole grid">🗑 Clear</button>
+        <button class="tool-btn" id="saveBtn" title="Save your progress to a file">💾 Save to file</button>
+        <button class="tool-btn" id="loadBtn" title="Load progress from a file">📂 Load from file</button>
+        <input type="file" id="loadInput" accept="application/json" hidden>
+        <span class="autosave-note" id="autosaveNote"></span>
+        <button class="tool-btn" id="editBtn" title="Edit this puzzle's grid, rooms and objects">✏️ Edit puzzle</button>
+      </div>
 
-    <div class="suspect-palette" id="suspectPalette"></div>
+      <div class="suspect-palette" id="suspectPalette"></div>
 
-    <div class="tool-group view-options" id="viewOptions">
-      <label><input type="checkbox" id="prefColorPencils"> Colour pencil marks</label>
-      <label><input type="checkbox" id="prefPlayerNotes"> Player notes</label>
-      <label id="prefPortraitsLabel" hidden><input type="checkbox" id="prefPortraits"> Suspect portraits</label>
-      <label id="prefArtModeLabel" hidden><input type="checkbox" id="prefArtMode"> Board art</label>
-    </div>
-  </section>
+      <div class="tool-group view-options" id="viewOptions">
+        <label><input type="checkbox" id="prefColorPencils"> Colour pencil marks</label>
+        <label><input type="checkbox" id="prefPlayerNotes"> Player notes</label>
+        <label id="prefPortraitsLabel" hidden><input type="checkbox" id="prefPortraits"> Suspect portraits</label>
+        <label id="prefArtModeLabel" hidden><input type="checkbox" id="prefArtMode"> Board art</label>
+      </div>
+    </section>
+  </div>
 
   <section class="editor-bar" id="editorBar" hidden>
     <div class="editor-row">
@@ -63,7 +68,13 @@
     </div>
     <div class="editor-row" id="editorArtView" hidden>
       <label id="editArtModeLabel"><input type="checkbox" id="editArtMode"> Board art</label>
-      <label id="artOverlayLabel"><input type="checkbox" id="artOverlay"> Art on top</label>
+      <label id="artStackLabel">Art layer
+        <select id="artStack" title="Choose where the board art sits relative to the grid, objects and marks">
+          <option value="bottom">Below grid</option>
+          <option value="mid">Above grid, below objects</option>
+          <option value="top">Above everything</option>
+        </select>
+      </label>
       <div class="editor-row art-opacity-row" id="editorOpacityRow">
         <label>Art<input type="range" min="0" max="100" step="1" data-op="art"><span class="art-op-value" data-op-value="art"></span></label>
         <label>Grid<input type="range" min="0" max="100" step="1" data-op="grid"><span class="art-op-value" data-op-value="grid"></span></label>
@@ -92,7 +103,6 @@
         <div id="layerMarks" class="grid-layer layer-marks"></div>
         <div id="layerHeaders" class="grid-layer layer-headers"></div>
       </div>
-      <p id="status" class="status-line"></p>
       <button type="button" id="solveBtn" class="solve-btn" hidden>Solved!?</button>
       <button type="button" id="storyBtn" class="solve-btn story-btn" hidden>📖 The story</button>
     </section>
@@ -114,6 +124,10 @@
 
   <section class="legend" id="legend"></section>
 </main>
+
+<div id="statusDock" class="status-dock empty">
+  <p id="status" class="status-line"></p>
+</div>
 
 <div id="verdictBackdrop" class="verdict-backdrop" hidden>
   <div id="verdictPanel" class="verdict-panel" role="dialog" aria-modal="true" aria-labelledby="verdictTitle">
