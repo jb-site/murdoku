@@ -1,40 +1,40 @@
 {
  "id": "the-hiking-trip",
  "title": "The Hiking Trip",
- "victoryHeadline": "Caught! The trail ends here.",
+ "victoryHeadline": "Caught! Turns out the only predator on this trail walked on two legs.",
  "acts": [
-  "The trailhead sign-in sheet had barely dried before the group scattered to its factions. Aubrey, Brianna and Hank formed the self-appointed Windy Trail cap club, an alliance held together by nothing but matching headwear — Hank's a size too small, worn anyway on principle. Down on the Rocky Trail, Clark and Finlay had both shown up in sunglasses despite the overcast sky, which they took as proof they were meant to hike together. Danika peeled off toward the Pine Forest alone, the way she'd wanted the whole trip to go from the start. Gavin practically jogged for the Summit, one boot up on the first boulder he found like he'd personally put it there. Elias stayed behind in the Ranger's Hut fussing over waivers nobody had read, Iris settled into the Booth's one good chair with no intention of moving, and Kobe ducked into the Grove, his plaid shirt doing an unsettling amount of camouflage work.",
-  "Deeper in, at the edge of Bear Woods, Joe was telling Vincenza — headphones in, sunglasses on, gamely not listening to a word — that the bear everyone kept whispering about was \"basically tame, honestly, barely worth mentioning.\" What nobody mentioned, and what the trail map certainly didn't, was that there were two real bears out there that day, each one quietly occupying a stretch of woods that should otherwise have been empty. Finlay, four rows further down the Rocky Trail than he had any idea, was one wrong turn from meeting his. Brianna kept pacing out her distance from Finlay like a woman doing sums, Clark matched him stride for stride, and back on the Windy Trail, Hank brought up the rear grumbling that it never used to take three people and a headcount to lose a footpath.",
-  "It was Elias, cross-checking his waiver list against the returning stragglers, who noticed the gap first: everyone back except Vincenza. And Joe, oddly, was already back too — freshly washed hands, no bear story to tell, and absolutely no headphones in sight."
+  "By the time the trailhead sign-in sheet had dried, the group had split into factions nobody had actually organized. On the Windy Trail, Aubrey declared herself keeper of the cap club's one bylaw — matching hats, no exceptions — and spent the walk drafting an amendment to close what she considered Hank's loophole, while Brianna kept a private step count she refused, on principle, to admit she was losing. Hank, drafted into the club against his will and wearing the smallest cap on offer, spent most of the hike observing that it never used to take three people to lose a footpath. Down on the Rocky Trail, Clark and Finlay had both shown up in sunglasses despite the cloud cover and took this as proof they were meant to hike together — Clark filling a pocket notebook with a private rock-classification system, Finlay pleased with himself for finding what he was already calling the shortcut.",
+  "The shortcut, as it turned out, ran straight toward the one stretch of woods the printed map quietly asked everyone to avoid, and Finlay got close enough to the real thing to hear something move in the undergrowth before deciding, wisely, that he did not want to know what. He never mentioned it to Clark, or to anyone. Deeper in, at the edge of Bear Woods proper, Joe was pointing out claw marks on a trunk to Vincenza — headphones in, sunglasses on, gamely not listening to a word — and telling her the local bear was far more interested in berries than hikers. Back at the Ranger's Hut, Elias worked steadily down his waiver list, ticking off names as stragglers filtered back in ones and twos, in no particular hurry yet.",
+  "By late afternoon the list had one gap left on it, and it stayed a gap. Everyone else was accounted for — cap club and all, Clark's sunglasses finally off, Finlay none the wiser about how close his shortcut had come to costing him a very different afternoon. Vincenza wasn't among the returning stragglers. Joe was, freshly arrived, hands rinsed clean at the stream by the trailhead, with no bear story left to tell and nothing at all to add to the headcount."
  ],
  "whereabouts": {
-  "A": "Aubrey kept her cap pulled low against the wind, defending the Windy Trail cap club's honor against accusations that Hank's didn't count.",
-  "B": "Brianna paced out her distance from Finlay in whole rows, treating the Windy Trail like a maths problem she refused to leave unsolved.",
-  "C": "Clark kept his sunglasses on under an overcast sky, matching Finlay step for step down the Rocky Trail out of pure sunglasses solidarity.",
-  "D": "Danika had gone alone into the Pine Forest, getting exactly the solitude she'd been angling for since the trailhead.",
-  "E": "Elias stayed back in the Ranger's Hut, fussing over a waiver list nobody had actually read.",
-  "F": "Finlay strolled the Rocky Trail beside Clark, four rows and one bad turn away from a bear he had no idea was there.",
-  "G": "Gavin had already reached the Summit and was resting a boot on a boulder as though he'd personally hauled it up there.",
-  "H": "Hank brought up the rear of the Windy Trail group, cap two sizes too small, muttering that it never used to take a committee to lose a footpath.",
-  "I": "Iris had claimed the Booth's one good chair and made it extremely clear she wasn't giving it back.",
-  "J": "Joe stood at the edge of Bear Woods reassuring Vincenza that the local bear was \"basically tame,\" a claim nobody had asked him to make with such confidence.",
-  "K": "Kobe had ducked into the Grove for shade, his plaid shirt blending into the undergrowth a little too well.",
-  "V": "Vincenza wandered into Bear Woods with her headphones in and her sunglasses on, blissfully unaware of anyone, or anything, nearby."
+  "A": "Aubrey had appointed herself keeper of the Windy Trail cap club's one bylaw — matching hats, mandatory — and spent the walk drafting an amendment to close what she considered a loophole in Hank's favor.",
+  "B": "Brianna had set herself a private step-count target for the Windy Trail and was refusing, on principle, to admit how far short of it she'd fallen.",
+  "C": "Clark hadn't taken his sunglasses off since the trailhead, overcast sky or not, and was quietly filling a pocket notebook with a rock-classification system he had no intention of showing anyone.",
+  "D": "Danika had wanted the Pine Forest to herself since the itinerary was first mentioned, and now that she had it, she sat on a fallen log matching birdsong to a folded card she kept in her cardigan pocket.",
+  "E": "Elias had the waiver clipboard, a headcount to run, and no particular interest in whether anyone thought that made him the least fun person on the trip.",
+  "F": "Finlay kept his sunglasses on despite the cloud cover and had drifted further up the Rocky Trail than the printed map really allowed, pleased with himself for finding what he was already calling the shortcut.",
+  "G": "Gavin had stopped photographing the view an hour ago and switched to cataloguing boulders in a private numbering system nobody at work had ever heard him mention.",
+  "H": "Hank had been folded into the Windy Trail cap club against his will, wore the smallest cap available on principle, and spent most of the walk announcing that it never used to take three people to find a footpath.",
+  "I": "Iris had claimed the Booth's one decent chair within four minutes of arriving and fully intended to still be sitting in it when everyone else came back.",
+  "J": "Joe stood at the edge of Bear Woods pointing out a set of claw marks on a nearby trunk, telling Vincenza the local bear was far more interested in berries than hikers.",
+  "K": "Kobe had worn the plaid on purpose, hoping the Grove's dappled light would let him get close enough to photograph a woodpecker without spooking it off its branch, and hadn't accounted for how completely the same trick would make him vanish from a distance.",
+  "V": "Vincenza had her headphones in and her sunglasses on and had tuned out precisely everyone, which was, by her own account, the entire point of the trip."
  },
- "reveal": "It was Joe, in Bear Woods, and there was never any bear involved at all — that was the whole point of bringing one up. He'd picked the spot because a growl and a rustle in the right bushes bought him thirty uninterrupted seconds with someone who couldn't hear him coming or going. A fallen branch did the rest, and by the time Elias finished his headcount, Joe had already rinsed his hands in the nearest stream and rehearsed his very calm, very concerned face.",
+ "reveal": "It was Joe, in Bear Woods, and there was never a second bear involved at all — only him, a fallen branch, and thirty seconds bought by a story about claw marks. He'd spotted the real bear's tracks earlier that day and borrowed its reputation rather than its company: a rustle he made himself, a warning that sent Vincenza's attention exactly the wrong way, and the branch already in his hand before she'd worked out there was nothing behind her. By the time Elias reached the bottom of his list, Joe had rinsed his hands in the stream and had nothing left to tell anyone.",
  "escape": {
-  "generic": "Somewhere out there, two actual bears are still getting blamed for something neither of them did, and the person who invented a third one is already back at the trailhead loading up the car.",
+  "generic": "Somewhere out there, an entirely innocent bear is still getting blamed for something it had nothing to do with, while the person who borrowed its reputation is already back at the trailhead, loading up the car.",
   "byAccused": {
-   "A": "Aubrey was marched off still defending the honor of the Windy Trail cap club, insisting a matching hat is not a motive.",
-   "B": "Brianna went quietly, still two rows off from finishing whatever calculation she'd been running about Finlay.",
-   "C": "Clark kept his sunglasses on through the entire arrest, which the rangers agreed was deeply unsettling but not, on its own, a confession.",
-   "D": "Danika got the solitude she wanted after all, just with considerably more paperwork attached.",
-   "E": "Elias was hauled off mid-sentence about the waivers, which — everyone quietly agreed — really should have been read.",
-   "F": "Finlay never did find out how close he'd come to a real bear, which made getting arrested for a fake one feel especially unfair.",
-   "G": "Gavin was escorted down from the Summit still insisting the boulder incident had nothing to do with anything.",
-   "H": "Hank grumbled the entire way down that it never used to take this many people to arrest the wrong hiker either.",
-   "I": "Iris had to be talked out of the Booth's chair a second time, this time by someone with handcuffs.",
-   "K": "Kobe was pulled out of the Grove still wearing the plaid shirt that had nearly gotten him lost in it."
+   "A": "Aubrey's only complaint, the whole way into the ranger's truck, was that nobody had let her finish the amendment.",
+   "B": "Brianna never did admit to the real number, and now, technically, she never has to.",
+   "C": "Clark was marched off still wearing the sunglasses, which he felt was at least consistent, if nothing else.",
+   "D": "Danika's bird-call card sat abandoned on the log for the rest of the afternoon, which was closer to alone than she'd actually wanted.",
+   "E": "The rangers filed Elias's own waiver as evidence against him, which he considered, even under arrest, a serious breach of paperwork etiquette.",
+   "F": "Finlay was hauled off still congratulating himself on the shortcut, never finding out how close it had actually come to a very different kind of story.",
+   "G": "The rest of the group agreed the boulder numbering system made a lot more sense once someone explained it was evidence, not a hobby.",
+   "H": "Hank was hauled off still muttering that it never used to take a search party this large to arrest the wrong hiker either.",
+   "I": "Iris's chair sat empty at the Booth for the rest of the day, which everyone quietly agreed was the real crime.",
+   "K": "Kobe's plaid shirt turned out to be excellent camouflage right up until it wasn't, and he spent the whole walk out insisting the woodpecker would back him up."
   }
  }
 }

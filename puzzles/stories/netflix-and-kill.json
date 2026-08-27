@@ -1,28 +1,28 @@
 {
  "id": "netflix-and-kill",
  "title": "Netflix and Kill",
- "victoryHeadline": "Caught! It's a wrap on movie night.",
+ "victoryHeadline": "Caught! Someone's getting an ending nobody asked for.",
  "acts": [
-  "Movie night at Vaughn's had the structural integrity of a house of cards. Austin was on his knees in front of the living-room shelf, pulling out DVDs nobody owned a player for and holding them up like evidence. \"We are not watching anything with Charlotte's face on the case,\" he announced, which was rich, because Charlotte had already claimed the good chair — the only chair worth sitting in, a fact she repeated so often it had become her whole personality for the evening. Enid crouched by the TV with the remote held at arm's length, cycling through four different streaming apps and getting a spinning wheel from all of them. \"It's buffering,\" she said, to no one, for the ninth time. In the kitchen, mercifully out of earshot of all of it, Dean was microwaving popcorn with the calm of a man who had opted out of group decisions entirely.",
-  "\"The wifi password's taped to the router,\" Vaughn called out, \"which is on the desk, which is in the bedroom, which none of you are allowed in because it's a disaster in there.\" He went to fetch it himself. Barbara, curled up on the end of his bed with her phone since the film selection had turned into a debate club, patted the mattress beside her. \"I already found it,\" she said. \"Come sit, you're missing the argument out there.\" He sat. Out in the living room the argument was in fact still going — Austin had moved on to accusing Charlotte of hoarding cushions, and Enid had gotten one app to load, only for it to be the wrong one entirely.",
-  "It took Dean arriving with the popcorn, and finding the sofa's third occupant conspicuously missing, to break the mood. The bedroom door was ajar. The router password was still taped exactly where Vaughn had left it, unread."
+  "Movie night at Vaughn's had, by eight o'clock, produced no movie. Austin was elbow-deep in the living-room shelf, pulling out DVDs for a player the house hadn't owned in six years and insisting each one was basically still watchable on a laptop that didn't have a drive either. Charlotte had claimed the one chair that didn't creak and had spent twenty minutes daring anyone, with just her eyebrows, to suggest she give it up. Enid stood by the TV working through a universal remote with three dead batteries already discarded on the carpet, entirely convinced the fourth one in her pocket was the one that would finally do it. In the kitchen, mercifully out of range of all three of them, Dean had a set of scales out and was weighing portions off a sourdough starter he'd been quietly nursing for four months and had never once mentioned to anyone in this house.",
+  "\"The wifi password's on a sticky note somewhere in my desk,\" Vaughn called through from the bedroom, on his knees beside a chair buried in laundry he kept meaning to fold, going through drawer after drawer. Barbara wandered in after him, phone in hand, and settled on the end of the bed to wait it out. \"Take your time,\" she said, \"it's not like anything's happening out there.\" This was, at that moment, almost true — the living room had reached the kind of pitch where Austin's DVD case, Charlotte's chair, and Enid's remote were all being argued about simultaneously, loud enough that a much smaller sound from down the hall wouldn't have stood a chance. Dean, three rooms and one very precise set of scales away, didn't hear anything either.",
+  "It was Dean who eventually carried the popcorn through, took one look at the empty end of the sofa, and asked where Vaughn had got to with that password. Nobody had a good answer. The bedroom door was ajar. The sticky note, it turned out, had been on the desk the whole time — face up, easy to find, completely unread."
  ],
  "whereabouts": {
-  "A": "Austin was crouched at the living-room shelf, rejecting DVDs one by one to avoid picking a side in the movie argument.",
-  "B": "Barbara was curled up on the end of the bed with her phone, using the film debate as an excuse to get Vaughn alone.",
-  "C": "Charlotte had annexed the only good chair in the living room and was defending it like a throne.",
-  "D": "Dean had quietly excused himself to the kitchen to make popcorn, opting out of the argument entirely.",
-  "E": "Enid was parked in front of the TV, cycling through streaming apps and getting nothing but spinning wheels.",
-  "V": "Vaughn slipped away to the bedroom for the wifi password taped to his desk, and never made it back."
+  "A": "Austin was elbow-deep in the shelf, working through a stack of DVDs for a player the house hadn't owned in six years, insisting each one was basically still watchable on a laptop with no disc drive either.",
+  "B": "Barbara stayed curled up on the end of the bed, phone in hand, keeping Vaughn company while he hunted for a wifi password he swore was somewhere obvious.",
+  "C": "Charlotte had claimed the one chair in the living room that didn't creak, and had spent the last twenty minutes daring anyone, with just her eyebrows, to suggest she give it up.",
+  "D": "Dean stood at the kitchen counter with a set of scales, weighing out portions of a sourdough starter he'd been nursing for four months and had never once mentioned to anyone in this house.",
+  "E": "Enid worked through every button on a universal remote with three dead batteries already on the carpet, convinced the fourth one in her pocket was the one that would finally do it.",
+  "V": "Vaughn was on his knees beside a chair buried in laundry, working through drawer after drawer for a wifi password sticky note that had to be in there somewhere."
  },
- "reveal": "It was Barbara, in the bedroom, on the very bed she'd been sitting on all evening. The phone she'd waved as a distraction became the last thing Vaughn ever looked at; the pillow he never saw coming did the rest. She was back on the sofa before the popcorn finished popping, one streaming app away from a perfect alibi.",
+ "reveal": "It was Barbara, in the bedroom, on the very bed she'd spent the evening curled up on. While Vaughn dug through his desk for a password he never found, she reached for the pillow beside her instead. The living room's three-way argument over DVDs, chairs, and remote batteries covered the ten quiet minutes that followed; Dean's scales, three rooms away, covered the rest. She was back on the sofa's arm before the popcorn finished popping, one dead battery away from a house that never thought to ask her anything.",
  "escape": {
-  "generic": "The wifi password is still taped to that desk. Nobody ever did agree on a movie, and somewhere out there the real killer is already halfway through someone else's box set.",
+  "generic": "The sticky note is still on that desk, face up, easy to find. Nobody ever did agree on a movie, and somewhere out there the real killer already knows which remote button works.",
   "byAccused": {
-   "A": "Austin got hauled off still clutching a DVD nobody owns a player for, loudly explaining that rejecting cushion arrangements is not, legally, a motive.",
-   "C": "Charlotte was pried out of the good chair for questioning, which she considered the real crime of the evening.",
-   "D": "Dean went quietly, popcorn still warm, insisting — accurately, as it happens — that he'd been nowhere near any of it.",
-   "E": "Enid was led away mid-buffer, the fourth streaming app finally loading just as the door closed behind her."
+   "A": "Austin was led out mid-sentence, one hand still full of DVDs nobody owns a player for, complaining that rejecting a movie is not, legally, a crime.",
+   "C": "Charlotte's chair sat empty for the rest of the night — nobody else in the house had the nerve to sit in it, guilty or not.",
+   "D": "The others found Dean's sourdough starter in the fridge two days later, still alive, with nobody quite sure whose job it now was to feed it.",
+   "E": "Enid's own verdict, delivered loudly to the arresting officer, was that the fourth battery would definitely have worked, and no one would ever know now."
   }
  }
 }
