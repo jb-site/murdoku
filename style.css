@@ -134,6 +134,10 @@ body.resizing { cursor: col-resize; }
 .controls-toggle:hover { color: var(--text); border-color: var(--accent); }
 .controls-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 body.edit-mode .controls-toggle { display: none; }
+/* Edit mode's .toolbar has every child hidden individually below (palette, undo/clear/save/
+   load/editBtn, view-options) — collapsing the container too removes the empty padding gap
+   that would otherwise sit above .editor-bar inside the now-shared sticky dock. */
+body.edit-mode .toolbar { display: none; }
 
 .toolbar {
   width: 100%;
@@ -238,6 +242,12 @@ body.controls-collapsed .toolbar { gap: 6px; padding-top: 8px; padding-bottom: 8
   border: 1px solid #6b3a3a;
   border-radius: 10px;
   padding: 12px;
+  /* .editor-bar now lives inside #controlsDock (sticky, top:0) so its tools stay reachable
+     on a tall grid. It's the tallest thing in the dock (room/object palette + validation),
+     so it gets its own scroll cap rather than letting the whole sticky dock grow to cover
+     most of the viewport. */
+  max-height: 70vh;
+  overflow-y: auto;
 }
 .editor-bar[hidden] { display: none; } /* author display:flex above would otherwise beat the UA [hidden] rule */
 .editor-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }

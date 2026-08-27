@@ -41,51 +41,51 @@
         <label id="prefArtModeLabel" hidden><input type="checkbox" id="prefArtMode"> Board art</label>
       </div>
     </section>
-  </div>
 
-  <section class="editor-bar" id="editorBar" hidden>
-    <div class="editor-row">
-      <strong>Editing puzzle</strong> — solving is paused.
-      <span class="editor-spacer"></span>
-      <button class="tool-btn" id="editApplyBtn" title="Use these edits now, in this browser session">✅ Apply</button>
-      <button class="tool-btn" id="editDiscardBtn" title="Throw away edits and go back to solving">✖ Discard</button>
-      <button class="tool-btn" id="editDownloadBtn" title="Download the edited puzzle as a JSON file">⬇️ Download JSON</button>
-    </div>
-    <div class="editor-row">
-      <button class="tool-btn" id="editNewBtn" title="Start a blank puzzle">＋ New</button>
-      <button class="tool-btn" id="editOpenBtn" title="Open a puzzle JSON file to edit">📂 Open file…</button>
-      <input type="file" id="editFileInput" accept="application/json" hidden>
-      <span class="editor-spacer"></span>
-      <label>Rows <input type="number" id="editRows" min="1" max="24"></label>
-      <label>Cols <input type="number" id="editCols" min="1" max="24"></label>
-      <button class="tool-btn" id="editResizeBtn">Resize</button>
-    </div>
-    <div class="editor-row" id="editorTabs">
-      <button class="tool-btn edit-tab active" data-tab="rooms">Rooms</button>
-      <button class="tool-btn edit-tab" data-tab="objects">Objects</button>
-      <button class="tool-btn edit-tab" data-tab="details">Details</button>
-      <button class="tool-btn edit-tab" data-tab="art">Art</button>
-    </div>
-    <div class="editor-row" id="editorArtView" hidden>
-      <label id="editArtModeLabel"><input type="checkbox" id="editArtMode"> Board art</label>
-      <label id="artStackLabel">Art layer
-        <select id="artStack" title="Choose where the board art sits relative to the grid, objects and marks">
-          <option value="bottom">Below grid</option>
-          <option value="mid">Above grid, below objects</option>
-          <option value="top">Above everything</option>
-        </select>
-      </label>
-      <div class="editor-row art-opacity-row" id="editorOpacityRow">
-        <label>Art<input type="range" min="0" max="100" step="1" data-op="art"><span class="art-op-value" data-op-value="art"></span></label>
-        <label>Grid<input type="range" min="0" max="100" step="1" data-op="grid"><span class="art-op-value" data-op-value="grid"></span></label>
-        <label>Objects<input type="range" min="0" max="100" step="1" data-op="objects"><span class="art-op-value" data-op-value="objects"></span></label>
+    <section class="editor-bar" id="editorBar" hidden>
+      <div class="editor-row">
+        <strong>Editing puzzle</strong> — solving is paused.
+        <span class="editor-spacer"></span>
+        <button class="tool-btn" id="editApplyBtn" title="Use these edits now, in this browser session">✅ Apply</button>
+        <button class="tool-btn" id="editDiscardBtn" title="Throw away edits and go back to solving">✖ Discard</button>
+        <button class="tool-btn" id="editDownloadBtn" title="Download the edited puzzle as a JSON file">⬇️ Download JSON</button>
       </div>
-      <button type="button" class="tool-btn" id="artOpResetBtn" title="Reset to defaults (Art 100%, Grid 50%, Objects 100%)">↺ Reset opacities</button>
-    </div>
-    <div class="editor-palette" id="editorPalette"></div>
-    <div class="editor-details" id="editorDetails" hidden></div>
-    <div class="editor-validation" id="editorValidation"></div>
-  </section>
+      <div class="editor-row">
+        <button class="tool-btn" id="editNewBtn" title="Start a blank puzzle">＋ New</button>
+        <button class="tool-btn" id="editOpenBtn" title="Open a puzzle JSON file to edit">📂 Open file…</button>
+        <input type="file" id="editFileInput" accept="application/json" hidden>
+        <span class="editor-spacer"></span>
+        <label>Rows <input type="number" id="editRows" min="1" max="24"></label>
+        <label>Cols <input type="number" id="editCols" min="1" max="24"></label>
+        <button class="tool-btn" id="editResizeBtn">Resize</button>
+      </div>
+      <div class="editor-row" id="editorTabs">
+        <button class="tool-btn edit-tab active" data-tab="rooms">Rooms</button>
+        <button class="tool-btn edit-tab" data-tab="objects">Objects</button>
+        <button class="tool-btn edit-tab" data-tab="details">Details</button>
+        <button class="tool-btn edit-tab" data-tab="art">Art</button>
+      </div>
+      <div class="editor-row" id="editorArtView" hidden>
+        <label id="editArtModeLabel"><input type="checkbox" id="editArtMode"> Board art</label>
+        <label id="artStackLabel">Art layer
+          <select id="artStack" title="Choose where the board art sits relative to the grid, objects and marks">
+            <option value="bottom">Below grid</option>
+            <option value="mid">Above grid, below objects</option>
+            <option value="top">Above everything</option>
+          </select>
+        </label>
+        <div class="editor-row art-opacity-row" id="editorOpacityRow">
+          <label>Art<input type="range" min="0" max="100" step="1" data-op="art"><span class="art-op-value" data-op-value="art"></span></label>
+          <label>Grid<input type="range" min="0" max="100" step="1" data-op="grid"><span class="art-op-value" data-op-value="grid"></span></label>
+          <label>Objects<input type="range" min="0" max="100" step="1" data-op="objects"><span class="art-op-value" data-op-value="objects"></span></label>
+        </div>
+        <button type="button" class="tool-btn" id="artOpResetBtn" title="Reset to defaults (Art 100%, Grid 50%, Objects 100%)">↺ Reset opacities</button>
+      </div>
+      <div class="editor-palette" id="editorPalette"></div>
+      <div class="editor-details" id="editorDetails" hidden></div>
+      <div class="editor-validation" id="editorValidation"></div>
+    </section>
+  </div>
 
   <section class="puzzle-meta" id="puzzleMeta">
     <h2 id="puzzleTitle"></h2>
