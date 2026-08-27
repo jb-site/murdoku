@@ -72,8 +72,11 @@ const TWEMOJI_ICONS = {
   "26f3": '<path fill="#77B255" d="M4 36h28c2 0 3.731-2 3.731-4 0-4.355-4.634-11-17.731-11C4.508 21 .193 27.459.193 32 .193 34 2 36 4 36z"/><path fill="#5C913B" d="M11.292 29.5s.958.667 1.958.667c2.208-4.875 13-7.5 14-7.5.15 0 .33-.018.512-.047-.716-.28-1.502-.521-2.33-.737-4.626.063-13.031 3.917-14.14 7.617z"/><ellipse fill="#292F33" cx="12.5" cy="30.5" rx="6.5" ry="2.5"/><path fill="#FFAC33" d="M10 4v26c0 .553.448.844 1 .844s1-.291 1-.844V4h-2z"/><path fill="#DD2E44" d="M10 3C10 .8 11.695-.395 13.767.345l9.466 3.381c2.071.74 2.071 1.951 0 2.69l-9.466 3.381C11.695 10.538 10 9.343 10 7.143V3z"/>',
 };
 
-function twemojiArt(code) {
-  return `<svg class="object-art" viewBox="0 0 36 36" preserveAspectRatio="xMidYMid meet">${TWEMOJI_ICONS[code]}</svg>`;
+// pad adds empty margin around the emoji's native 36x36 art (by widening the viewBox
+// around it) so the icon renders smaller within its cell instead of filling it edge-to-edge.
+function twemojiArt(code, pad = 0) {
+  const size = 36 + pad * 2;
+  return `<svg class="object-art" viewBox="${-pad} ${-pad} ${size} ${size}" preserveAspectRatio="xMidYMid meet">${TWEMOJI_ICONS[code]}</svg>`;
 }
 
 const OBJECT_TYPES = {
@@ -145,7 +148,7 @@ const OBJECT_TYPES = {
   },
   bonsai: {
     label: "Bonsai", emoji: "🌳", occupiable: false,
-    art() { return twemojiArt("1f333"); },
+    art() { return twemojiArt("1f333", 6); },
   },
   cactus: {
     label: "Cactus", emoji: "🌵", occupiable: false,
@@ -153,7 +156,15 @@ const OBJECT_TYPES = {
   },
   lilypad: {
     label: "Lily Pad", emoji: "🍃", occupiable: false, ground: true,
-    art() { return twemojiArt("1f343"); },
+    art() {
+      return svgObject("#4a8a4f", "#6fbf74", "#1f3d22", `
+        <path d="M50 50 L90 50 A40 40 0 1 1 61 14 Z" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M50 50 L50 14" stroke="var(--obj-fill2)" stroke-width="2" opacity="0.6"/>
+        <path d="M50 50 L20 32" stroke="var(--obj-fill2)" stroke-width="2" opacity="0.6"/>
+        <path d="M50 50 L26 68" stroke="var(--obj-fill2)" stroke-width="2" opacity="0.6"/>
+        <path d="M50 50 L58 86" stroke="var(--obj-fill2)" stroke-width="2" opacity="0.6"/>
+      `, 100, 100);
+    },
   },
   flower: {
     label: "Flower", emoji: "💐", occupiable: false,
@@ -161,7 +172,14 @@ const OBJECT_TYPES = {
   },
   shrub: {
     label: "Shrub", emoji: "🌿", occupiable: false,
-    art() { return twemojiArt("1f33f"); },
+    art() {
+      return svgObject("#4a7a3f", "#6fa855", "#274a20", `
+        <ellipse cx="50" cy="82" rx="34" ry="7" fill="var(--obj-stroke)" opacity="0.3"/>
+        <circle cx="35" cy="58" r="24" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <circle cx="65" cy="58" r="24" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <circle cx="50" cy="42" r="26" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+      `, 100, 100);
+    },
   },
   path: {
     label: "Path", emoji: "🧱", occupiable: true, ground: true,
@@ -190,7 +208,14 @@ const OBJECT_TYPES = {
   },
   boulder: {
     label: "Boulder", emoji: "🪨", occupiable: false,
-    art() { return twemojiArt("1faa8"); },
+    art() {
+      return svgObject("#8a919c", "#6b727c", "#3c4148", `
+        <path d="M15 78 Q10 55 25 40 Q35 20 55 18 Q78 16 85 38 Q92 55 82 68 Q75 84 50 86 Q28 88 15 78 Z"
+          fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M28 34 Q40 24 52 26" stroke="var(--obj-fill2)" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.6"/>
+        <path d="M55 55 Q65 50 72 58" stroke="var(--obj-fill2)" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.5"/>
+      `, 100, 100);
+    },
   },
   carpet: {
     label: "Carpet", emoji: "🧵", occupiable: true, ground: true,
@@ -214,16 +239,27 @@ const OBJECT_TYPES = {
     label: "Crate", emoji: "🪵", occupiable: false,
     art() {
       return svgObject("#b98a4f", "#7a5528", "#40290f", `
-        <rect x="10" y="14" width="80" height="72" rx="3" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
-        <line x1="10" y1="14" x2="90" y2="86" stroke="var(--obj-fill2)" stroke-width="3"/>
-        <line x1="90" y1="14" x2="10" y2="86" stroke="var(--obj-fill2)" stroke-width="3"/>
-        <rect x="10" y="14" width="80" height="72" rx="3" fill="none" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="8" y="10" width="84" height="78" rx="2" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <line x1="8" y1="34" x2="92" y2="34" stroke="var(--obj-stroke)" stroke-width="2.5"/>
+        <line x1="8" y1="64" x2="92" y2="64" stroke="var(--obj-stroke)" stroke-width="2.5"/>
+        <line x1="30" y1="10" x2="30" y2="88" stroke="var(--obj-fill2)" stroke-width="2.5" opacity="0.6"/>
+        <line x1="70" y1="10" x2="70" y2="88" stroke="var(--obj-fill2)" stroke-width="2.5" opacity="0.6"/>
+        <rect x="8" y="10" width="84" height="78" rx="2" fill="none" stroke="var(--obj-stroke)" stroke-width="3"/>
       `, 100, 100);
     },
   },
   safe: {
     label: "Safe", emoji: "🔒", occupiable: false,
-    art() { return twemojiArt("1f512"); },
+    art() {
+      return svgObject("#5a6068", "#3d4249", "#1c1f24", `
+        <rect x="10" y="8" width="80" height="84" rx="4" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="18" y="16" width="64" height="68" rx="3" fill="none" stroke="var(--obj-fill2)" stroke-width="2.5" opacity="0.7"/>
+        <circle cx="50" cy="46" r="14" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2.5"/>
+        <circle cx="50" cy="46" r="4" fill="var(--obj-stroke)"/>
+        <line x1="50" y1="34" x2="50" y2="40" stroke="var(--obj-stroke)" stroke-width="2.5"/>
+        <rect x="40" y="66" width="20" height="8" rx="2" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
+      `, 100, 100);
+    },
   },
   statue: {
     label: "Statue", emoji: "🗿", occupiable: false,
@@ -246,7 +282,14 @@ const OBJECT_TYPES = {
   },
   water: {
     label: "Water", emoji: "🌊", occupiable: false, ground: true,
-    art() { return twemojiArt("1f30a"); },
+    art() {
+      return svgObject("#2f6fa8", "#4a8fc9", "#173a54", `
+        <rect x="4" y="4" width="92" height="92" rx="8" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M14 30 Q26 24 38 30 Q50 36 62 30 Q74 24 86 30" stroke="var(--obj-fill2)" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.7"/>
+        <path d="M14 52 Q26 46 38 52 Q50 58 62 52 Q74 46 86 52" stroke="var(--obj-fill2)" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.6"/>
+        <path d="M14 74 Q26 68 38 74 Q50 80 62 74 Q74 68 86 74" stroke="var(--obj-fill2)" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.5"/>
+      `, 100, 100);
+    },
   },
   lion: {
     label: "Lion", emoji: "🦁", occupiable: false,
@@ -270,7 +313,14 @@ const OBJECT_TYPES = {
   },
   mudpuddle: {
     label: "Mud Puddle", emoji: "💧", occupiable: true, ground: true,
-    art() { return twemojiArt("1f4a7"); },
+    art() {
+      return svgObject("#6b5033", "#8a6b45", "#2f2115", `
+        <path d="M12 55 Q10 35 30 30 Q45 18 62 28 Q88 32 86 55 Q90 75 65 78 Q40 90 22 76 Q8 72 12 55 Z"
+          fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <ellipse cx="40" cy="50" rx="14" ry="8" fill="var(--obj-fill2)" opacity="0.5"/>
+        <ellipse cx="65" cy="58" rx="10" ry="6" fill="var(--obj-fill2)" opacity="0.4"/>
+      `, 100, 100);
+    },
   },
   barrel: {
     label: "Barrel", emoji: "🛢️", occupiable: false,
@@ -278,17 +328,26 @@ const OBJECT_TYPES = {
   },
   rubble: {
     label: "Rubble", emoji: "🪨", occupiable: false, ground: true,
-    art() { return twemojiArt("1faa8"); },
+    art() {
+      return svgObject("#7d838c", "#5a5f66", "#2f3237", `
+        <ellipse cx="50" cy="86" rx="42" ry="8" fill="var(--obj-stroke)" opacity="0.35"/>
+        <path d="M18 82 L26 58 L42 54 L50 74 L40 84 Z" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="2.5"/>
+        <path d="M42 82 L52 50 L70 46 L80 68 L68 86 Z" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2.5"/>
+        <path d="M62 84 L72 64 L88 66 L86 84 Z" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="2.5"/>
+      `, 100, 100);
+    },
   },
   catapult: {
     label: "Catapult", emoji: "🏹", occupiable: false,
     art() {
       return svgObject("#a8763f", "#5c3d20", "#2c1c0e", `
-        <rect x="14" y="70" width="72" height="14" rx="3" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
-        <line x1="30" y1="70" x2="30" y2="30" stroke="var(--obj-fill)" stroke-width="8"/>
-        <line x1="70" y1="70" x2="70" y2="30" stroke="var(--obj-fill)" stroke-width="8"/>
-        <line x1="30" y1="30" x2="70" y2="30" stroke="var(--obj-fill)" stroke-width="6"/>
-        <circle cx="50" cy="30" r="10" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
+        <rect x="12" y="70" width="62" height="9" rx="2" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="2.5"/>
+        <circle cx="24" cy="84" r="9" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2.5"/>
+        <circle cx="62" cy="84" r="9" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2.5"/>
+        <line x1="26" y1="70" x2="46" y2="26" stroke="var(--obj-fill)" stroke-width="7" stroke-linecap="round"/>
+        <line x1="46" y1="26" x2="82" y2="14" stroke="var(--obj-fill)" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="85" cy="12" r="7" fill="#8a919c" stroke="var(--obj-stroke)" stroke-width="2"/>
+        <line x1="30" y1="52" x2="56" y2="46" stroke="var(--obj-fill2)" stroke-width="4" stroke-linecap="round"/>
       `, 100, 100);
     },
   },
