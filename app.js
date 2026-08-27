@@ -2771,9 +2771,8 @@ artOpResetBtn.addEventListener("click", () => {
 function applyViewPrefs() {
   document.body.classList.toggle("color-pencils", viewPrefs.colorPencils);
   document.body.classList.toggle("show-player-notes", viewPrefs.playerNotes);
-  // Gated on availability as well as the preference: the class also drives the
-  // .no-suspect indent, which must not shift on a puzzle that has no portraits.
-  // Also covers Edit > New > Apply, which leaves PUZZLE.art undefined.
+  // Gated on availability as well as the preference — also covers
+  // Edit > New > Apply, which leaves PUZZLE.art undefined.
   const hasPortraits = !!PUZZLE?.art?.portraits;
   document.body.classList.toggle("show-portraits", viewPrefs.portraits && hasPortraits);
   // Same availability-gating as portraits, for the same reason (art.board is optional

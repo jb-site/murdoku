@@ -984,10 +984,8 @@ body.art-mode .object-cell.ref-object {
 }
 .clue-row:hover { background: #2f3239; }
 .clue-row.selected { border-color: var(--accent); background: var(--accent-soft); }
-.clue-row.no-suspect { cursor: default; padding-left: 44px; }
-/* Portraits add 40px + the row's 10px flex gap ahead of the chip, so the indent that
-   lines a suspect-less clue up with the clue text has to grow to match. */
-body.show-portraits .clue-row.no-suspect { padding-left: 94px; }
+/* No chip or portrait to align to, so the text just uses the row's full width. */
+.clue-row.no-suspect { cursor: default; }
 .clue-row.no-suspect:hover { background: transparent; }
 
 .clue-portrait-wrap {
