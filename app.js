@@ -452,11 +452,28 @@ const OBJECT_TYPES = {
   },
   sand: {
     label: "Sand", emoji: "🏖️", occupiable: true, ground: true,
-    art() { return twemojiArt("1f3d6"); },
+    art() {
+      return svgObject("#e8c98a", "#f5e3b8", "#a8874a", `
+        <rect x="0" y="0" width="100" height="100" fill="var(--obj-fill)"/>
+        <path d="M-10 25 L25 -10" stroke="var(--obj-fill2)" stroke-width="8" opacity="0.5"/>
+        <path d="M-10 65 L65 -10" stroke="var(--obj-fill2)" stroke-width="8" opacity="0.4"/>
+        <path d="M25 110 L110 25" stroke="var(--obj-fill2)" stroke-width="8" opacity="0.5"/>
+        <path d="M65 110 L110 65" stroke="var(--obj-fill2)" stroke-width="8" opacity="0.4"/>
+      `, 100, 100);
+    },
   },
   tee: {
     label: "Tee", emoji: "⛳", occupiable: true,
-    art() { return twemojiArt("26f3"); },
+    art() {
+      return svgObject("#5a9c4a", "#eeeee6", "#2f5a26", `
+        <ellipse cx="50" cy="74" rx="38" ry="18" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <line x1="50" y1="70" x2="50" y2="40" stroke="#8a8a82" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="50" cy="30" r="13" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2.5"/>
+        <circle cx="45" cy="26" r="2" fill="#c8c8c0"/>
+        <circle cx="56" cy="28" r="2" fill="#c8c8c0"/>
+        <circle cx="50" cy="35" r="2" fill="#c8c8c0"/>
+      `, 100, 100);
+    },
   },
   flag: {
     label: "Flag", emoji: "🚩", occupiable: true,
