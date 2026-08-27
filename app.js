@@ -978,7 +978,7 @@ function buildClueList() {
 }
 
 function clearPortraitZoom() {
-  clueListEl.querySelectorAll(".clue-portrait-wrap.zoomed").forEach((el) => el.classList.remove("zoomed"));
+  document.querySelectorAll(".clue-portrait-wrap.zoomed").forEach((el) => el.classList.remove("zoomed"));
 }
 
 // Attached once at module level, not per-clue in buildClueList() — that reruns on every
@@ -1668,6 +1668,35 @@ function updateStoryButton() {
   storyBtn.hidden = EDIT || !PUZZLE || !getSolvedSet().has(PUZZLE.id);
 }
 
+// Shared by the whereabouts list and the story panel's hero cards. Returns "" when the
+// puzzle has no portrait for this letter; the wrap's own display is gated by
+// body.show-portraits, so callers never need to check viewPrefs.
+function storyPortraitHtml(letter, extraClass = "") {
+  const portrait = PUZZLE.art?.portraits?.[letter];
+  if (!portrait) return "";
+  const crop = portrait.crop || { x: 0, y: 0, w: 1, h: 1 };
+  return `<span class="clue-portrait-wrap ${extraClass}"><img class="clue-portrait"
+    src="puzzles/${escapeHtml(portrait.src)}"
+    style="--pc-x:${crop.x};--pc-y:${crop.y};--pc-w:${crop.w};--pc-h:${crop.h}"
+    alt="${escapeHtml(suspectFirstName(letter))}" loading="lazy"></span>`;
+}
+
+// A large portrait card for the naming-and-catching moments (victim banner, murderer
+// reveal, wrong-arrest escape framing). Returns "" when there's no letter or no portrait
+// for it, so callers degrade cleanly to text-only.
+function storyHeroHtml(letter, kicker, modifier) {
+  if (!letter) return "";
+  const img = storyPortraitHtml(letter, "portrait-hero");
+  if (!img) return "";
+  return `<div class="story-hero ${modifier}">
+    ${img}
+    <div class="story-hero-caption">
+      <span class="story-hero-kicker">${escapeHtml(kicker)}</span>
+      <span class="story-hero-name">${escapeHtml(suspectFirstName(letter))}</span>
+    </div>
+  </div>`;
+}
+
 // Builds the "where everyone was" list: one row per suspect (victim included, murderer
 // last, per PLAN-solve-and-story.md's Phase D4), reusing the same chip/portrait markup as
 // the clue list so a solved puzzle with portraits shows them here too.
@@ -1680,14 +1709,7 @@ function buildWhereaboutsHtml(story, murdererLetter) {
     const line = story.whereabouts?.[letter];
     if (!line) return "";
     const isMurderer = letter === murdererLetter;
-    const portrait = PUZZLE.art?.portraits?.[letter];
-    let portraitHtml = "";
-    if (portrait) {
-      const crop = portrait.crop || { x: 0, y: 0, w: 1, h: 1 };
-      portraitHtml = `<span class="clue-portrait-wrap"><img class="clue-portrait" src="puzzles/${escapeHtml(portrait.src)}"
-        style="--pc-x:${crop.x};--pc-y:${crop.y};--pc-w:${crop.w};--pc-h:${crop.h}"
-        alt="${escapeHtml(PUZZLE.names[letter] || letter)}" loading="lazy"></span>`;
-    }
+    const portraitHtml = storyPortraitHtml(letter);
     const chipClass = "suspect-chip chip-inline" + (letter === "V" ? " victim" : "");
     return `<li class="${isMurderer ? "story-murderer" : ""}">
       ${portraitHtml}<span class="${chipClass}">${escapeHtml(letter)}</span>
@@ -1699,19 +1721,38 @@ function buildWhereaboutsHtml(story, murdererLetter) {
 
 // escapeLine (Phase E, only passed on the "show me what happened anyway" path) renders as
 // a distinct intro paragraph above the acts, framing this as the wrong-arrest/unsolved
-// reveal rather than the on-solve victory reading.
-function buildStoryHtml(story, murdererLetter, escapeLine) {
-  const escapeIntro = escapeLine ? `<p class="story-escape-intro">${escapeHtml(escapeLine)}</p>` : "";
+// reveal rather than the on-solve victory reading. accusedLetter (also Phase E, wrong-arrest
+// only) gets its own hero card beside that intro.
+function buildStoryHtml(story, murdererLetter, escapeLine, accusedLetter) {
+  const victimBanner = storyHeroHtml("V", "The victim", "story-hero-victim");
+  const accusedHero = escapeLine ? storyHeroHtml(accusedLetter, "You accused", "story-hero-accused") : "";
+  const escapeIntro = escapeLine
+    ? `<div class="story-escape-block">${accusedHero}<p class="story-escape-intro">${escapeHtml(escapeLine)}</p></div>`
+    : "";
   const acts = (story.acts || []).map((a) => `<p>${escapeHtml(a)}</p>`).join("");
-  const reveal = story.reveal ? `<p class="story-reveal">${escapeHtml(story.reveal)}</p>` : "";
-  return `${escapeIntro}${acts}${reveal}
+  const reveal = story.reveal
+    ? `<div class="story-reveal-block">
+         ${storyHeroHtml(murdererLetter, "The murderer", "story-hero-murderer")}
+         <p class="story-reveal">${escapeHtml(story.reveal)}</p>
+       </div>`
+    : "";
+  return `${victimBanner}${escapeIntro}${acts}${reveal}
     <h3 class="story-whereabouts-title">Where everyone was</h3>
     ${buildWhereaboutsHtml(story, murdererLetter)}`;
 }
 
-function openStoryPanel(title, story, murdererLetter, escapeLine) {
+function openStoryPanel(title, story, murdererLetter, escapeLine, accusedLetter) {
   verdictTitleEl.textContent = title;
-  verdictBodyEl.innerHTML = buildStoryHtml(story, murdererLetter, escapeLine);
+  verdictBodyEl.innerHTML = buildStoryHtml(story, murdererLetter, escapeLine, accusedLetter);
+  verdictBodyEl.querySelectorAll(".clue-portrait-wrap").forEach((wrap) => {
+    if (wrap.classList.contains("portrait-hero")) return; // hero cards stay non-interactive, already large
+    wrap.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const wasZoomed = wrap.classList.contains("zoomed");
+      clearPortraitZoom();
+      if (!wasZoomed) wrap.classList.add("zoomed");
+    });
+  });
   verdictPanelEl.classList.add("story-panel");
   verdictEscapeBtn.hidden = true; // already showing the full story — nothing left to opt into
   verdictDismissBtn.textContent = "Close";
@@ -1915,7 +1956,13 @@ async function onSolveClick() {
         : story.escape?.generic;
     // Showing the reveal is purely informational — it must never mark the puzzle solved,
     // so a player who peeked can still come back and solve it properly afterwards.
-    openStoryPanel("Here's what actually happened...", story, solution.murderer, escapeLine);
+    openStoryPanel(
+      "Here's what actually happened...",
+      story,
+      solution.murderer,
+      escapeLine,
+      v.status === "wrong-arrest" ? v.accusedLetter : null
+    );
   };
 }
 

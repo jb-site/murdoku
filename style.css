@@ -935,14 +935,44 @@ body.art-mode .object-cell.ref-object {
 .verdict-escape-btn { background: transparent; color: var(--muted); }
 .verdict-escape-btn:hover { background: #383b44; color: var(--text); }
 
-.story-escape-intro {
-  font-weight: 600;
-  color: var(--x-color);
-  border-bottom: 1px dashed var(--border);
-  padding-bottom: 10px;
-  margin-bottom: 14px;
+/* Hero portrait cards in the story panel. Hidden entirely (not just the image) when the
+   player has portraits switched off, so no orphan caption is left behind. */
+.story-hero { display: none; }
+body.show-portraits .story-hero { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: none; }
+.story-hero .clue-portrait-wrap.portrait-hero {
+  /* Portraits crop to ~0.82 w/h across every puzzle; a square box would squash them.
+     .clue-portrait is percentage-based, so no crop math changes here. */
+  width: 108px;
+  height: 132px;
+  border-radius: 10px;
+  cursor: default;
+  border: 1px solid var(--border);
 }
-.story-reveal { font-style: italic; border-top: 1px dashed var(--border); padding-top: 10px; margin-top: 14px; }
+.story-hero-caption { display: flex; flex-direction: column; align-items: center; line-height: 1.25; }
+.story-hero-kicker {
+  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);
+}
+.story-hero-name { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.story-hero-murderer .clue-portrait-wrap.portrait-hero { border-color: var(--x-color); box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.18); }
+.story-hero-murderer .story-hero-kicker { color: var(--x-color); }
+.story-hero-accused .clue-portrait-wrap.portrait-hero { border-color: var(--highlight); box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.16); }
+.story-hero-accused .story-hero-kicker { color: var(--highlight); }
+.story-hero-victim .clue-portrait-wrap.portrait-hero { width: 76px; height: 93px; }
+
+/* Victim banner: a small case-file header above the acts. */
+body.show-portraits .story-hero-victim {
+  flex-direction: row; align-items: center; gap: 12px;
+  border-bottom: 1px dashed var(--border); padding-bottom: 12px; margin-bottom: 14px;
+}
+.story-hero-victim .story-hero-caption { align-items: flex-start; }
+
+.story-reveal-block, .story-escape-block { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+.story-reveal-block { border-top: 1px dashed var(--border); padding-top: 14px; margin-top: 14px; }
+.story-escape-block { border-bottom: 1px dashed var(--border); padding-bottom: 12px; margin-bottom: 14px; }
+.story-reveal { font-style: italic; flex: 1 1 260px; min-width: 0; margin: 0; }
+.story-escape-intro {
+  font-weight: 600; color: var(--x-color); flex: 1 1 260px; min-width: 0; margin: 0;
+}
 .story-whereabouts-title { margin: 18px 0 8px; font-size: 1rem; color: var(--text); }
 .story-whereabouts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .story-whereabouts li { display: flex; align-items: center; gap: 8px; margin: 0; }
