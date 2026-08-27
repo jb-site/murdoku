@@ -2482,6 +2482,7 @@ function applyControlsCollapsed() {
   document.body.classList.toggle("controls-collapsed", controlsCollapsed);
   controlsToggleEl.textContent = controlsCollapsed ? "▸" : "▾";
   controlsToggleEl.setAttribute("aria-expanded", String(!controlsCollapsed));
+  controlsToggleEl.setAttribute("aria-controls", document.body.classList.contains("edit-mode") ? "editorBar" : "toolbar");
   controlsToggleEl.title = controlsCollapsed ? "Show all controls" : "Collapse the controls";
 }
 
@@ -2960,6 +2961,7 @@ function enterEditMode(sourcePuzzle) {
   hoverRefs = null;
 
   document.body.classList.add("edit-mode");
+  applyControlsCollapsed();
   editorBarEl.hidden = false;
   puzzleSelectEl.disabled = true;
   editRowsInput.value = PUZZLE.rows;
@@ -2994,6 +2996,7 @@ function exitEditMode(mode) {
   EDIT = null;
   localStorage.removeItem("murdoku:draft");
   document.body.classList.remove("edit-mode");
+  applyControlsCollapsed();
   editorBarEl.hidden = true;
   puzzleSelectEl.disabled = false;
 
