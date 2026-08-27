@@ -62,7 +62,58 @@
     ["windytrail", "windytrail", "booth", "booth", "booth", "booth", "bearwoods", "bearwoods", "rockytrail", "lake", "lake", "lake"],
     ["windytrail", "windytrail", "booth", "booth", "booth", "booth", "rockytrail", "rockytrail", "rockytrail", "lake", "lake", "lake"]
   ],
-  "objects": [],
+  "objects": [
+    { "type": "bear", "cells": [[1, 9]] },
+    { "type": "bear", "cells": [[3, 7]] },
+    { "type": "bear", "cells": [[7, 8]] },
+    { "type": "bear", "cells": [[9, 4]] },
+
+    { "type": "boulder", "cells": [[0, 5]] },
+    { "type": "boulder", "cells": [[0, 7]] },
+    { "type": "boulder", "cells": [[1, 2]] },
+    { "type": "boulder", "cells": [[2, 4]] },
+    { "type": "boulder", "cells": [[7, 11]] },
+    { "type": "boulder", "cells": [[9, 8]] },
+    { "type": "boulder", "cells": [[12, 11]] },
+
+    { "type": "chair", "cells": [[1, 11]] },
+    { "type": "chair", "cells": [[11, 2]] },
+    { "type": "chair", "cells": [[13, 5]] },
+
+    { "type": "table", "cells": [[11, 5]] },
+    { "type": "table", "cells": [[12, 2], [12, 3]] },
+    { "type": "table", "cells": [[13, 0]] },
+
+    { "type": "tree", "cells": [[3, 1]] },
+    { "type": "tree", "cells": [[3, 8]] },
+    { "type": "tree", "cells": [[5, 0]] },
+    { "type": "tree", "cells": [[5, 6]] },
+    { "type": "tree", "cells": [[5, 8]] },
+    { "type": "tree", "cells": [[7, 1]] },
+    { "type": "tree", "cells": [[7, 7]] },
+    { "type": "tree", "cells": [[8, 0]] },
+    { "type": "tree", "cells": [[8, 5]] },
+    { "type": "tree", "cells": [[8, 8]] },
+    { "type": "tree", "cells": [[9, 2]] },
+    { "type": "tree", "cells": [[9, 3]] },
+    { "type": "tree", "cells": [[10, 0]] },
+    { "type": "tree", "cells": [[10, 2]] },
+    { "type": "tree", "cells": [[10, 6]] },
+    { "type": "tree", "cells": [[12, 6]] },
+
+    { "type": "shrub", "cells": [[3, 6]] },
+    { "type": "shrub", "cells": [[4, 10]] },
+    { "type": "shrub", "cells": [[5, 2]] },
+    { "type": "shrub", "cells": [[5, 7]] },
+    { "type": "shrub", "cells": [[6, 0]] },
+    { "type": "shrub", "cells": [[6, 8]] },
+    { "type": "shrub", "cells": [[6, 10]] },
+    { "type": "shrub", "cells": [[6, 11]] },
+    { "type": "shrub", "cells": [[7, 0]] },
+    { "type": "shrub", "cells": [[7, 4]] },
+    { "type": "shrub", "cells": [[8, 9]] },
+    { "type": "shrub", "cells": [[8, 11]] }
+  ],
   "art": {
     "portraits": {
       "A": {
