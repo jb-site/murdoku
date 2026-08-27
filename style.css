@@ -506,6 +506,15 @@ body.edit-mode .players {
   align-items: center;
   justify-content: center;
   padding: 4px;
+  /* The six layers only stay aligned because they share one grid template, and
+     `repeat(N, 1fr)` is really `minmax(auto, 1fr)` — a track can be pushed past its 1fr
+     share by a grid item's automatic minimum size. An <svg> has an intrinsic aspect ratio
+     from its viewBox, so a wrapper spanning 2 columns resolved a min-content HEIGHT of two
+     cells and inflated that row track on layer-objects alone: every object below it drew a
+     row too low while layer-cells (whose .cell min-height matches the track exactly) stayed
+     put. Pinning the automatic minimum to 0 keeps track sizing purely template-driven. */
+  min-width: 0;
+  min-height: 0;
 }
 .object-art { width: 100%; height: 100%; display: block; }
 .object-cell.occupiable .object-art { opacity: 0.45; }

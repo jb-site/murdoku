@@ -74,15 +74,58 @@ const TWEMOJI_ICONS = {
 
 // pad adds empty margin around the emoji's native 36x36 art (by widening the viewBox
 // around it) so the icon renders smaller within its cell instead of filling it edge-to-edge.
-function twemojiArt(code, pad = 0) {
+//
+// colSpan/rowSpan describe the wrapper's real footprint in cells. Cells are square, so any
+// non-square span gives a non-square box, and the default "meet" would letterbox the icon
+// into one cell's worth of space in the middle — reading as a single-cell object sitting in
+// the wrong place. These are fixed emoji outlines with no parametric structure to restretch,
+// so a non-uniform fill is the pragmatic way to own the whole footprint: a 2-wide boat or car
+// reads as a longer boat or car rather than as one that has drifted.
+function twemojiArt(code, pad = 0, colSpan = 1, rowSpan = 1) {
   const size = 36 + pad * 2;
-  return `<svg class="object-art" viewBox="${-pad} ${-pad} ${size} ${size}" preserveAspectRatio="xMidYMid meet">${TWEMOJI_ICONS[code]}</svg>`;
+  const fit = colSpan === rowSpan ? "xMidYMid meet" : "none";
+  return `<svg class="object-art" viewBox="${-pad} ${-pad} ${size} ${size}" preserveAspectRatio="${fit}">${TWEMOJI_ICONS[code]}</svg>`;
+}
+
+// --- Span-aware bespoke art -------------------------------------------------
+// Shared scaffolding for svgObject() furniture that has a "long" axis (table, bed). The art
+// is authored ONCE in a landscape L x S box (L = the long axis, S = the short one, both in
+// 100-units-per-cell), then rotated a quarter turn for a vertical span so legs stay
+// leg-shaped and pillows stay pillow-shaped instead of being squashed along the wrong axis.
+// Follow-up restyling only needs to replace the `inner(L, S)` drawing — the span/orientation
+// maths below stays as is.
+function spanBox(colSpan = 1, rowSpan = 1) {
+  const long = Math.max(colSpan, rowSpan), short = Math.min(colSpan, rowSpan);
+  return { L: 100 * long, S: 100 * short, vertical: rowSpan > colSpan };
+}
+
+function spanArt(fill, fill2, stroke, colSpan, rowSpan, inner) {
+  const { L, S, vertical } = spanBox(colSpan, rowSpan);
+  const body = inner(L, S);
+  if (!vertical) return svgObject(fill, fill2, stroke, body, L, S);
+  // rotate(90) about the origin maps (x, y) -> (-y, x); the translate puts it back in view.
+  return svgObject(fill, fill2, stroke, `<g transform="translate(${S} 0) rotate(90)">${body}</g>`, S, L);
 }
 
 const OBJECT_TYPES = {
   bed: {
     label: "Bed", emoji: "🛏️", occupiable: true,
-    art() { return twemojiArt("1f6cf"); },
+    art(colSpan = 1, rowSpan = 1) {
+      return spanArt("#f4f6f7", "#cfe2dd", "#6b7a8c", colSpan, rowSpan, (L, S) => {
+        // Pillow keeps an absolute-ish size at the head end rather than a fixed fraction of L,
+        // so a 3-cell bed grows its blanket, not a comically long pillow.
+        const pillowW = Math.min(38, Math.max(24, S * 0.3));
+        const foldX = 12 + pillowW + 14;
+        const r = Math.min(10, S * 0.1);
+        return `
+        <rect x="4" y="${S * 0.05}" width="${L - 8}" height="${S * 0.9}" rx="${r}" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M${foldX} ${S * 0.05} H${L - 4 - r} a${r} ${r} 0 0 1 ${r} ${r} V${S * 0.95 - r} a${r} ${r} 0 0 1 -${r} ${r} H${foldX} Z"
+          fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="12" y="${S * 0.13}" width="${pillowW}" height="${S * 0.74}" rx="7" fill="#fdfdfd" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <line x1="${foldX}" y1="${S * 0.05}" x2="${foldX}" y2="${S * 0.95}" stroke="#c69a63" stroke-width="3" opacity="0.8"/>
+      `;
+      });
+    },
   },
   chair: {
     label: "Chair", emoji: "🪑", occupiable: true,
@@ -113,14 +156,24 @@ const OBJECT_TYPES = {
   },
   table: {
     label: "Table", emoji: "🍽️", occupiable: false,
-    art() {
-      return svgObject("#c9975a", "#8a6534", "#40290f", `
-        <rect x="6" y="16" width="88" height="16" rx="3" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
-        <line x1="16" y1="34" x2="16" y2="88" stroke="var(--obj-fill2)" stroke-width="7" stroke-linecap="round"/>
-        <line x1="84" y1="34" x2="84" y2="88" stroke="var(--obj-fill2)" stroke-width="7" stroke-linecap="round"/>
-        <line x1="32" y1="34" x2="32" y2="72" stroke="var(--obj-fill2)" stroke-width="6" stroke-linecap="round" opacity="0.75"/>
-        <line x1="68" y1="34" x2="68" y2="72" stroke="var(--obj-fill2)" stroke-width="6" stroke-linecap="round" opacity="0.75"/>
-      `, 100, 100);
+    art(colSpan = 1, rowSpan = 1) {
+      return spanArt("#cdb87a", "#565160", "#1d1710", colSpan, rowSpan, (L, S) => {
+        // Legs are placed at absolute insets from the two real ends (not at fractions of L),
+        // so a longer tabletop gains extra legs under the middle instead of stretching four
+        // legs apart and leaving the ends unsupported.
+        const legW = 9, legH = S * 0.16;
+        const endLegs = [21, L - 21 - legW];
+        const extras = Math.max(0, Math.round(L / 100) - 2);
+        const midLegs = [];
+        for (let i = 1; i <= extras; i++) midLegs.push(21 + legW + ((L - 42 - legW * 2) * i) / (extras + 1));
+        const legs = [...endLegs, ...midLegs];
+        return `
+        <rect x="9" y="${S * 0.10}" width="${L - 18}" height="${S * 0.59}" rx="3" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="14" y="${S * 0.15}" width="${L - 28}" height="${S * 0.49}" rx="2" fill="none" stroke="#e6d7a4" stroke-width="2" opacity="0.45"/>
+        <rect x="9" y="${S * 0.67}" width="${L - 18}" height="${S * 0.13}" rx="2" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        ${legs.map((x) => `<rect x="${x}" y="${S * 0.76}" width="${legW}" height="${legH}" rx="2" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>`).join("")}
+      `;
+      });
     },
   },
   plant: {
@@ -140,7 +193,7 @@ const OBJECT_TYPES = {
   },
   car: {
     label: "Car", emoji: "🚗", occupiable: true,
-    art() { return twemojiArt("1f697"); },
+    art(colSpan = 1, rowSpan = 1) { return twemojiArt("1f697", 0, colSpan, rowSpan); },
   },
   tree: {
     label: "Tree", emoji: "🌲", occupiable: false,
@@ -168,7 +221,31 @@ const OBJECT_TYPES = {
   },
   flower: {
     label: "Flower", emoji: "💐", occupiable: false,
-    art() { return twemojiArt("1f490"); },
+    art(colSpan = 1, rowSpan = 1) {
+      const roses = [
+        [30, 30, 1], [54, 24, 1.1], [74, 36, 0.95],
+        [22, 52, 0.95], [48, 47, 1.15], [72, 58, 1],
+        [34, 68, 1], [58, 70, 0.95],
+      ];
+      const blooms = roses.map(([x, y, s]) => {
+        const petals = [0, 1, 2, 3, 4].map(i => {
+          const a = -Math.PI / 2 + i * (2 * Math.PI / 5);
+          const px = (x + Math.cos(a) * 6.5 * s).toFixed(1);
+          const py = (y + Math.sin(a) * 6.5 * s).toFixed(1);
+          return `<circle cx="${px}" cy="${py}" r="${(5.4 * s).toFixed(1)}" fill="#cc6b62" stroke="var(--obj-stroke)" stroke-width="2.5"/>`;
+        }).join("");
+        return `${petals}<circle cx="${x}" cy="${y}" r="${(5 * s).toFixed(1)}" fill="#b8564d" stroke="var(--obj-stroke)" stroke-width="2.5"/><circle cx="${x}" cy="${y}" r="${(1.9 * s).toFixed(1)}" fill="#f0d878"/>`;
+      }).join("");
+      return svgObject("#4f8a45", "#79b566", "#22401d", `
+        <path d="M50 8 Q80 8 88 32 Q98 52 88 72 Q78 92 50 92 Q22 92 12 72 Q2 52 12 32 Q20 8 50 8 Z"
+          fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M22 76 Q30 62 40 76 Q46 88 34 90 Q22 90 22 76 Z" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M52 80 Q62 66 72 80 Q78 92 64 92 Q52 92 52 80 Z" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M6 44 Q14 34 20 44 Q22 54 12 54 Q4 52 6 44 Z" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <path d="M80 20 Q90 14 92 24 Q92 34 82 32 Q76 28 80 20 Z" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        ${blooms}
+      `, 100, 100);
+    },
   },
   shrub: {
     label: "Shrub", emoji: "🌿", occupiable: false,
@@ -229,7 +306,7 @@ const OBJECT_TYPES = {
   },
   boat: {
     label: "Boat", emoji: "🚤", occupiable: true,
-    art() { return twemojiArt("1f6a4"); },
+    art(colSpan = 1, rowSpan = 1) { return twemojiArt("1f6a4", 0, colSpan, rowSpan); },
   },
   box: {
     label: "Box", emoji: "📦", occupiable: false,
@@ -282,13 +359,27 @@ const OBJECT_TYPES = {
   },
   water: {
     label: "Water", emoji: "🌊", occupiable: false, ground: true,
-    art() {
+    art(colSpan = 1, rowSpan = 1) {
+      const w = 100 * colSpan, h = 100 * rowSpan;
+      // Waves repeat per cell rather than stretching, so a wide pool keeps the same ripple
+      // scale as a single tile (a span currently only reaches here via the editor — ground
+      // renders one art(1, 1) tile per cell — but the maths matches path/carpet either way).
+      const bands = 3 * rowSpan;
+      const x0 = w * 0.14, x1 = w * 0.86;
+      const period = (x1 - x0) / (3 * colSpan), q = period / 4, amp = 6;
+      let waves = "";
+      for (let i = 0; i < bands; i++) {
+        const y = (h * (i + 1)) / (bands + 1);
+        let d = `M${x0} ${y}`;
+        for (let x = x0; x < x1 - 1; x += period) {
+          d += ` Q${x + q} ${y - amp} ${x + period / 2} ${y} Q${x + period * 0.75} ${y + amp} ${x + period} ${y}`;
+        }
+        waves += `<path d="${d}" stroke="var(--obj-fill2)" stroke-width="4" fill="none" stroke-linecap="round" opacity="${Math.max(0.35, 0.7 - i * 0.1).toFixed(2)}"/>`;
+      }
       return svgObject("#2f6fa8", "#4a8fc9", "#173a54", `
-        <rect x="4" y="4" width="92" height="92" rx="8" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
-        <path d="M14 30 Q26 24 38 30 Q50 36 62 30 Q74 24 86 30" stroke="var(--obj-fill2)" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.7"/>
-        <path d="M14 52 Q26 46 38 52 Q50 58 62 52 Q74 46 86 52" stroke="var(--obj-fill2)" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.6"/>
-        <path d="M14 74 Q26 68 38 74 Q50 80 62 74 Q74 68 86 74" stroke="var(--obj-fill2)" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.5"/>
-      `, 100, 100);
+        <rect x="4" y="4" width="${w - 8}" height="${h - 8}" rx="8" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        ${waves}
+      `, w, h);
     },
   },
   lion: {
@@ -309,7 +400,7 @@ const OBJECT_TYPES = {
   },
   elephant: {
     label: "Elephant", emoji: "🐘", occupiable: false,
-    art() { return twemojiArt("1f418"); },
+    art(colSpan = 1, rowSpan = 1) { return twemojiArt("1f418", 0, colSpan, rowSpan); },
   },
   mudpuddle: {
     label: "Mud Puddle", emoji: "💧", occupiable: true, ground: true,
