@@ -91,18 +91,32 @@ const OBJECT_TYPES = {
   },
   shelf: {
     label: "Shelf", emoji: "📚", occupiable: false,
-    art() { return twemojiArt("1f4da"); },
+    art() {
+      return svgObject("#8a5a2e", "#5c3a1a", "#2c1a0a", `
+        <rect x="10" y="8" width="80" height="84" rx="3" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <line x1="10" y1="32" x2="90" y2="32" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <line x1="10" y1="56" x2="90" y2="56" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <line x1="10" y1="80" x2="90" y2="80" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <rect x="16" y="12" width="6" height="16" fill="var(--obj-fill2)"/>
+        <rect x="26" y="12" width="6" height="16" fill="#d9c07a"/>
+        <rect x="36" y="12" width="6" height="16" fill="var(--obj-fill2)"/>
+        <rect x="16" y="36" width="6" height="16" fill="#d9c07a"/>
+        <rect x="26" y="36" width="6" height="16" fill="var(--obj-fill2)"/>
+        <rect x="36" y="36" width="6" height="16" fill="#c96f6f"/>
+        <rect x="16" y="60" width="6" height="16" fill="var(--obj-fill2)"/>
+        <rect x="26" y="60" width="6" height="16" fill="#7fb0d9"/>
+      `, 100, 100);
+    },
   },
   table: {
     label: "Table", emoji: "🍽️", occupiable: false,
     art() {
       return svgObject("#c9975a", "#8a6534", "#40290f", `
-        <rect x="8" y="8" width="84" height="84" rx="6" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
-        <rect x="20" y="20" width="60" height="60" rx="3" fill="none" stroke="var(--obj-fill2)" stroke-width="2" opacity="0.6"/>
-        <circle cx="22" cy="22" r="7" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
-        <circle cx="78" cy="22" r="7" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
-        <circle cx="22" cy="78" r="7" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
-        <circle cx="78" cy="78" r="7" fill="var(--obj-fill2)" stroke="var(--obj-stroke)" stroke-width="2"/>
+        <rect x="6" y="16" width="88" height="16" rx="3" fill="var(--obj-fill)" stroke="var(--obj-stroke)" stroke-width="3"/>
+        <line x1="16" y1="34" x2="16" y2="88" stroke="var(--obj-fill2)" stroke-width="7" stroke-linecap="round"/>
+        <line x1="84" y1="34" x2="84" y2="88" stroke="var(--obj-fill2)" stroke-width="7" stroke-linecap="round"/>
+        <line x1="32" y1="34" x2="32" y2="72" stroke="var(--obj-fill2)" stroke-width="6" stroke-linecap="round" opacity="0.75"/>
+        <line x1="68" y1="34" x2="68" y2="72" stroke="var(--obj-fill2)" stroke-width="6" stroke-linecap="round" opacity="0.75"/>
       `, 100, 100);
     },
   },
@@ -2255,6 +2269,32 @@ function updateLayoutMode() {
   mainEl.classList.toggle("split", split);
   if (split) applySplit(clampCluesWidth(desiredCluesWidth));
   else workspaceEl.style.gridTemplateColumns = "";
+  syncLayerGeometry();
+}
+
+// layer-cells is the only layer sized by content (its cells carry aspect-ratio:1, so its
+// row height is derived from column width, not from the 1fr row track directly). The other
+// five layers are position:absolute;inset:0 overlays that share the same grid-template but
+// resolve their own 1fr row tracks against a *definite* height (the box layer-cells produced) —
+// a different track-sizing algorithm than layer-cells' own auto/content-driven one. The two
+// algorithms don't always round identically per row, and the mismatch compounds row by row,
+// so objects drift further from their true cell the further down the grid they sit. Fixing
+// row/col tracks to layer-cells' own measured pixel geometry (instead of leaving them all as
+// independently-computed 1fr) makes every layer agree on the exact same boundaries.
+function syncLayerGeometry() {
+  if (!PUZZLE) return;
+  const rect = layerCellsEl.getBoundingClientRect();
+  if (!rect.width || !rect.height) return; // not laid out yet (e.g. display:none)
+  const gs = getComputedStyle(gridEl);
+  const hdrPx = parseFloat(gs.getPropertyValue("--hdr-size")) || 28;
+  const colPx = (rect.width - hdrPx) / PUZZLE.cols;
+  const rowPx = (rect.height - hdrPx) / PUZZLE.rows;
+  const cols = `${hdrPx}px repeat(${PUZZLE.cols}, ${colPx}px)`;
+  const rows = `${hdrPx}px repeat(${PUZZLE.rows}, ${rowPx}px)`;
+  [layerGroundEl, layerObjectsEl, layerLabelsEl, layerMarksEl, layerHeadersEl].forEach((el) => {
+    el.style.gridTemplateColumns = cols;
+    el.style.gridTemplateRows = rows;
+  });
 }
 
 function attachSplitListeners() {
