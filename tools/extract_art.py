@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extract portrait (and, eventually, board) artwork from a puzzle's source PDF.
+"""Extract portrait/board/legend artwork from a puzzle's source PDF.
 
 See PLAN-artwork.md for the full design. This is a one-time authoring tool, not
 runtime code, so the portrait detection is deliberately a starting point: the
@@ -9,6 +9,11 @@ Usage:
     python3 tools/extract_art.py <puzzle-id> --portraits --letters A,B,C,D,...
     python3 tools/extract_art.py <puzzle-id> --portraits --letters A,B,...  \\
         --extra-box V=920,1090,1106,1316
+    python3 tools/extract_art.py <puzzle-id> --board
+    python3 tools/extract_art.py <puzzle-id> --legend
+        # -> writes puzzles/art/<id>/legend-guide.png, a labelled coordinate
+        # overlay; read the legend's bbox off it, then:
+    python3 tools/extract_art.py <puzzle-id> --legend --legend-bbox x0,y0,x1,y1
 
 The rendered page is at 200dpi by default (--dpi). Detected/extra boxes are
 sorted into reading order (row-clusters top-to-bottom, then left-to-right
@@ -42,6 +47,9 @@ BOARD_RUN_FRACTION = 0.3  # a row/col counts as a border line if its longest dar
                            # this fraction of the search region's width/height
 BOARD_TARGET_CELL_W = 80  # downscaled board.png is roughly cols * this many px wide
 BOARD_ASPECT_TOLERANCE = 0.03  # flag detected cell width/height ratios more than this off square
+
+LEGEND_TARGET_W = 1200   # downscaled legend.png width in px
+GUIDE_W = 1100           # width of the coordinate-guide render
 
 
 def render_page(puzzle_id, dpi):
@@ -182,6 +190,24 @@ def write_contact_sheet(img, boxes, letters, dest):
         label = letters[i] if letters and i < len(letters) else str(i)
         draw.text((box[0] + 6, box[1] + 6), label, fill=(255, 0, 0))
     sheet.save(dest)
+
+
+def write_legend_guide(img, dest):
+    """Page render downscaled to GUIDE_W, overlaid with gridlines every 100px
+    IN ORIGINAL PAGE PIXEL SPACE, each labelled with its original coordinate —
+    so a bbox can be read straight off the image with no scaling arithmetic."""
+    scale = GUIDE_W / img.width
+    guide = img.resize((GUIDE_W, round(img.height * scale)), Image.LANCZOS)
+    draw = ImageDraw.Draw(guide)
+    for x in range(0, img.width, 100):
+        gx = x * scale
+        draw.line([(gx, 0), (gx, guide.height)], fill=(255, 0, 0), width=1)
+        draw.text((gx + 2, 2), str(x), fill=(255, 0, 0))
+    for y in range(0, img.height, 100):
+        gy = y * scale
+        draw.line([(0, gy), (guide.width, gy)], fill=(255, 0, 0), width=1)
+        draw.text((2, gy + 2), str(y), fill=(255, 0, 0))
+    guide.save(dest)
 
 
 def load_puzzle_json(puzzle_id):
@@ -325,12 +351,45 @@ def do_board(args, page_path):
     print(f"Patched art.board/boardCrop/calibratedFor into {puzzle_path}")
 
 
+def do_legend(args, page_path):
+    puzzle_path, data = load_puzzle_json(args.puzzle_id)
+    img = Image.open(page_path).convert("RGB")
+    out_dir = ART_DIR / args.puzzle_id
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    if not args.legend_bbox:
+        guide = out_dir / "legend-guide.png"
+        write_legend_guide(img, guide)
+        print(f"No --legend-bbox given. Page is {img.width}x{img.height}px.\n"
+              f"Inspect {guide} (gridlines labelled in page pixels), read off the\n"
+              f"legend's x0,y0,x1,y1, then rerun with --legend-bbox x0,y0,x1,y1.")
+        return
+
+    box = parse_box(args.legend_bbox)
+    crop_img = img.crop(box)
+    if crop_img.width > LEGEND_TARGET_W:
+        scale = LEGEND_TARGET_W / crop_img.width
+        crop_img = crop_img.resize(
+            (LEGEND_TARGET_W, round(crop_img.height * scale)), Image.LANCZOS)
+    dest = out_dir / "legend.png"
+    crop_img.save(dest)
+    print(f"  legend -> {dest} ({crop_img.width}x{crop_img.height}px, "
+          f"aspect {crop_img.width / crop_img.height:.2f})")
+    print(f"  INSPECT {dest} before committing — both pills fully inside, "
+          f"no board edge or rules box bleeding in.")
+
+    patch_art_block(puzzle_path, data, {"legend": f"art/{args.puzzle_id}/legend.png"})
+    print(f"Patched art.legend into {puzzle_path}")
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("puzzle_id")
     p.add_argument("--board", action="store_true")
     p.add_argument("--portraits", action="store_true")
+    p.add_argument("--legend", action="store_true")
     p.add_argument("--bbox", help="x0,y0,x1,y1 board bbox override (--board only)")
+    p.add_argument("--legend-bbox", help="x0,y0,x1,y1 in rendered-page pixels (--legend only)")
     p.add_argument("--pad", type=float, default=0.15)
     p.add_argument("--dpi", type=int, default=200)
     p.add_argument("--letters", help="comma-separated letters in reading order, e.g. A,B,C,D,...,V")
@@ -338,14 +397,16 @@ def main():
                     help="LETTER=x0,y0,x1,y1 for a card the auto-detector missed (repeatable)")
     args = p.parse_args()
 
-    if not args.board and not args.portraits:
-        sys.exit("Nothing to do: pass --portraits and/or --board")
+    if not args.board and not args.portraits and not args.legend:
+        sys.exit("Nothing to do: pass --portraits and/or --board and/or --legend")
 
     page_path = render_page(args.puzzle_id, args.dpi)
     if args.board:
         do_board(args, page_path)
     if args.portraits:
         do_portraits(args, page_path)
+    if args.legend:
+        do_legend(args, page_path)
 
 
 if __name__ == "__main__":

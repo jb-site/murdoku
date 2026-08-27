@@ -779,6 +779,8 @@ const puzzleSelectEl = document.getElementById("puzzleSelect");
 const puzzleTitleEl = document.getElementById("puzzleTitle");
 const puzzleDifficultyEl = document.getElementById("puzzleDifficulty");
 const legendEl = document.getElementById("legend");
+const boardLegendEl = document.getElementById("boardLegend");
+const boardLegendImgEl = document.getElementById("boardLegendImg");
 const mainEl = document.querySelector("main");
 const workspaceEl = document.getElementById("workspace");
 const resizeHandleEl = document.getElementById("resizeHandle");
@@ -2836,7 +2838,8 @@ function applyViewPrefs() {
   const onArtTab = !!(EDIT && EDIT.tool === "art" && hasBoard);
   const editorArt = !!(EDIT && hasBoard && viewPrefs.artMode);
   const calibrating = onArtTab || editorArt;
-  document.body.classList.toggle("art-mode", calibrating || (viewPrefs.artMode && hasBoard));
+  const artShowing = calibrating || (viewPrefs.artMode && hasBoard);
+  document.body.classList.toggle("art-mode", artShowing);
   document.body.classList.toggle("art-calibrate", calibrating);
   // Pan/crop affordances (grab cursor, art-pick/art-crop tools) are Art-tab-only — the
   // JS handlers behind them are gated on EDIT.tool === "art", so nothing would actually
@@ -2848,6 +2851,20 @@ function applyViewPrefs() {
   prefPortraitsLabelEl.hidden = !PUZZLE?.art?.portraits;
   prefArtModeEl.checked = viewPrefs.artMode;
   prefArtModeLabelEl.hidden = !hasBoard;
+  // The artist's own icon key from the source PDF, shown under the board whenever that
+  // board's artwork is showing — it explains the drawn icons, which the OBJECT_TYPES-driven
+  // #legend section can't (that one describes our SVG redraws, by our own type names).
+  // Gated on `artShowing`, the same expression driving body.art-mode, so it can never be
+  // visible against a plain (non-art) grid. Deliberately not edit-mode-gated — it's useful
+  // there too while placing objects against the board photo, and gridMinWidth()/canSplit()
+  // never measure .grid-wrap's other children so it can't perturb layout-mode selection.
+  const legendSrc = PUZZLE?.art?.legend;
+  const showBoardLegend = artShowing && !!legendSrc;
+  boardLegendEl.hidden = !showBoardLegend;
+  if (showBoardLegend) {
+    const src = `puzzles/${legendSrc}`;
+    if (boardLegendImgEl.getAttribute("src") !== src) boardLegendImgEl.setAttribute("src", src);
+  }
   // Same checkbox, same viewPrefs.artMode, mirrored into the editor bar (the toolbar's
   // #viewOptions is hidden entirely in edit mode) so art can be switched off during
   // Rooms/Objects/Details editing to see the board exactly as it plays. On the Art tab

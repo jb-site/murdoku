@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 .env
 .playwright-mcp/
+puzzles/art/*/_page.png
+puzzles/art/*/legend-guide.png

@@ -1091,6 +1091,29 @@ body.show-player-notes:not(.edit-mode) .players { display: block; }
   font-size: 0.8rem;
 }
 
+/* --- Board legend (the artist's own icon key, cropped from the source PDF) ---
+   A static reference image, NOT part of the live board — so it is deliberately
+   NOT wired to any of the art-opacity calibration custom properties. Those sliders
+   mean "fade the photo so the grid under it is visible", which is meaningless for
+   a picture that sits under the grid rather than behind it. */
+.board-legend {
+  margin: 4px 0 0;
+  width: min(100%, 760px);
+  padding: 6px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  line-height: 0;
+}
+.board-legend img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 22vh;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
 /* --- Legend --- */
 
 .legend {

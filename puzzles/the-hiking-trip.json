@@ -942,6 +942,7 @@
     "calibratedFor": {
       "rows": 14,
       "cols": 12
-    }
+    },
+    "legend": "art/the-hiking-trip/legend.png"
   }
 }
