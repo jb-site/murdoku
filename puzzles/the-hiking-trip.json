@@ -5,7 +5,20 @@
   "sourceFile": "source/the-hiking-trip-color.pdf",
   "rows": 14,
   "cols": 12,
-  "suspects": ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "V"],
+  "suspects": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "V"
+  ],
   "names": {
     "A": "Aubrey",
     "B": "Brianna",
@@ -21,98 +34,792 @@
     "V": "Vincenza (victim)"
   },
   "clues": [
-    { "suspect": "A", "text": "Aubrey (A) was on the Windy Trail, everyone there wore a cap.", "refs": { "rooms": ["windytrail"] } },
-    { "suspect": "B", "text": "Brianna (B) was exactly two rows north of Finlay.", "refs": { "suspects": ["F"] } },
-    { "suspect": "C", "text": "Clark (C) was on the Rocky Trail, everyone there wore glasses.", "refs": { "rooms": ["rockytrail"] } },
-    { "suspect": "D", "text": "Danika (D) was alone in the Pine Forest.", "refs": { "rooms": ["pineforest"] } },
-    { "suspect": "E", "text": "Elias (E) was in the Ranger's Hut.", "refs": { "rooms": ["rangershut"] } },
-    { "suspect": "F", "text": "Finlay (F) — there was a bear in his column, exactly 4 rows north of him.", "refs": { "objects": ["bear"] } },
-    { "suspect": "G", "text": "Gavin (G) was beside a boulder.", "refs": { "objects": ["boulder"] } },
-    { "suspect": "H", "text": "Hank (H) was in the bottom row. His area had at least 3 people in it.", "refs": {} },
-    { "suspect": "I", "text": "Iris (I) was sitting in a chair.", "refs": { "objects": ["chair"] } },
-    { "suspect": "J", "text": "Joe (J) was beside a bear.", "refs": { "objects": ["bear"] } },
-    { "suspect": "K", "text": "Kobe (K) was in the Grove.", "refs": { "rooms": ["grove"] } },
-    { "suspect": "V", "text": "Vincenza (V), the victim, was alone with the murderer.", "refs": {} },
-    { "suspect": null, "text": "There are two empty rows. Each empty row contains a bear.", "refs": { "objects": ["bear"] } }
+    {
+      "suspect": "A",
+      "text": "Aubrey (A) was on the Windy Trail, everyone there wore a cap.",
+      "refs": {
+        "rooms": [
+          "windytrail"
+        ],
+        "objects": [],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "B",
+      "text": "Brianna (B) was exactly two rows north of Finlay.",
+      "refs": {
+        "rooms": [],
+        "objects": [],
+        "suspects": [
+          "F"
+        ]
+      }
+    },
+    {
+      "suspect": "C",
+      "text": "Clark (C) was on the Rocky Trail, everyone there wore glasses.",
+      "refs": {
+        "rooms": [
+          "rockytrail"
+        ],
+        "objects": [],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "D",
+      "text": "Danika (D) was alone in the Pine Forest.",
+      "refs": {
+        "rooms": [
+          "pineforest"
+        ],
+        "objects": [],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "E",
+      "text": "Elias (E) was in the Ranger's Hut.",
+      "refs": {
+        "rooms": [
+          "rangershut"
+        ],
+        "objects": [],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "F",
+      "text": "Finlay (F) — there was a bear in his column, exactly 4 rows north of him.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "bear"
+        ],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "G",
+      "text": "Gavin (G) was beside a boulder.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "boulder"
+        ],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "H",
+      "text": "Hank (H) was in the bottom row. His area had at least 3 people in it.",
+      "refs": {
+        "rooms": [],
+        "objects": [],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "I",
+      "text": "Iris (I) was sitting in a chair.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "chair"
+        ],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "J",
+      "text": "Joe (J) was beside a bear.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "bear"
+        ],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "K",
+      "text": "Kobe (K) was in the Grove.",
+      "refs": {
+        "rooms": [
+          "grove"
+        ],
+        "objects": [],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": "V",
+      "text": "Vincenza (V), the victim, was alone with the murderer.",
+      "refs": {
+        "rooms": [],
+        "objects": [],
+        "suspects": []
+      }
+    },
+    {
+      "suspect": null,
+      "text": "There are two empty rows. Each empty row contains a bear.",
+      "refs": {
+        "rooms": [],
+        "objects": [
+          "bear"
+        ],
+        "suspects": []
+      }
+    }
   ],
   "rooms": {
-    "summit": { "name": "Summit" },
-    "rangershut": { "name": "Ranger's Hut" },
-    "windytrail": { "name": "Windy Trail" },
-    "rockytrail": { "name": "Rocky Trail" },
-    "pineforest": { "name": "Pine Forest" },
-    "bearwoods": { "name": "Bear Woods" },
-    "grove": { "name": "Grove" },
-    "lake": { "name": "Lake" },
-    "booth": { "name": "Booth" }
+    "summit": {
+      "name": "Summit"
+    },
+    "rangershut": {
+      "name": "Ranger's Hut"
+    },
+    "windytrail": {
+      "name": "Windy Trail"
+    },
+    "rockytrail": {
+      "name": "Rocky Trail"
+    },
+    "pineforest": {
+      "name": "Pine Forest"
+    },
+    "bearwoods": {
+      "name": "Bear Woods"
+    },
+    "grove": {
+      "name": "Grove"
+    },
+    "lake": {
+      "name": "Lake"
+    },
+    "booth": {
+      "name": "Booth"
+    }
   },
   "roomGrid": [
-    [null, null, null, null, "summit", "summit", "summit", "summit", "summit", "summit", null, null],
-    [null, null, "summit", "summit", "summit", "summit", "summit", "summit", "summit", "summit", "rangershut", "rangershut"],
-    [null, null, "summit", "summit", "summit", "windytrail", "windytrail", "windytrail", "rockytrail", "rockytrail", "rangershut", "rangershut"],
-    ["pineforest", "pineforest", "pineforest", "summit", "summit", "windytrail", "bearwoods", "bearwoods", "bearwoods", "rockytrail", "grove", "grove"],
-    ["pineforest", "pineforest", "pineforest", "pineforest", "pineforest", "windytrail", "bearwoods", "bearwoods", "bearwoods", "rockytrail", "grove", "grove"],
-    ["pineforest", "pineforest", "pineforest", "windytrail", "windytrail", "windytrail", "bearwoods", "bearwoods", "bearwoods", "rockytrail", "grove", "grove"],
-    ["pineforest", "pineforest", "windytrail", "windytrail", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "rockytrail", "grove", "grove"],
-    ["pineforest", "pineforest", "windytrail", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "rockytrail", "rockytrail", "grove"],
-    ["pineforest", "windytrail", "windytrail", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "rockytrail", "grove"],
-    ["pineforest", "windytrail", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "rockytrail", "lake"],
-    ["pineforest", "windytrail", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "bearwoods", "rockytrail", "rockytrail", "lake"],
-    ["pineforest", "windytrail", "booth", "booth", "booth", "booth", "bearwoods", "bearwoods", "rockytrail", "rockytrail", "lake", "lake"],
-    ["windytrail", "windytrail", "booth", "booth", "booth", "booth", "bearwoods", "bearwoods", "rockytrail", "lake", "lake", "lake"],
-    ["windytrail", "windytrail", "booth", "booth", "booth", "booth", "rockytrail", "rockytrail", "rockytrail", "lake", "lake", "lake"]
+    [
+      null,
+      null,
+      null,
+      null,
+      "summit",
+      "summit",
+      "summit",
+      "summit",
+      "summit",
+      "summit",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "summit",
+      "summit",
+      "summit",
+      "summit",
+      "summit",
+      "summit",
+      "summit",
+      "summit",
+      "rangershut",
+      "rangershut"
+    ],
+    [
+      null,
+      null,
+      "summit",
+      "summit",
+      "summit",
+      "windytrail",
+      "windytrail",
+      "windytrail",
+      "rockytrail",
+      "rockytrail",
+      "rangershut",
+      "rangershut"
+    ],
+    [
+      "pineforest",
+      "pineforest",
+      "pineforest",
+      "summit",
+      "summit",
+      "windytrail",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "rockytrail",
+      "grove",
+      "grove"
+    ],
+    [
+      "pineforest",
+      "pineforest",
+      "pineforest",
+      "pineforest",
+      "pineforest",
+      "windytrail",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "rockytrail",
+      "grove",
+      "grove"
+    ],
+    [
+      "pineforest",
+      "pineforest",
+      "pineforest",
+      "windytrail",
+      "windytrail",
+      "windytrail",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "rockytrail",
+      "grove",
+      "grove"
+    ],
+    [
+      "pineforest",
+      "pineforest",
+      "windytrail",
+      "windytrail",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "rockytrail",
+      "grove",
+      "grove"
+    ],
+    [
+      "pineforest",
+      "pineforest",
+      "windytrail",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "rockytrail",
+      "rockytrail",
+      "grove"
+    ],
+    [
+      "pineforest",
+      "windytrail",
+      "windytrail",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "rockytrail",
+      "grove"
+    ],
+    [
+      "pineforest",
+      "windytrail",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "rockytrail",
+      "lake"
+    ],
+    [
+      "pineforest",
+      "windytrail",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "bearwoods",
+      "rockytrail",
+      "rockytrail",
+      "lake"
+    ],
+    [
+      "pineforest",
+      "windytrail",
+      "booth",
+      "booth",
+      "booth",
+      "booth",
+      "bearwoods",
+      "bearwoods",
+      "rockytrail",
+      "rockytrail",
+      "lake",
+      "lake"
+    ],
+    [
+      "windytrail",
+      "windytrail",
+      "booth",
+      "booth",
+      "booth",
+      "booth",
+      "bearwoods",
+      "bearwoods",
+      "rockytrail",
+      "lake",
+      "lake",
+      "lake"
+    ],
+    [
+      "windytrail",
+      "windytrail",
+      "booth",
+      "booth",
+      "booth",
+      "booth",
+      "rockytrail",
+      "rockytrail",
+      "rockytrail",
+      "lake",
+      "lake",
+      "lake"
+    ]
   ],
   "objects": [
-    { "type": "bear", "cells": [[1, 9]] },
-    { "type": "bear", "cells": [[3, 7]] },
-    { "type": "bear", "cells": [[7, 8]] },
-    { "type": "bear", "cells": [[9, 4]] },
-
-    { "type": "boulder", "cells": [[0, 5]] },
-    { "type": "boulder", "cells": [[0, 7]] },
-    { "type": "boulder", "cells": [[1, 2]] },
-    { "type": "boulder", "cells": [[2, 4]] },
-    { "type": "boulder", "cells": [[7, 11]] },
-    { "type": "boulder", "cells": [[9, 8]] },
-    { "type": "boulder", "cells": [[12, 11]] },
-
-    { "type": "chair", "cells": [[1, 11]] },
-    { "type": "chair", "cells": [[11, 2]] },
-    { "type": "chair", "cells": [[13, 5]] },
-
-    { "type": "table", "cells": [[11, 5]] },
-    { "type": "table", "cells": [[12, 2], [12, 3]] },
-    { "type": "table", "cells": [[13, 0]] },
-
-    { "type": "tree", "cells": [[3, 1]] },
-    { "type": "tree", "cells": [[3, 8]] },
-    { "type": "tree", "cells": [[5, 0]] },
-    { "type": "tree", "cells": [[5, 6]] },
-    { "type": "tree", "cells": [[5, 8]] },
-    { "type": "tree", "cells": [[7, 1]] },
-    { "type": "tree", "cells": [[7, 7]] },
-    { "type": "tree", "cells": [[8, 0]] },
-    { "type": "tree", "cells": [[8, 5]] },
-    { "type": "tree", "cells": [[8, 8]] },
-    { "type": "tree", "cells": [[9, 2]] },
-    { "type": "tree", "cells": [[9, 3]] },
-    { "type": "tree", "cells": [[10, 0]] },
-    { "type": "tree", "cells": [[10, 2]] },
-    { "type": "tree", "cells": [[10, 6]] },
-    { "type": "tree", "cells": [[12, 6]] },
-
-    { "type": "shrub", "cells": [[3, 6]] },
-    { "type": "shrub", "cells": [[4, 10]] },
-    { "type": "shrub", "cells": [[5, 2]] },
-    { "type": "shrub", "cells": [[5, 7]] },
-    { "type": "shrub", "cells": [[6, 0]] },
-    { "type": "shrub", "cells": [[6, 8]] },
-    { "type": "shrub", "cells": [[6, 10]] },
-    { "type": "shrub", "cells": [[6, 11]] },
-    { "type": "shrub", "cells": [[7, 0]] },
-    { "type": "shrub", "cells": [[7, 4]] },
-    { "type": "shrub", "cells": [[8, 9]] },
-    { "type": "shrub", "cells": [[8, 11]] }
+    {
+      "type": "bear",
+      "cells": [
+        [
+          1,
+          9
+        ]
+      ]
+    },
+    {
+      "type": "bear",
+      "cells": [
+        [
+          3,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "bear",
+      "cells": [
+        [
+          7,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "bear",
+      "cells": [
+        [
+          9,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "boulder",
+      "cells": [
+        [
+          0,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "boulder",
+      "cells": [
+        [
+          0,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "boulder",
+      "cells": [
+        [
+          1,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "boulder",
+      "cells": [
+        [
+          2,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "boulder",
+      "cells": [
+        [
+          7,
+          11
+        ]
+      ]
+    },
+    {
+      "type": "boulder",
+      "cells": [
+        [
+          9,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "boulder",
+      "cells": [
+        [
+          12,
+          11
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          1,
+          11
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          11,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          13,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          11,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          12,
+          2
+        ],
+        [
+          12,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          13,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          3,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          5,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          5,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          5,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          7,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          7,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          8,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          8,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          8,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          9,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          9,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          10,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          10,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          10,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "tree",
+      "cells": [
+        [
+          12,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "shrub",
+      "cells": [
+        [
+          3,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "shrub",
+      "cells": [
+        [
+          4,
+          10
+        ]
+      ]
+    },
+    {
+      "type": "shrub",
+      "cells": [
+        [
+          5,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "shrub",
+      "cells": [
+        [
+          5,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "shrub",
+      "cells": [
+        [
+          6,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "shrub",
+      "cells": [
+        [
+          6,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "shrub",
+      "cells": [
+        [
+          6,
+          10
+        ]
+      ]
+    },
+    {
+      "type": "shrub",
+      "cells": [
+        [
+          6,
+          11
+        ]
+      ]
+    },
+    {
+      "type": "shrub",
+      "cells": [
+        [
+          7,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "shrub",
+      "cells": [
+        [
+          7,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "shrub",
+      "cells": [
+        [
+          8,
+          9
+        ]
+      ]
+    },
+    {
+      "type": "shrub",
+      "cells": [
+        [
+          8,
+          11
+        ]
+      ]
+    },
+    {
+      "type": "shrub",
+      "cells": [
+        [
+          10,
+          7
+        ]
+      ]
+    }
   ],
   "art": {
     "portraits": {
@@ -226,7 +933,12 @@
       }
     },
     "board": "art/the-hiking-trip/board.png",
-    "boardCrop": { "x": 0.1986, "y": 0.203, "w": 0.7332, "h": 0.665 },
+    "boardCrop": {
+      "x": 0.1986,
+      "y": 0.203,
+      "w": 0.7332,
+      "h": 0.665
+    },
     "calibratedFor": {
       "rows": 14,
       "cols": 12
