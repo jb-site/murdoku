@@ -39,6 +39,11 @@
         <label><input type="checkbox" id="prefPlayerNotes"> Player notes</label>
         <label id="prefPortraitsLabel" hidden><input type="checkbox" id="prefPortraits"> Suspect portraits</label>
         <label id="prefArtModeLabel" hidden><input type="checkbox" id="prefArtMode"> Board art</label>
+        <div class="zoom-controls" id="zoomControls">
+          <button type="button" id="zoomOutBtn" class="tool-btn zoom-btn" aria-label="Zoom out" title="Zoom out">−</button>
+          <button type="button" id="zoomFitBtn" class="tool-btn zoom-btn" aria-label="Fit grid to screen" title="Fit grid to screen">Fit</button>
+          <button type="button" id="zoomInBtn" class="tool-btn zoom-btn" aria-label="Zoom in" title="Zoom in">+</button>
+        </div>
       </div>
     </section>
 
@@ -99,15 +104,17 @@
   </section>
 
   <div class="workspace" id="workspace">
-    <section class="grid-wrap">
-      <div id="grid" class="grid">
-        <div id="layerArt" class="grid-layer layer-art"></div>
-        <div id="layerCells" class="grid-layer layer-cells"></div>
-        <div id="layerGround" class="grid-layer layer-ground"></div>
-        <div id="layerObjects" class="grid-layer layer-objects"></div>
-        <div id="layerLabels" class="grid-layer layer-labels"></div>
-        <div id="layerMarks" class="grid-layer layer-marks"></div>
-        <div id="layerHeaders" class="grid-layer layer-headers"></div>
+    <section class="grid-wrap" id="gridWrap">
+      <div id="gridZoomBox" class="grid-zoom-box">
+        <div id="grid" class="grid">
+          <div id="layerArt" class="grid-layer layer-art"></div>
+          <div id="layerCells" class="grid-layer layer-cells"></div>
+          <div id="layerGround" class="grid-layer layer-ground"></div>
+          <div id="layerObjects" class="grid-layer layer-objects"></div>
+          <div id="layerLabels" class="grid-layer layer-labels"></div>
+          <div id="layerMarks" class="grid-layer layer-marks"></div>
+          <div id="layerHeaders" class="grid-layer layer-headers"></div>
+        </div>
       </div>
       <button type="button" id="solveBtn" class="solve-btn" hidden>Solved!?</button>
       <button type="button" id="storyBtn" class="solve-btn story-btn" hidden>📖 The story</button>

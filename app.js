@@ -587,6 +587,9 @@ const CLUES_DEFAULT = 340;
 const HANDLE_W = 10;
 const SPLIT_MAX_WIDTH = 1280;
 const SPLIT_HYSTERESIS = 16;
+const ZOOM_MIN = 0.5;
+const ZOOM_MAX = 1.5;
+const ZOOM_STEP = 0.1;
 const CELL_MAX = 96; // caps how big a cell (and thus the whole square-ish grid) can render at
 
 // --- State ---------------------------------------------------------------
@@ -775,6 +778,12 @@ function buildGroundIndex(data, errors) {
 // --- DOM setup -------------------------------------------------------------
 
 const gridEl = document.getElementById("grid");
+const gridWrapEl = document.getElementById("gridWrap");
+const gridZoomBoxEl = document.getElementById("gridZoomBox");
+const zoomControlsEl = document.getElementById("zoomControls");
+const zoomOutBtn = document.getElementById("zoomOutBtn");
+const zoomFitBtn = document.getElementById("zoomFitBtn");
+const zoomInBtn = document.getElementById("zoomInBtn");
 const layerArtEl = document.getElementById("layerArt");
 const layerCellsEl = document.getElementById("layerCells");
 const layerGroundEl = document.getElementById("layerGround");
@@ -2484,11 +2493,104 @@ function applySplit(w) {
   resizeHandleEl.setAttribute("aria-valuemax", String(CLUES_MAX));
 }
 
+// --- Grid zoom (Part D) -----------------------------------------------------
+//
+// `gridZoom` is either the string "fit" (the default: shrink an oversized board to
+// the available width, never grow a board that already fits) or a manually-chosen
+// number in [ZOOM_MIN, ZOOM_MAX]. Persisted puzzle-independently, like
+// murdoku:cluesWidth. Forced to 1 whenever EDIT is active (see applyGridZoom()) since
+// the Art-tab pointer mapping in edit mode reads raw post-transform client pixels
+// (artPointFromEvent/artHandleAt), unlike the solving-mode gestures which either use
+// elementFromPoint() (transform-aware) or divide by a measured rect (scale-invariant).
+let gridZoom = "fit";
+
+function loadGridZoom() {
+  try {
+    const raw = localStorage.getItem("murdoku:gridZoom");
+    if (raw === null || raw === "fit") { gridZoom = "fit"; return; }
+    const n = parseFloat(raw);
+    gridZoom = Number.isFinite(n) && n >= ZOOM_MIN && n <= ZOOM_MAX ? n : "fit";
+  } catch (err) {
+    console.warn("Couldn't load grid zoom:", err);
+    gridZoom = "fit";
+  }
+}
+
+function saveGridZoom() {
+  try {
+    localStorage.setItem("murdoku:gridZoom", String(gridZoom));
+  } catch (err) {
+    console.warn("Couldn't save grid zoom:", err);
+  }
+}
+
+// The width available to the grid itself: .grid-wrap is `width:100%` of its flex
+// container (main in stacked mode, the workspace's 1fr track in split mode) and never
+// shrink-to-fits its content, so measuring its clientWidth doesn't feed back into the
+// zoom it's about to be given.
+function availableGridWidth() {
+  return gridWrapEl.clientWidth || Infinity;
+}
+
+// #grid's offsetWidth is its UNSCALED border-box width (a CSS transform never changes
+// layout size), so this ratio is well-defined regardless of whatever zoom is already
+// applied -- no feedback loop between this and applyGridZoom() below.
+function computeFitZoom() {
+  const natural = gridEl.offsetWidth;
+  if (!natural) return 1;
+  return Math.min(1, availableGridWidth() / natural);
+}
+
+function updateZoomButtons(zoom) {
+  zoomFitBtn.classList.toggle("active", gridZoom === "fit");
+  zoomOutBtn.disabled = zoom <= ZOOM_MIN + 1e-6;
+  zoomInBtn.disabled = zoom >= ZOOM_MAX - 1e-6;
+}
+
+// Applies the current zoom to #grid and resizes #gridZoomBox to match -- a transform
+// alone doesn't change layout size, so without the resize the page would keep
+// reserving the grid's unscaled footprint and leave a gap below a zoomed-out board.
+function applyGridZoom() {
+  if (!PUZZLE) return;
+  const zoom = EDIT ? 1 : (gridZoom === "fit" ? computeFitZoom() : Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, gridZoom)));
+  gridEl.style.setProperty("--grid-zoom", String(zoom));
+  gridZoomBoxEl.style.width = `${Math.ceil(gridEl.offsetWidth * zoom)}px`;
+  gridZoomBoxEl.style.height = `${Math.ceil(gridEl.offsetHeight * zoom)}px`;
+  updateZoomButtons(zoom);
+}
+
+function stepZoom(delta) {
+  const current = gridZoom === "fit" ? computeFitZoom() : gridZoom;
+  gridZoom = Math.round(Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, current + delta)) * 10) / 10;
+  applyGridZoom();
+  saveGridZoom();
+}
+
+zoomOutBtn.addEventListener("click", () => stepZoom(-ZOOM_STEP));
+zoomInBtn.addEventListener("click", () => stepZoom(ZOOM_STEP));
+zoomFitBtn.addEventListener("click", () => {
+  gridZoom = "fit";
+  applyGridZoom();
+  saveGridZoom();
+});
+
 function updateLayoutMode() {
   const split = canSplit();
   mainEl.classList.toggle("split", split);
-  if (split) applySplit(clampCluesWidth(desiredCluesWidth));
-  else workspaceEl.style.gridTemplateColumns = "";
+  if (split) {
+    applySplit(clampCluesWidth(desiredCluesWidth));
+    // Split mode has its own explicit --split-max (style.css), so a leftover
+    // --stack-max from a previous stacked puzzle must not linger and constrain it.
+    mainEl.style.removeProperty("--stack-max");
+  } else {
+    workspaceEl.style.gridTemplateColumns = "";
+    // A puzzle too big to reach split mode (e.g. 16x16) would otherwise be cropped
+    // inside the fixed 720px stacked box (see the --stack-max rule in style.css).
+    // Grow up to the grid's own minimum width, but never below 720 — small puzzles
+    // must render identically to before this existed.
+    mainEl.style.setProperty("--stack-max", `${Math.max(720, Math.min(availableWidth(), gridMinWidth()))}px`);
+  }
+  applyGridZoom();
   syncLayerGeometry();
 }
 
@@ -2503,12 +2605,18 @@ function updateLayoutMode() {
 // independently-computed 1fr) makes every layer agree on the exact same boundaries.
 function syncLayerGeometry() {
   if (!PUZZLE) return;
-  const rect = layerCellsEl.getBoundingClientRect();
-  if (!rect.width || !rect.height) return; // not laid out yet (e.g. display:none)
+  // offsetWidth/offsetHeight, NOT getBoundingClientRect(): the rect is POST-transform
+  // (#grid carries `transform: scale(var(--grid-zoom))` for the Part D zoom control),
+  // while these grid-template pixel values are consumed as UNTRANSFORMED local
+  // coordinates. Feeding a scaled rect in here would double-apply the zoom and every
+  // overlay layer would drift off its cells -- exactly the row-by-row drift the
+  // comment above this function describes fixing, just from a different cause.
+  const w = layerCellsEl.offsetWidth, h = layerCellsEl.offsetHeight;
+  if (!w || !h) return; // not laid out yet (e.g. display:none)
   const gs = getComputedStyle(gridEl);
   const hdrPx = parseFloat(gs.getPropertyValue("--hdr-size")) || 28;
-  const colPx = (rect.width - hdrPx) / PUZZLE.cols;
-  const rowPx = (rect.height - hdrPx) / PUZZLE.rows;
+  const colPx = (w - hdrPx) / PUZZLE.cols;
+  const rowPx = (h - hdrPx) / PUZZLE.rows;
   const cols = `${hdrPx}px repeat(${PUZZLE.cols}, ${colPx}px)`;
   const rows = `${hdrPx}px repeat(${PUZZLE.rows}, ${rowPx}px)`;
   [layerGroundEl, layerObjectsEl, layerLabelsEl, layerMarksEl, layerHeadersEl].forEach((el) => {
@@ -2555,6 +2663,10 @@ function applyControlsCollapsed() {
 controlsToggleEl.addEventListener("click", () => {
   controlsCollapsed = !controlsCollapsed;
   applyControlsCollapsed();
+  // Collapsing the dock only changes reserved height today, not the grid's available
+  // width, but "fit" zoom is cheap to recompute and this keeps the two from silently
+  // drifting apart if that ever changes.
+  updateLayoutMode();
   try {
     localStorage.setItem("murdoku:controlsCollapsed", controlsCollapsed ? "1" : "0");
   } catch (err) {
@@ -4796,6 +4908,7 @@ async function boot() {
   loadControlsCollapsed();
   applyControlsCollapsed();
   loadSplitPref();
+  loadGridZoom();
   loadViewPrefs();
   applyViewPrefs();
   loadArtCalibView();

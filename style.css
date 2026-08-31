@@ -49,7 +49,11 @@ header h1 { margin: 0 0 4px; letter-spacing: 0.02em; }
   font-size: 0.85rem;
 }
 
-main { width: 100%; max-width: 720px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+/* --stack-max is set by updateLayoutMode() in app.js for a large puzzle (e.g. 16x16)
+   that can't reach split mode: it lets the stacked grid use the full viewport width
+   instead of being cropped inside a fixed 720px box, while staying 720px (the var's
+   fallback) for every puzzle small enough that the fixed box was never a problem. */
+main { width: 100%; max-width: var(--stack-max, 720px); display: flex; flex-direction: column; align-items: center; gap: 16px; }
 
 /* Stacked (default): .workspace contributes no box of its own, so .grid-wrap and
    .clues remain plain flex children of main with the usual gap rhythm. */
@@ -417,16 +421,70 @@ body.edit-mode .players {
 
 /* --- Grid: layered (cells / objects / labels / marks) --- */
 
-.grid-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px; overflow-x: auto; }
+/* align-items: safe center centres the grid when it fits the wrap, but degrades to
+   start alignment the moment it overflows — a plain `center` on a flex item wider
+   than its (centered) container overflows on BOTH sides, and overflow-x:auto can't
+   scroll to a negative scrollLeft, so the left edge becomes permanently unreachable.
+   The plain `center` fallback line is for browsers without `safe` support. */
+.grid-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-items: safe center;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+/* Sizing box for the zoom transform below: a CSS transform doesn't change layout
+   size, so #grid at scale 0.6 would still reserve its full 1x box and leave a large
+   empty gap. app.js's applyGridZoom() sets this element's width/height in px, each
+   render, to #grid's own unscaled offsetWidth/offsetHeight * the current zoom, so the
+   page only ever reserves the space the zoomed grid actually occupies. */
+.grid-zoom-box {
+  position: relative;
+}
 
 .grid {
   --hdr-size: 28px;
+  --grid-zoom: 1;
   position: relative;
+  /* Before the zoom box existed, #grid was itself the flex item under .grid-wrap's
+     align-items:center, so it naturally shrink-wrapped to layer-cells' content size
+     (cells carry aspect-ratio:1 + min-width). Now that #grid sits inside a plain block
+     wrapper (#gridZoomBox) whose width JS sets FROM #grid's own offsetWidth, a bare
+     block "auto" width here would instead fill that wrapper -- and since the wrapper's
+     width comes from #grid, that's a circular dependency. width:fit-content keeps
+     #grid sized from its own content regardless of the wrapper, exactly like before.
+  */
+  width: fit-content;
   background: #111318;
   border: 3px solid #111318;
   border-radius: 6px;
   overflow: hidden;
+  transform: scale(var(--grid-zoom));
+  transform-origin: top left;
 }
+
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.zoom-btn {
+  min-width: 36px;
+  padding: 4px 8px;
+  font: 600 0.85rem/1 inherit;
+}
+.zoom-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.zoom-btn:disabled { opacity: 0.4; cursor: default; }
+/* No explicit edit-mode hide rule needed here: .zoom-controls lives inside .toolbar's
+   .view-options group, and `body.edit-mode .toolbar { display: none; }` above already
+   hides the whole toolbar there. applyGridZoom() separately forces the zoom value
+   itself to 1 while EDIT is active (see its comment) — the art-view pointer mapping in
+   edit mode reads post-transform client-space pixels directly, unlike the
+   ratio-based/elementFromPoint mapping the normal solving gestures use. Also covered
+   for free by `body.controls-collapsed .toolbar > .view-options { display: none; }`. */
 
 .grid-layer {
   display: grid;
@@ -999,6 +1057,11 @@ body.show-portraits .story-hero-victim {
   border-radius: 10px;
   padding: 14px 18px;
 }
+/* Stacked layout only: main's own max-width can now grow past 720px (see --stack-max
+   above) so a large puzzle isn't cropped, but that shouldn't drag clue prose out to
+   full width too — cap and centre it independently. main.split's grid-template already
+   gives .clues a fixed pixel column, so this rule must not apply there. */
+main:not(.split) .clues { max-width: 720px; margin-inline: auto; }
 .clues h2 { margin: 0 0 8px; font-size: 1rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
 .clues ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 

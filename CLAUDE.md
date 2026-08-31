@@ -54,33 +54,35 @@ URL) because `app.js` fetches puzzle JSON via `fetch()`.
 
 ## Rendering
 
-The grid is six aligned CSS-grid layers stacked in one `#grid` container, sharing the same
+The grid is seven aligned CSS-grid layers stacked in one `#grid` container, sharing the same
 `grid-template-rows/columns` so a cell at `(r,c)` lines up across all of them. Each template has
 a **fixed-size** leading track on both axes (`var(--hdr-size)`, a custom property on `.grid`) for
 the row/column header buttons, followed by `repeat(N, 1fr)` for the puzzle cells — model row/col
 `r`/`c` sit at CSS grid track `r+2`/`c+2`. The leading track must stay a fixed length, not `auto`:
-the six layers are independent grid containers only visually aligned via identical templates over
-the same shared box (five are `position:absolute;inset:0` against `layer-cells`' rendered box) —
+the seven layers are independent grid containers only visually aligned via identical templates over
+the same shared box (six are `position:absolute;inset:0` against `layer-cells`' rendered box) —
 an `auto` track sizes to each container's own content, and only `layer-headers` has real content
-in that track, so it would drift every cell out of alignment in the other five.
+in that track, so it would drift every cell out of alignment in the other six.
 
-1. `layer-cells` — room background tint + borders (thick between different rooms, thin within one).
+1. `layer-art` — the immersive board-art image (art mode), sitting below (or above, in edit mode's
+   Art tab) everything else.
+2. `layer-cells` — room background tint + borders (thick between different rooms, thin within one).
    **This is the only interactive layer for single-cell actions** — all pointer listeners are
    delegated here. A void cell (`isVoid(r,c)`) gets no `.cell` element at all — just a
    non-interactive `.void-cell` skin — so the entire gesture layer is naturally void-unaware:
    `cellFromEvent()`'s `.closest(".cell")` can never land on one.
-2. `layer-ground` — one art tile per covered cell (`OBJECT_TYPES[type].art(1,1)`) for the `ground`
+3. `layer-ground` — one art tile per covered cell (`OBJECT_TYPES[type].art(1,1)`) for the `ground`
    layer, rendered fainter than an object at the same occupiable state so an object sitting on
    top stays visually dominant. Unlike objects, ground renders per-cell rather than as one
    spanning SVG, since floor textures tile better than they stretch.
-3. `layer-objects` — one SVG per object (`OBJECT_TYPES[type].art(colSpan, rowSpan)`), spanning
+4. `layer-objects` — one SVG per object (`OBJECT_TYPES[type].art(colSpan, rowSpan)`), spanning
    multiple grid cells for multi-cell objects.
-4. `layer-labels` — room-name pills, anchored to each room's longest bottom-most horizontal run.
-5. `layer-marks` — the definite letter / ✕ / pencil-mark grid, plus the highlight rings.
-6. `layer-headers` — clickable row/column number buttons (`.grid-header`) in the fixed leading
+5. `layer-labels` — room-name pills, anchored to each room's longest bottom-most horizontal run.
+6. `layer-marks` — the definite letter / ✕ / pencil-mark grid, plus the highlight rings.
+7. `layer-headers` — clickable row/column number buttons (`.grid-header`) in the fixed leading
    track, delegated `click` listener attached once at boot.
 
-`renderStatic()` rebuilds all six layers and runs once per puzzle load. `renderMarks()` (after
+`renderStatic()` rebuilds all seven layers and runs once per puzzle load. `renderMarks()` (after
 every state mutation) and `applyHighlights()` (on every hover change) only rewrite content/classes
 on the existing `layer-marks` elements — never structure or listeners — so an in-progress
 long-press/drag gesture never has its DOM pulled out from under it.
@@ -156,6 +158,38 @@ explicit drag/keyboard/reset gesture and persisted; every render instead applies
 or switching back to a smaller puzzle restores it exactly. `updateLayoutMode()` runs at boot, at
 the end of every `initPuzzle()` (after `renderStatic()`, since it needs a real rendered `.cell` to
 measure), and on window resize.
+
+`.grid-wrap` centres its content (`align-items: safe center`) but degrades to start-aligned the
+moment that content overflows — a plain `center` on an overflowing flex item overflows on *both*
+sides, and `overflow-x: auto` can never scroll to a negative `scrollLeft`, so without `safe` the
+board's leftmost column or so becomes permanently unreachable on a puzzle too wide for the
+viewport (this bit tablets on the 16×16 puzzles). For the same oversized-puzzle case, the stacked
+(non-split) layout's `main` normally caps at a 720px `max-width`; `updateLayoutMode()` instead
+raises that cap via the `--stack-max` custom property, up to the puzzle's own `gridMinWidth()`
+(never below 720px, so small puzzles are unaffected), so the grid isn't cropped inside a
+fixed-width box it can't fit. `main.split` ignores `--stack-max` and keeps its own `--split-max`.
+
+The grid itself additionally supports a zoom control (three toolbar buttons — `−`/`Fit`/`+` — in
+`.view-options`, next to the display-preference checkboxes) so a board that's still too big (or a
+player who wants to zoom in on a corner) can rescale it directly. Mechanically, `#grid` sits inside
+a `#gridZoomBox` sizing wrapper and carries `transform: scale(var(--grid-zoom))` with
+`transform-origin: top left` — a transform on the shared seven-layer box keeps every layer aligned
+by construction, which is why this was preferred over shrinking `.cell`'s `min-width` directly. A
+transform doesn't change layout size, so `applyGridZoom()` also resizes `#gridZoomBox` to
+`#grid`'s *unscaled* `offsetWidth`/`offsetHeight` (a CSS transform never changes these) times the
+current zoom, otherwise the page would keep reserving the grid's full-size footprint and leave a
+gap below a zoomed-out board. `gridZoom` is `"fit"` (default: shrinks an oversized board to the
+available width, but never grows one that already fits — so the common case renders at exactly
+zoom 1, unchanged from before this existed) or a manually-chosen number clamped to `[0.5, 1.5]`,
+persisted puzzle-independently as `murdoku:gridZoom`. **`syncLayerGeometry()` reads
+`layerCellsEl.offsetWidth`/`offsetHeight`, never `getBoundingClientRect()`**, to derive the other
+layers' pixel track sizes — the rect is post-transform while those values are consumed as
+untransformed local coordinates, so a rect there would double-apply the zoom and drift every
+overlay off its cells. Edit mode forces zoom to 1 and hides the zoom control (covered for free by
+`body.edit-mode .toolbar { display: none; }`, since the buttons live in `.view-options`) because
+its Art-tab pointer mapping (`artPointFromEvent`/`artHandleAt`) reads raw post-transform
+client-space pixels, unlike the solving-mode gestures (`elementFromPoint()`-based, or ratio/rect
+divisions that are scale-invariant).
 
 Two page-level docks sit outside this split/stacked distinction, viewport-relative in both modes.
 `#controlsDock` (`position: sticky; top: 0`) wraps `.toolbar` and stays pinned while the page
