@@ -801,6 +801,9 @@ const loadBtn = document.getElementById("loadBtn");
 const loadInput = document.getElementById("loadInput");
 const autosaveNote = document.getElementById("autosaveNote");
 const clueListEl = document.getElementById("clueList");
+const rulesPanelEl = document.getElementById("rulesPanel");
+const rulesSummaryEl = document.getElementById("rulesSummary");
+const rulesBodyEl = document.getElementById("rulesBody");
 const puzzleSelectEl = document.getElementById("puzzleSelect");
 const puzzleTitleEl = document.getElementById("puzzleTitle");
 const puzzleDifficultyEl = document.getElementById("puzzleDifficulty");
@@ -1013,6 +1016,120 @@ function clearPortraitZoom() {
 // puzzle switch and would stack duplicate document listeners.
 document.addEventListener("click", clearPortraitZoom);
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") clearPortraitZoom(); });
+
+// --- Extra rules panel ---------------------------------------------------
+//
+// puzzles/rules/<ruleset-id>.json holds a rules page (verbatim prose, plus an optional
+// photo) that can be shared across several puzzles — see CLAUDE.md and
+// PLAN-photo-import.md §5. A puzzle opts in via an optional "rulesets" array of ruleset
+// ids; a ruleset file never lists its puzzles back (see the plan for why that direction
+// was chosen).
+//
+// rulesetCache is keyed by RULESET id, not puzzle id — several puzzles pointing at the
+// same shared rules page (a "house rules" page photographed once) should fetch it once
+// per session, not once per puzzle that references it. Same lazy-fetch-and-cache shape
+// as solutionCache/storyCache (a 404 or parse failure caches as the string "none"), but
+// unlike those two this is fetched at puzzle load rather than lazily on click: a
+// solution/story is a spoiler worth withholding until asked for, but a rule the player
+// hasn't read makes the puzzle literally unsolvable — there's nothing to protect here.
+const rulesetCache = new Map();
+
+async function fetchRuleset(rulesetId) {
+  if (rulesetCache.has(rulesetId)) return rulesetCache.get(rulesetId);
+  let result = "none";
+  try {
+    const res = await fetch(`puzzles/rules/${rulesetId}.json`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && Array.isArray(data.text)) result = data;
+    }
+  } catch (err) {
+    result = "none";
+  }
+  rulesetCache.set(rulesetId, result);
+  return result;
+}
+
+// Renders the loaded ruleset(s) into #rulesPanel, or hides it entirely when the puzzle
+// has none (or none of its referenced rulesets loaded) — same availability-gating as
+// prefPortraitsLabel/prefArtModeLabel in applyViewPrefs().
+function renderRulesPanel(rulesets) {
+  rulesPanelEl.hidden = rulesets.length === 0;
+  if (rulesets.length === 0) return;
+  rulesSummaryEl.textContent =
+    rulesets.length === 1 ? `📜 Extra rules — ${rulesets[0].title}` : "📜 Extra rules";
+  rulesBodyEl.innerHTML = "";
+  rulesets.forEach((rs) => {
+    rs.text.forEach((line) => {
+      const p = document.createElement("p");
+      p.textContent = line;
+      rulesBodyEl.appendChild(p);
+    });
+    if (rs.image) {
+      // Reuses #boardLegend's figure styling (see .board-legend / .rules-image in
+      // style.css) — same idea, a static reference photo rather than live board art.
+      const figure = document.createElement("figure");
+      figure.className = "rules-image";
+      const img = document.createElement("img");
+      img.src = `puzzles/${rs.image}`;
+      img.loading = "lazy";
+      img.alt = rs.imageAlt || rs.title;
+      figure.appendChild(img);
+      rulesBodyEl.appendChild(figure);
+    }
+  });
+}
+
+// Fetches every ruleset a puzzle references (in order — the plan makes this an array,
+// not a single id, specifically so a puzzle carrying two rule pages controls the panel's
+// order) and renders them once all have resolved. Called from initPuzzle(), fire-and-
+// forget — initPuzzle() itself stays synchronous, same as how portrait/board images just
+// load in the background rather than blocking the render.
+async function loadRulesPanel() {
+  const puzzleId = PUZZLE?.id;
+  const ids = PUZZLE?.rulesets || [];
+  // Hidden immediately, synchronously (everything up to the first await below runs
+  // before this function's caller gets control back) — so a puzzle switch can never
+  // leave the PREVIOUS puzzle's rules visible while this one's fetch is still in flight.
+  rulesPanelEl.hidden = true;
+  if (!puzzleId || ids.length === 0) return;
+  const fetched = await Promise.all(ids.map(fetchRuleset));
+  // The player may have switched puzzles while these were in flight — a switch calls
+  // initPuzzle() again, which calls loadRulesPanel() again for the new puzzle, so an
+  // outdated response here must never paint over it. Unlike onSolveClick()'s
+  // gridGeneration guard, only PUZZLE.id matters: ruleset text doesn't depend on grid
+  // state, so an intervening placement/undo on the SAME puzzle must NOT discard a fetch
+  // that's still perfectly valid — reusing gridGeneration here (it bumps on every
+  // mutation, not just a puzzle switch) would cause exactly that false discard.
+  if (!PUZZLE || PUZZLE.id !== puzzleId) return;
+  renderRulesPanel(fetched.filter((r) => r !== "none"));
+}
+
+const RULES_OPEN_KEY = "murdoku:rulesOpen";
+
+// Bare string, puzzle-independent — same convention as murdoku:gridZoom /
+// murdoku:controlsCollapsed. Applied once at boot (the panel's open/closed state isn't
+// puzzle-specific, so it isn't reapplied per puzzle switch). Defaults OPEN: unlike the
+// controls dock, which collapses to save space on a control the player already knows how
+// to use, defaulting this closed would hide information the puzzle cannot be solved
+// without — the trap PLAN-photo-import.md §5.3 calls out explicitly.
+function loadRulesOpenPref() {
+  try {
+    const raw = localStorage.getItem(RULES_OPEN_KEY);
+    rulesPanelEl.open = raw === null ? true : raw === "1";
+  } catch (err) {
+    console.warn("Couldn't load rules-panel open state:", err);
+    rulesPanelEl.open = true;
+  }
+}
+
+rulesPanelEl.addEventListener("toggle", () => {
+  try {
+    localStorage.setItem(RULES_OPEN_KEY, rulesPanelEl.open ? "1" : "0");
+  } catch (err) {
+    console.warn("Couldn't save rules-panel open state:", err);
+  }
+});
 
 // --- Legend --------------------------------------------------------------
 
@@ -3126,6 +3243,7 @@ function blankPuzzle() {
     roomGrid: Array.from({ length: rows }, () => Array(cols).fill("room1")),
     objects: [],
     ground: [],
+    rulesets: [],
   };
 }
 
@@ -4818,6 +4936,7 @@ function exportPuzzleJSON() {
   };
   if (PUZZLE.ground?.length) ordered.ground = PUZZLE.ground;
   if (PUZZLE.customObjectTypes?.length) ordered.customObjectTypes = PUZZLE.customObjectTypes;
+  if (PUZZLE.rulesets?.length) ordered.rulesets = PUZZLE.rulesets;
   if (PUZZLE.art) ordered.art = PUZZLE.art;
   return ordered;
 }
@@ -4880,6 +4999,7 @@ function initPuzzle(data) {
   applySuspectColors();
   buildPalette();
   buildClueList();
+  loadRulesPanel(); // fire-and-forget — see its own comment for the puzzle-switch guard
   updateSelectionUI();
   updateHint();
   updateUndoButton();
@@ -4909,6 +5029,7 @@ async function boot() {
   applyControlsCollapsed();
   loadSplitPref();
   loadGridZoom();
+  loadRulesOpenPref();
   loadViewPrefs();
   applyViewPrefs();
   loadArtCalibView();

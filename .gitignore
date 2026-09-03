@@ -5,3 +5,6 @@ __pycache__/
 .playwright-mcp/
 puzzles/art/*/_page.png
 puzzles/art/*/legend-guide.png
+puzzles/art/*/photo-guide.png
+puzzles/art/*/clues/
+puzzles/source/raw/

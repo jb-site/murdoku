@@ -97,24 +97,48 @@ Emit the `art` block ready to paste:
 }
 ```
 
-### 2.5 Light normalisation, so the existing detectors still fire
+### 2.5 Light normalisation — opt-in, not default
 
 `detect_portrait_boxes()` thresholds at `arr > 230` (near-white polaroid cards) and
 `detect_board_bbox()` at `< 128` (dark grid lines). Both assume a flat scan. On a photo, a gutter
 shadow or a warm bulb sinks paper white to ~190 and the detectors return nothing.
 
-`photo_prep.py` should, after warping and before writing:
+**Implementation note — this was planned as an always-on step, and it should not be.** Every warp
+this tool performs is written straight to committed, player-facing artwork: `board.png` directly,
+and the portraits and legend that `extract_art.py` crops out of `_page.png`. Measured against the
+12 known-good PDF-path boards, the correction moves colour by a **mean of 18–33 levels per
+channel** (95th percentile 55–87). That is a visible recolour, not a touch-up, and recolouring the
+artwork to suit a detector is the wrong trade when the detector has its own threshold knobs.
 
-1. **Flatten illumination** — divide the image by a heavily blurred copy of itself
-   (`PIL.ImageFilter.GaussianBlur`, radius ≈ 1/12 of the short edge), rescaled so the modal value
-   maps to white. Kills the gutter gradient and most soft glare in a few lines.
-2. **White-balance** — per-channel scale so the 95th percentile is white. Fixes the yellow cast
-   that makes portrait cards fail the `>230` test.
-3. **Mild unsharp mask** — recovers the thin grid lines that the perspective resample softens,
-   which is what `detect_board_bbox`'s longest-dark-run scan is looking for.
+So `photo_prep.py` ships it behind `--normalise`, and the escalation order when detection
+misbehaves on a photo is:
 
-Then make the two constants CLI-overridable (`--white-threshold`, `--dark-threshold`) rather than
-editing the module, since print stock varies book to book.
+1. **`extract_art.py --white-threshold / --dark-threshold`** — tell the detectors what this book's
+   stock actually photographs as. This is why those flags exist; `photo_prep.py` reports the pair
+   back for you.
+2. **`--normalise`**, accepting the colour cost on that puzzle.
+3. **Reshoot with flatter light** — always the best answer for severe glare, or a gutter gradient
+   steep enough that step 2 cannot fix it either.
+
+What `--normalise` does, when asked:
+
+1. **Estimate illumination as a local high percentile of luminance** over a large window — the
+   standard document-imaging background estimate, computed on a heavily downscaled copy and scaled
+   back up. A Gaussian blur cannot tell a dark room tile from a shadow (both are simply "locally
+   dark"), so a blur-based field drags down over genuine content and the correction then washes
+   that content out. A local high percentile reads the brightest paper *near* each pixel instead,
+   which grid lines, furniture and mid-size colour blocks cannot pull down.
+2. **Apply the gain from luminance only**, shared across all three channels, centred on the field's
+   median and clamped to `[0.85, 1.25]`, so hue is preserved and an evenly-lit photo comes back
+   essentially untouched. Correcting each channel against its own blurred self — the obvious
+   reading of "divide by a blurred copy" — collapses any large uniformly-coloured region toward
+   white regardless of hue, which is precisely what a puzzle board is made of.
+3. **White-balance** per channel to the 95th percentile, capped, for a warm-bulb cast.
+4. **Mild unsharp mask**, recovering the thin grid lines the perspective resample softens.
+
+Either way, make the two detector constants CLI-overridable (`--white-threshold`,
+`--dark-threshold`) rather than editing the module, since print stock varies book to book. That is
+the primary lever.
 
 ### 2.6 Shooting guidance (goes in the prompt doc)
 

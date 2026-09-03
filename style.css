@@ -1110,6 +1110,56 @@ body.show-portraits .clue-portrait-wrap { display: block; }
   max-width: none;
 }
 
+/* --- Extra rules panel (puzzles/rules/<id>.json, Phase 4 of PLAN-photo-import.md) ---
+   Deliberately placed above #clueList inside .clues, in the markup, rather than as a
+   sibling section of its own — that gets both layouts for free (main.split's sticky
+   right-hand column, or sitting directly above the clues when stacked) with zero extra
+   layout rules here. Hidden/shown per puzzle by loadRulesPanel() in app.js; open/closed
+   state is the player's own choice, persisted puzzle-independently (murdoku:rulesOpen).
+   Modest by design — an information panel, not a feature — so it borrows .editor-
+   disclosure's summary-triangle language rather than inventing new chrome. */
+.rules-panel {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background: #2f3239;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.rules-panel[hidden] { display: none; } /* same UA-vs-author-display trap as .editor-bar[hidden] */
+.rules-panel > summary {
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+}
+.rules-panel > summary::-webkit-details-marker { display: none; }
+.rules-panel > summary::before { content: "▸ "; }
+.rules-panel[open] > summary::before { content: "▾ "; }
+.rules-panel[open] > summary { margin-bottom: 8px; }
+.rules-panel > summary:hover { color: var(--accent); }
+
+.rules-body p { margin: 0 0 8px; line-height: 1.4; }
+.rules-body p:last-child { margin-bottom: 0; }
+
+/* Same idea as .board-legend (a static reference photo, not live board art — see that
+   rule's own comment), reused here rather than duplicated verbatim only because the
+   two live in different parent contexts (.grid-wrap vs. .rules-body). */
+.rules-image {
+  margin: 8px 0 0;
+  padding: 6px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  line-height: 0;
+}
+.rules-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 22vh;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
 /* --- Player panel (room guess + notes, toggleable) --- */
 
 .players {

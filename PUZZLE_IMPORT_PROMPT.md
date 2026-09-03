@@ -13,37 +13,108 @@ locally by an assistant that can already read images/PDFs directly.
 > You are converting a photo or PDF of a "Murdoku" (whodunnit-sudoku) puzzle
 > into a JSON file for the Murdoku web app at `murdoku/`.
 >
-> **1. Extract the text layer first — it's nearly free and gives verbatim
-> wording.** Before touching the image, run `pdftotext -layout input.pdf -`
-> and read the output. For puzzles produced from this template, it cleanly
-> yields the `title`, `difficulty`, every room label, the legend's
-> occupiable/non-occupiable object names, and — most importantly — every
-> suspect's clue sentence(s), character-for-character. Treat this text as
-> the **authoritative source for clue wording** (see step 5) rather than
-> transcribing clues by eye off a rendered image; it's both cheaper (no
-> vision tokens) and more accurate (no OCR-by-eye drift). Two caveats to
-> watch for: (a) the PDF's own column/portrait layout can make `pdftotext`
-> interleave text in a jumbled order, so a sentence's *wording* is reliable
-> but which suspect it belongs to sometimes isn't — confirm attribution
-> against the image if a name-to-clue pairing looks ambiguous or a stray
-> extra name appears; (b) some PDFs have leftover invisible/placeholder
-> "Lorem ipsum" design text sitting behind the real clue text, which
-> `pdftotext` will happily extract mixed in with the real sentence — if a
-> clue's extracted text looks garbled or contains obvious filler Latin, that
-> one clue must be read directly off the rendered image instead.
+> **1–2. Get the text and the geometry, by source type.** The two capture
+> methods diverge here — pick the branch that matches how you got this
+> puzzle, then continue with step 3, which is the same either way.
 >
-> **2. Look closely at the image for everything spatial.** Render the PDF to
-> a high-resolution PNG (e.g. `pdftoppm -png -r 300 input.pdf output`) and
-> crop/zoom into the grid region — furniture icons and thin grid lines are
-> easy to misread at low resolution. Read each quadrant of the grid
-> separately if it's large. For a large grid (8+ per side), it's worth
-> detecting the exact pixel row/column boundaries programmatically (look for
-> the dark grid-line bands) and overlaying row/col labels on a copy of the
-> image before reading cells — far less error-prone than eyeballing
-> coordinates. Room boundaries, void cells, furniture positions/spans, and
-> suspect portraits/reading order are genuinely spatial information that
-> `pdftotext` can't give you — this pass is still required even when step 1
-> supplied the text.
+> ### Source: PDF
+>
+> > **1. Extract the text layer first — it's nearly free and gives verbatim
+> > wording.** Before touching the image, run `pdftotext -layout input.pdf -`
+> > and read the output. For puzzles produced from this template, it cleanly
+> > yields the `title`, `difficulty`, every room label, the legend's
+> > occupiable/non-occupiable object names, and — most importantly — every
+> > suspect's clue sentence(s), character-for-character. Treat this text as
+> > the **authoritative source for clue wording** (see step 5) rather than
+> > transcribing clues by eye off a rendered image; it's both cheaper (no
+> > vision tokens) and more accurate (no OCR-by-eye drift). Two caveats to
+> > watch for: (a) the PDF's own column/portrait layout can make `pdftotext`
+> > interleave text in a jumbled order, so a sentence's *wording* is reliable
+> > but which suspect it belongs to sometimes isn't — confirm attribution
+> > against the image if a name-to-clue pairing looks ambiguous or a stray
+> > extra name appears; (b) some PDFs have leftover invisible/placeholder
+> > "Lorem ipsum" design text sitting behind the real clue text, which
+> > `pdftotext` will happily extract mixed in with the real sentence — if a
+> > clue's extracted text looks garbled or contains obvious filler Latin,
+> > that one clue must be read directly off the rendered image instead.
+> >
+> > **2. Look closely at the image for everything spatial.** Render the PDF
+> > to a high-resolution PNG (e.g. `pdftoppm -png -r 300 input.pdf output`)
+> > and crop/zoom into the grid region — furniture icons and thin grid lines
+> > are easy to misread at low resolution. Read each quadrant of the grid
+> > separately if it's large. For a large grid (8+ per side), it's worth
+> > detecting the exact pixel row/column boundaries programmatically (look
+> > for the dark grid-line bands) and overlaying row/col labels on a copy of
+> > the image before reading cells — far less error-prone than eyeballing
+> > coordinates. Room boundaries, void cells, furniture positions/spans, and
+> > suspect portraits/reading order are genuinely spatial information that
+> > `pdftotext` can't give you — this pass is still required even when step 1
+> > supplied the text.
+>
+> ### Source: photo
+>
+> > A photo has no text layer and no guaranteed flat, axis-aligned page —
+> > perspective, roll, page curl and uneven light all stand between the raw
+> > shot and something the usual reading techniques work on. Fix the input
+> > before reading anything off it; don't try to read a skewed, unevenly-lit
+> > photo directly.
+> >
+> > **1. Rectify the page first, so every read below happens on a flat
+> > page.** Run `tools/photo_prep.py <id> --guide` to get a labelled
+> > coordinate overlay, read the four page corners (TL, TR, BR, BL) off it,
+> > then `tools/photo_prep.py <id> --page-quad x0,y0,x1,y1,x2,y2,x3,y3`. This
+> > writes `puzzles/art/<id>/_page.png` — exactly the artefact `pdftoppm`
+> > produces on the PDF path — and normalises illumination/white-balance/
+> > sharpness so the same detectors `tools/extract_art.py` already has still
+> > fire. If the book won't lie flat, shoot the grid and the clue block as
+> > two separate photos (`--part grid` / `--part clues`) rather than fighting
+> > one warped shot; see the shooting checklist below before you shoot at
+> > all.
+> >
+> > **2. Transcribe the text with a doubled-read, since there's no text
+> > layer to fall back on.**
+> > - Crop the clue block out of the rectified page and read each suspect's
+> >   card in isolation, at full resolution — a whole-page read is where
+> >   OCR-by-eye drift lives, a single 400px-tall card crop is close to
+> >   trivial. `tools/photo_prep.py <id> --clue-crops --rows N --cols M
+> >   --clue-bbox x0,y0,x1,y1` (bbox read off the guide) slices the card grid
+> >   automatically once `_page.png` exists.
+> > - **Transcribe each clue twice, independently, and diff the two
+> >   readings.** Any mismatch gets re-read at higher zoom before you accept
+> >   it. This is the cheap substitute for having ground truth, and it costs
+> >   far less than a wrong clue discovered after the story is written. Do
+> >   the same doubled-read for the title, difficulty, room labels and the
+> >   legend's occupiable/non-occupiable labels.
+> > - **Write the result to `puzzles/source/<id>-transcript.txt` before
+> >   writing any JSON.** This is the artefact that replaces the `pdftotext`
+> >   output for this puzzle — step 8's verbatim diff below then works
+> >   exactly as written, against this file instead of against recall.
+> >
+> > **Look closely at the rectified page for everything spatial** — the same
+> > pass step 2 describes on the PDF branch, just against `_page.png` (or a
+> > `--board-quad`-warped `board.png`, which needs zero further calibration —
+> > see the checklist below) instead of a `pdftoppm` render. Room boundaries,
+> > void cells, furniture positions/spans and suspect portraits/reading order
+> > are still genuinely spatial and still need this pass regardless of where
+> > the text came from.
+> >
+> > **Shooting checklist**, cheap to follow and expensive to skip after the
+> > fact:
+> > - Flatten the book; if a page won't lie flat, shoot the grid and the clue
+> >   block separately — two clean quads beat one warped one.
+> > - Diffuse, indirect light, camera parallel to the page, no flash. Glare
+> >   over a grid line is unrecoverable; glare over blank paper is harmless.
+> > - Frame the *whole* board plus a margin — the quad corners need to exist
+> >   in the shot.
+> > - Shoot at 8MP+ so a single grid cell comes out ≥120px after warping;
+> >   furniture icons are the limiting detail.
+> >
+> > **Repo weight**: commit the rectified derivatives (`board.png`,
+> > portraits, `legend.png`) as usual, plus the original photo downscaled to
+> > 2400px on the long edge, JPEG quality 85, as `puzzles/source/<id>-page.jpg`
+> > (preserves the "keep the source for reference" convention at a fraction
+> > of the size). Full-resolution originals live under `puzzles/source/raw/`,
+> > which is gitignored — they stay local, never committed.
 >
 > **3. Extract the grid structure:**
 > - `rows` / `cols` — count the grid cells.
@@ -258,6 +329,9 @@ locally by an assistant that can already read images/PDFs directly.
 > - Every `clues[].text` matches the `pdftotext` extraction verbatim (modulo
 >   only the pronoun→name substitution from step 5) — diff it against the
 >   raw extraction one more time and watch for reworded/merged sentences.
+> - For a photo-sourced puzzle, run this same verbatim diff against
+>   `puzzles/source/<id>-transcript.txt` instead — it plays the role the
+>   `pdftotext` output plays on the PDF path.
 
 ---
 
@@ -278,6 +352,16 @@ work — grid/room/object extraction, suspect reading-order and clue
 attribution, resolving any garbled/contaminated text flagged in step 1 — is
 still genuinely visual and still needs the full image-inspection guidance
 above; only the clue *wording* moves out of the image-reading budget.
+
+This central pre-pass is a PDF-path optimisation and doesn't apply to a
+photo-sourced puzzle in the batch — there's no single `pdftotext` step to
+front-load, and each photo needs its own `tools/photo_prep.py --page-quad`
+rectification (and, if the book's print stock is unusual, its own
+`tools/extract_art.py --from-image --white-threshold ... --dark-threshold
+...` values) before any reading happens. Run that per-puzzle prep first for
+every photo in the batch, the same way `pdftotext` is run first for every
+PDF, then dispatch each puzzle's remaining (still per-puzzle) grid/clue work
+as normal.
 
 ---
 
