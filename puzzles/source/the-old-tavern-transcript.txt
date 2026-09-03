@@ -1,0 +1,48 @@
+the-old-tavern — verbatim transcript
+Source: photo of printed book, pages 32-33 (puzzle "13. The Old Tavern")
+Photo: puzzles/source/photo-source/the-old-tavern.jpeg (24.5MP, EXIF orientation 6)
+Rectified via: tools/photo_prep.py --page-quad / --board-quad
+
+This file replaces the `pdftotext -layout` extraction the PDF path produces, and is
+the authoritative source for wording. Every clue below was transcribed twice
+independently (pass 1: rectified full page + per-card contact sheet; pass 2: each
+card crop re-read in isolation at full resolution) and the two passes diffed.
+Result: 8/8 identical, no mismatches, nothing needed a third read.
+
+== TITLE ==
+13. The Old Tavern
+
+== SUBTITLE / FLAVOUR ==
+This is the first exciting thing that's happened here since 1987.
+
+== DIFFICULTY ==
+(none printed — this book gives no difficulty rating, unlike the template PDFs)
+
+== GRID ==
+8 rows x 8 cols. Full rectangle, no void cells.
+(Confirmed two ways: lattice fit on the rectified board gave pitch 178.0px/col and
+179.0px/row over a 1440px canvas — i.e. exactly 8 — and the blank practice grid
+printed beside the board is also 8x8 with a rectangular outline.)
+
+== ROOM LABELS (as printed, in small caps on the board) ==
+COMMON ROOM
+RESTROOM
+BAR
+STORAGE ROOM
+
+== LEGEND ==
+(no legend box printed for this puzzle — nothing is called out as
+"cannot be occupied")
+
+== SUSPECTS AND CLUES (verbatim; ** marks the book's bold) ==
+Amir      He was in the **first column**.
+Bryson    He was **beside** a **TV**.
+Caleb     He was **beside** a **shelf**.
+Damien    He was in the **Restroom**.
+Eric      He was sitting in a **chair** in the **Restroom**.
+Finn      He was **beside** a **plant**.
+Garrett   He was sitting in a **chair**.
+Vlad      **The Victim**. He was alone with the murderer.
+
+== ANSWER LINE ==
+The murderer is...

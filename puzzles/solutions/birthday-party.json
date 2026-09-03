@@ -1,0 +1,17 @@
+{
+  "puzzleId": "birthday-party",
+  "sourceFile": "source/birthday-party-page.jpg",
+  "derivedBy": "constraint-solve",
+  "placements": {
+    "A": [3, 8],
+    "B": [8, 4],
+    "C": [2, 3],
+    "D": [5, 0],
+    "E": [7, 5],
+    "F": [1, 2],
+    "G": [0, 6],
+    "H": [6, 7],
+    "V": [4, 1]
+  },
+  "murderer": "D"
+}

@@ -10,5 +10,9 @@
   { "id": "the-golf-course", "title": "The Golf Course", "file": "the-golf-course.json" },
   { "id": "the-movie-studio", "title": "The Movie Studio", "file": "the-movie-studio.json" },
   { "id": "the-mystery-islands", "title": "The Mystery Islands", "file": "the-mystery-islands.json" },
-  { "id": "the-zoo", "title": "The Zoo", "file": "the-zoo.json" }
+  { "id": "the-zoo", "title": "The Zoo", "file": "the-zoo.json" },
+  { "id": "the-old-tavern", "title": "The Old Tavern", "file": "the-old-tavern.json" },
+  { "id": "ancestral-home", "title": "Ancestral Home", "file": "ancestral-home.json" },
+  { "id": "birthday-party", "title": "Birthday Party", "file": "birthday-party.json" },
+  { "id": "demolition-zone", "title": "Demolition Zone", "file": "demolition-zone.json" }
 ]

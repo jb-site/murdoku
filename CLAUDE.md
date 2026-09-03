@@ -225,9 +225,11 @@ below the grid, next to `#status`. Clicking it runs two checks, in order:
    editor round-trips the puzzle file through `enterEditMode()` → `Download JSON`, and a spoiler
    key living inside that object would be one silent bug away from riding along on that export;
    and lazy-fetching only works at all if the answer isn't already sitting in the response the
-   puzzle loaded from. All 12 puzzles currently have a solution file, checked for internal
-   consistency (a legal placement, and the murderer named in the source PDF is exactly the
-   single person sharing the victim's room) by `tools/check_solutions.py`.
+   puzzle loaded from. All 16 puzzles currently have a solution file, checked for internal
+   consistency (a legal placement, and the recorded murderer is exactly the single person
+   sharing the victim's room) by `tools/check_solutions.py`. For the 12 PDF-sourced puzzles the
+   murderer is the one named on the source PDF's answer page; for the four photo-sourced ones it
+   is whoever the puzzle's own constraints force, since no answer key was photographed.
 
 The outcome is stored in a module-level `verdict` (`null` when there isn't one) and rendered two
 ways: a dismissible `#verdictPanel`/`#verdictBackdrop` overlay carries the cosy-comic verdict
@@ -307,9 +309,15 @@ hover status, clue-ref highlighting, irregular/non-rectangular grids (void cells
 bulk-fill headers, the side-by-side clues layout, the multi-puzzle library, the in-app puzzle
 editor mode (rows/cols, rooms, objects, JSON import/export/validation), completion detection plus
 the two-check verdict, the cosy-comic reveal story with a tailored victory headline on a correct
-solve, and the opt-in escape reveal on a wrong-but-legal solve are all working for all 12 puzzles,
-11 of which now also have suspect portraits. Not yet built: structured suspects/clues editing in
-the editor (currently a raw-JSON textarea), and importing the two puzzles still sitting unimported
+solve, and the opt-in escape reveal on a wrong-but-legal solve are all working for all 16 puzzles,
+15 of which now also have suspect portraits. Four of the 16 (`the-old-tavern`, `demolition-zone`,
+`ancestral-home`, `birthday-party`) were imported from **photos of a printed book** rather than the
+template PDFs, via `tools/photo_prep.py` — see PLAN-photo-import.md and the photo branch of
+PUZZLE_IMPORT_PROMPT.md. Their solution files are `derivedBy: "constraint-solve"` (each verified to
+have exactly one solution) rather than read off an answer key, because the book's answer pages were
+not photographed. Not yet built: structured suspects/clues editing in
+the editor (currently a raw-JSON textarea), stories for the four photo-imported puzzles, and
+importing the two puzzles still sitting unimported
 in `puzzles/source/` (`a-walk-in-the-park`, `the-backyard-garden`).
 
 ## Conventions

@@ -1,0 +1,540 @@
+{
+  "id": "the-old-tavern",
+  "title": "The Old Tavern",
+  "sourceFile": "source/the-old-tavern-page.jpg",
+  "rows": 8,
+  "cols": 8,
+  "suspects": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "V"
+  ],
+  "names": {
+    "A": "Amir",
+    "B": "Bryson",
+    "C": "Caleb",
+    "D": "Damien",
+    "E": "Eric",
+    "F": "Finn",
+    "G": "Garrett",
+    "V": "Vlad (victim)"
+  },
+  "clues": [
+    {
+      "suspect": "A",
+      "text": "Amir (A) was in the first column.",
+      "refs": {}
+    },
+    {
+      "suspect": "B",
+      "text": "Bryson (B) was beside a TV.",
+      "refs": {
+        "objects": [
+          "tv"
+        ]
+      }
+    },
+    {
+      "suspect": "C",
+      "text": "Caleb (C) was beside a shelf.",
+      "refs": {
+        "objects": [
+          "shelf"
+        ]
+      }
+    },
+    {
+      "suspect": "D",
+      "text": "Damien (D) was in the Restroom.",
+      "refs": {
+        "rooms": [
+          "restroom"
+        ]
+      }
+    },
+    {
+      "suspect": "E",
+      "text": "Eric (E) was sitting in a chair in the Restroom.",
+      "refs": {
+        "objects": [
+          "chair"
+        ],
+        "rooms": [
+          "restroom"
+        ]
+      }
+    },
+    {
+      "suspect": "F",
+      "text": "Finn (F) was beside a plant.",
+      "refs": {
+        "objects": [
+          "plant"
+        ]
+      }
+    },
+    {
+      "suspect": "G",
+      "text": "Garrett (G) was sitting in a chair.",
+      "refs": {
+        "objects": [
+          "chair"
+        ]
+      }
+    },
+    {
+      "suspect": "V",
+      "text": "Vlad (V), the victim, was alone with the murderer \u2014 the killer was in the same area (room) as him.",
+      "refs": {}
+    }
+  ],
+  "rooms": {
+    "common": {
+      "name": "Common Room"
+    },
+    "restroom": {
+      "name": "Restroom"
+    },
+    "bar": {
+      "name": "Bar"
+    },
+    "storage": {
+      "name": "Storage Room"
+    }
+  },
+  "roomGrid": [
+    [
+      "common",
+      "common",
+      "common",
+      "common",
+      "restroom",
+      "restroom",
+      "restroom",
+      "restroom"
+    ],
+    [
+      "common",
+      "common",
+      "common",
+      "common",
+      "common",
+      "restroom",
+      "restroom",
+      "restroom"
+    ],
+    [
+      "common",
+      "common",
+      "common",
+      "common",
+      "common",
+      "restroom",
+      "restroom",
+      "restroom"
+    ],
+    [
+      "common",
+      "common",
+      "common",
+      "common",
+      "common",
+      "common",
+      "common",
+      "common"
+    ],
+    [
+      "common",
+      "common",
+      "common",
+      "common",
+      "common",
+      "common",
+      "common",
+      "common"
+    ],
+    [
+      "bar",
+      "bar",
+      "bar",
+      "bar",
+      "bar",
+      "bar",
+      "storage",
+      "storage"
+    ],
+    [
+      "bar",
+      "bar",
+      "bar",
+      "bar",
+      "bar",
+      "bar",
+      "storage",
+      "storage"
+    ],
+    [
+      "bar",
+      "bar",
+      "bar",
+      "bar",
+      "bar",
+      "storage",
+      "storage",
+      "storage"
+    ]
+  ],
+  "objects": [
+    {
+      "type": "chair",
+      "cells": [
+        [
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          0,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          0,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          0,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          2,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          4,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          4,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          4,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          4,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          0,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          1,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          2,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          3,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          3,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          3,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          5,
+          0
+        ],
+        [
+          6,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          5,
+          2
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          5,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "plant",
+      "cells": [
+        [
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "plant",
+      "cells": [
+        [
+          3,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "shelf",
+      "cells": [
+        [
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "shelf",
+      "cells": [
+        [
+          5,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "shelf",
+      "cells": [
+        [
+          7,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "shelf",
+      "cells": [
+        [
+          7,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "shelf",
+      "cells": [
+        [
+          7,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "tv",
+      "cells": [
+        [
+          4,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "tv",
+      "cells": [
+        [
+          6,
+          4
+        ]
+      ]
+    }
+  ],
+  "art": {
+    "board": "art/the-old-tavern/board.png",
+    "boardCrop": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+    },
+    "calibratedFor": {
+      "rows": 8,
+      "cols": 8
+    },
+    "portraits": {
+      "A": {
+        "src": "art/the-old-tavern/A.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "C": {
+        "src": "art/the-old-tavern/C.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "B": {
+        "src": "art/the-old-tavern/B.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "D": {
+        "src": "art/the-old-tavern/D.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "F": {
+        "src": "art/the-old-tavern/F.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "E": {
+        "src": "art/the-old-tavern/E.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "G": {
+        "src": "art/the-old-tavern/G.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "V": {
+        "src": "art/the-old-tavern/V.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      }
+    }
+  }
+}

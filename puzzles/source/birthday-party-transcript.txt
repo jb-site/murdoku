@@ -1,0 +1,47 @@
+birthday-party — verbatim transcript
+Source: photo of printed book, pages 34-35 (puzzle "14. Birthday Party")
+Photo: puzzles/source/photo-source/birthday-party.jpeg
+Rectified via: tools/photo_prep.py --page-quad / --board-quad
+
+This file replaces the `pdftotext -layout` extraction the PDF path produces, and is
+the authoritative source for wording. Every clue below was transcribed twice
+independently (pass 1: rectified full page at 1/3 scale; pass 2: three full-height,
+full-resolution column strips covering every card) and the two passes diffed.
+Result: 9/9 identical, no mismatches, nothing needed a third read.
+
+== TITLE ==
+14. Birthday Party
+
+== SUBTITLE / FLAVOUR ==
+As if homicide wasn't frightening enough, there's a clown at the crime scene?
+
+== DIFFICULTY ==
+(none printed — this book gives no difficulty rating, unlike the template PDFs)
+
+== GRID ==
+9 rows x 9 cols (confirmed by lattice fit on board.png: 720x720 at 80px/cell).
+
+== ROOM LABELS (as printed, in small caps on the board) ==
+BATHROOM
+GUEST ROOM
+LIVING ROOM
+KITCHEN
+MAIN BEDROOM
+DINING ROOM
+
+== LEGEND ==
+"Present" — cannot be occupied.
+
+== SUSPECTS AND CLUES (verbatim; ** marks the book's bold) ==
+Abraham   He was in the **Kitchen**, **beside** a table.
+Björn     He was in the **Dining Room** with **Ella** and **Hopsy**.
+Coralie   She was **beside** a **TV**.
+Dina      There was a **present** in her **column**, in the same room.
+Ella      She was sitting in a **chair**.
+Felix     He was on a **bed**.
+Gerald    He was **beside** a **present**.
+Hopsy     He was **beside** a **present**.
+Vanessa   **The Victim**. She was alone with the murderer.
+
+== ANSWER LINE ==
+The murderer is...

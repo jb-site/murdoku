@@ -35,8 +35,14 @@ grid|clues|legend to any mode to pick a specific source photo.
 
 Source photo resolution order (first match wins), for puzzle id <id> and
 optional --part <part>:
+    puzzles/source/photo-source/<id>[-<part>].{jpg,jpeg,png}
     puzzles/source/raw/<id>[-<part>].{jpg,jpeg,png}
     puzzles/source/<id>[-<part>].{jpg,jpeg,png}
+
+puzzles/source/photo-source/ is where book photos are dropped, and is
+gitignored along with puzzles/source/raw/ — full-resolution originals stay
+local. What gets committed is the rectified derivatives plus a 2400px-long-edge
+JPEG q85 copy at puzzles/source/<id>-page.jpg.
 
 Normalisation (flatten illumination, white-balance, mild unsharp) is OPT-IN,
 via --normalise. It exists to rescue a photo whose paper white sank below the
@@ -63,11 +69,12 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageDraw, ImageFilter, ImageOps
 from scipy import ndimage
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE_DIR = ROOT / "puzzles" / "source"
+PHOTO_SOURCE_DIR = SOURCE_DIR / "photo-source"
 RAW_DIR = SOURCE_DIR / "raw"
 ART_DIR = ROOT / "puzzles" / "art"
 PUZZLES_DIR = ROOT / "puzzles"
@@ -117,12 +124,28 @@ UNSHARP_PERCENT = 120
 UNSHARP_THRESHOLD = 3
 
 
+def load_photo(path):
+    """Open a source photo in the orientation every viewer displays it in.
+
+    Phone cameras store the sensor raster and a separate EXIF orientation tag
+    rather than rotating pixels. All four pilot photos came in as orientation 6
+    (landscape raster, displayed portrait). Without this, photo-guide.png is
+    drawn in the raw-raster frame while Preview/Finder/a browser show the
+    rotated one, so corners read off the photo land transposed and the warp
+    silently produces a rotated or mirrored page. Normalise on load so every
+    mode shares one frame.
+    """
+    img = Image.open(path)
+    img = ImageOps.exif_transpose(img)
+    return img.convert("RGB")
+
+
 def find_source_photo(puzzle_id, part=None):
     """Resolve the input photo per the module docstring's search order."""
     stem = f"{puzzle_id}-{part}" if part else puzzle_id
     exts = ("jpg", "jpeg", "png")
     tried = []
-    for base in (RAW_DIR, SOURCE_DIR):
+    for base in (PHOTO_SOURCE_DIR, RAW_DIR, SOURCE_DIR):
         for ext in exts:
             candidate = base / f"{stem}.{ext}"
             tried.append(candidate)
@@ -292,7 +315,7 @@ def write_guide(img, dest):
 
 def do_guide(args):
     photo_path = find_source_photo(args.puzzle_id, args.part)
-    img = Image.open(photo_path).convert("RGB")
+    img = load_photo(photo_path)
     out_dir = ART_DIR / args.puzzle_id
     out_dir.mkdir(parents=True, exist_ok=True)
     dest = out_dir / "photo-guide.png"
@@ -305,7 +328,7 @@ def do_guide(args):
 
 def do_page_quad(args):
     photo_path = find_source_photo(args.puzzle_id, args.part)
-    img = Image.open(photo_path).convert("RGB")
+    img = load_photo(photo_path)
     quad = parse_quad(args.page_quad)
     out_w, out_h = quad_output_size(quad)
     warped = warp_quad_to_rect(img, quad, out_w, out_h)
@@ -325,7 +348,7 @@ def do_board_quad(args):
     if not args.rows or not args.cols:
         sys.exit("--board-quad requires --rows and --cols")
     photo_path = find_source_photo(args.puzzle_id, args.part)
-    img = Image.open(photo_path).convert("RGB")
+    img = load_photo(photo_path)
     quad = parse_quad(args.board_quad)
     out_w = args.cols * BOARD_TARGET_CELL_W
     out_h = args.rows * BOARD_TARGET_CELL_W

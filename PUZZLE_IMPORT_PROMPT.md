@@ -108,13 +108,69 @@ locally by an assistant that can already read images/PDFs directly.
 > >   in the shot.
 > > - Shoot at 8MP+ so a single grid cell comes out ≥120px after warping;
 > >   furniture icons are the limiting detail.
+> > - A phone shot of a book held in landscape almost always carries an EXIF
+> >   orientation tag rather than rotated pixels. `photo_prep.py` normalises
+> >   this on load (`load_photo`), so the guide and every warp share the frame
+> >   your image viewer shows. Read corners off `photo-guide.png`, never off
+> >   the photo in Preview — only the guide is guaranteed to be in that frame.
+> >
+> > **A two-page spread is not one "page".** The template PDFs put a whole
+> > puzzle on a single page; a book puts the clue cards on the left page and
+> > the board (plus any legend) on the right. `_page.png` must be **one** of
+> > those pages, not the spread — portrait detection run over a spread picks
+> > up blobs from the facing page and mis-numbers the cards. So:
+> >   1. `--page-quad <clue page>` → portraits and clue crops.
+> >   2. `--board-quad <the board's outer grid corners>` → `board.png`.
+> >   3. Only if the puzzle has a legend, re-run `--page-quad <board page>`
+> >      (overwriting `_page.png`) and then `extract_art --legend`.
+> >
+> > **Do NOT pass `--board` to `extract_art` on the photo path.** It writes the
+> > same `puzzles/art/<id>/board.png` that `photo_prep --board-quad` just
+> > produced, replacing an exact, identity-crop warp with a detected bbox that
+> > then needs calibrating. `--board-quad` supersedes it; use `--portraits`
+> > and (when there is one) `--legend` only.
+> >
+> > **`--portraits` needs `puzzles/<id>.json` to already exist** — it maps each
+> > detected card onto a suspect letter. So the photo path's real order is
+> > transcribe → write the puzzle JSON (step 5) → *then* extract portraits,
+> > not art-first.
+> >
+> > **Counting the grid.** Fit the lattice with its boundaries pinned to `k*N/n`
+> > across the warped board and score the interior lines, choosing the best `n`.
+> > A free-floating fit will happily match `n` cells at the wrong pitch inside an
+> > oversized canvas — that silently produced two 8x8 boards that were really
+> > 9x9, each missing a column. If the board is not a rectangle, derive the quad
+> > from the border mask's **minimum-area bounding rectangle**, not its extreme
+> > points, and transcribe the cells outside the shape as `null` voids.
+> >
+> > **Detector thresholds.** Print stock photographs darker than a PDF
+> > renders. On the pilot book the polaroid card white sat at ~200-215, not the
+> > 230 `extract_art` defaults to, and detection returned **zero** boxes until
+> > `--white-threshold ~180`. Sweep the threshold and pick the value that
+> > yields exactly the expected box count; that is escalation step 1 and it was
+> > sufficient — `--normalise` was **not** needed, so the artwork kept its true
+> > colours. Note the victim's card is tint-highlighted (pink) rather than
+> > white, so no near-white threshold will ever catch it: expect to pin it with
+> > `--extra-box V=x0,y0,x1,y1` every time. Pin any other card the detector
+> > truncates the same way (`--extra-box` is additive, so a pinned card that is
+> > *also* auto-detected shows up twice — raise the threshold or regenerate
+> > that one PNG by hand rather than fighting it).
+> >
+> > **`--clue-crops` assumes a rigid grid.** If the book staggers its card
+> > columns (each column offset vertically from the last), a `--rows R --cols C`
+> > slice cuts speech bubbles off. Check one crop from every column before
+> > trusting the set; if they're staggered, crop per card instead — the column
+> > pitch and per-column vertical offset are easy to measure once and reuse.
 > >
 > > **Repo weight**: commit the rectified derivatives (`board.png`,
 > > portraits, `legend.png`) as usual, plus the original photo downscaled to
 > > 2400px on the long edge, JPEG quality 85, as `puzzles/source/<id>-page.jpg`
 > > (preserves the "keep the source for reference" convention at a fraction
-> > of the size). Full-resolution originals live under `puzzles/source/raw/`,
-> > which is gitignored — they stay local, never committed.
+> > of the size). Drop the original photos in
+> > `puzzles/source/photo-source/` — that is the first place
+> > `tools/photo_prep.py` looks (then `puzzles/source/raw/`, then
+> > `puzzles/source/`). Both `photo-source/` and `raw/` are gitignored, so
+> > full-resolution originals stay local and are never committed.
 >
 > **3. Extract the grid structure:**
 > - `rows` / `cols` — count the grid cells.

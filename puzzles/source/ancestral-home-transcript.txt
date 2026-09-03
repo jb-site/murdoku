@@ -1,0 +1,50 @@
+ancestral-home — verbatim transcript
+Source: photo of printed book, pages 30-31 (puzzle "12. Ancestral Home")
+Photo: puzzles/source/photo-source/ancestral-home.jpeg
+Rectified via: tools/photo_prep.py --page-quad / --board-quad
+(clues page = _page.png, page 30; board.png = page 31 board region, identity crop)
+
+This file replaces the `pdftotext -layout` extraction the PDF path produces, and is
+the authoritative source for wording. Every clue below was transcribed twice
+independently (pass 1: full rectified clues page at 1/3 scale; pass 2: each
+suspect's card+bubble cropped and re-read in isolation at full resolution) and the
+two passes diffed. Result: 9/9 identical, no mismatches, nothing needed a third read.
+
+== TITLE ==
+12. Ancestral Home
+
+== SUBTITLE / FLAVOUR ==
+There's nothing like arguing about a will to bring out the worst in people.
+
+== DIFFICULTY ==
+(none printed — this book gives no difficulty rating, unlike the template PDFs)
+
+== GRID ==
+9 rows x 9 cols. Full rectangle (per prompt's confirmed lattice fit on board.png:
+720x720 at 80px/cell = 9x9, identity boardCrop).
+
+== ROOM LABELS (as printed on the board) ==
+GUEST ROOM
+BATHROOM
+DINING ROOM
+KITCHEN
+MAIN BEDROOM
+BASEMENT
+STORAGE
+
+== LEGEND ==
+(no legend box printed for this puzzle)
+
+== SUSPECTS AND CLUES (verbatim; ** marks the book's bold) ==
+Adam       He was in the **Storage** room. He was **not beside** a **shelf**.
+Belinda    She was sitting in a **chair** in the **Basement**.
+Colton     He was in the **Bathroom**.
+Dean       He was in the **Main Bedroom**.
+Edwin      He was on a **bed**.
+Farah      She was in the **Guest Room**.
+Greg       He was **beside** a **plant**.
+Helena     She was in the **Basement**, in a **corner** of the room.
+Vincenzo   **The Victim**. He was alone with the murderer.
+
+== ANSWER LINE ==
+The murderer is...

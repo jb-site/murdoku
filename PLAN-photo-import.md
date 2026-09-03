@@ -87,6 +87,34 @@ puzzles; **the photo path needs zero calibration.** The Art tab stays as the ver
 (overlay the app's own object SVGs on the artwork to check the transcription) rather than as a
 correction surface.
 
+**Picking the board quad accurately.** Detecting the board's black border and
+taking its extreme points gets you within ~1% but is systematically off, because the
+border has thickness and perspective means the extremes of `x+y`/`x-y` aren't quite the
+corners — on the pilot the top border came out 2px thick against 23px at the bottom,
+i.e. the top row was being clipped. The reliable refinement is to **warp once with the
+rough quad, fit a regular lattice to the rectified board** (scan pitch and phase against
+a thin-dark-line profile; the best fit also *confirms* the row/column count), then
+back-project the fitted boundary through the same homography to get the real corners.
+On the pilot this converged to pitch 178.0/179.0 over a 1440px canvas — square cells to
+within a pixel — and the resulting `board.png` needed no calibration at all.
+
+**Counting rows and columns.** Don't eyeball it, and don't score a free-floating lattice
+either: a lattice of `n` cells at the wrong pitch happily fits *inside* an oversized canvas
+and reports a plausible-looking `n`. On this batch that silently returned 8x8 for two boards
+that are really 9x9, producing a `board.png` with a column cropped off. Because the rough quad
+already hugs the board, the real boundaries must sit at `k*N/n` — so score only the *interior*
+lines at that fixed spacing, for each candidate `n`, and take the winner. That separated cleanly
+(9 scoring 23.5 against 5.6 for the runner-up) and re-confirmed the pilot's 8x8. Useful free
+check in this book: **rows == cols == the number of suspects**, so a count that disagrees with
+the cast size is wrong.
+
+**A board that isn't a rectangle.** Taking the extreme points of the border mask assumes the
+board *is* its bounding box; for a stepped outline (Demolition Zone) that cuts a diagonal across
+the shape. Take the **minimum-area bounding rectangle** instead — sweep a rotation angle, pick
+the one minimising the axis-aligned bbox area, and rotate its corners back. That yields the
+`rows x cols` bounding rectangle the schema wants, with the missing cells transcribed as `null`
+void entries.
+
 Emit the `art` block ready to paste:
 
 ```json
@@ -120,6 +148,13 @@ misbehaves on a photo is:
 3. **Reshoot with flatter light** — always the best answer for severe glare, or a gutter gradient
    steep enough that step 2 cannot fix it either.
 
+**Validated on the pilot.** The first real photograph did exactly what this section
+predicted: portrait detection returned zero boxes because the book's card white
+photographs at ~200-215, not >230. Escalation step 1 (`--white-threshold 180`) fixed it
+outright, so `--normalise` was never reached and the committed artwork kept its true
+colours. Making normalisation opt-in was the right call, and the threshold flags are
+indeed the primary lever.
+
 What `--normalise` does, when asked:
 
 1. **Estimate illumination as a local high percentile of luminance** over a large window — the
@@ -151,6 +186,33 @@ Cheap to state, expensive to skip:
   unrecoverable; glare over blank paper is harmless.
 - Shoot with the *whole* board plus a margin in frame — the quad corners need to exist.
 - 8MP+ so a single grid cell is ≥ 120px after warping; furniture icons are the limiting detail.
+- Phone photos carry **EXIF orientation** rather than rotated pixels. `photo_prep.py`
+  applies `ImageOps.exif_transpose()` on load so the guide and every warp share the frame
+  a viewer shows; without it, corners read off the photo land transposed. Always read
+  corners off `photo-guide.png`.
+- A book puzzle is a **two-page spread**, not a page: clues left, board (and legend)
+  right. `_page.png` must be one page, not both — see §2.8.
+
+### 2.8 One spread is two pages (learned on the pilot)
+
+`_page.png` stands in for `pdftoppm`'s single-page raster, and the whole of
+`extract_art.py` assumes that page holds exactly one puzzle. A book spread breaks the
+assumption: run portrait detection over both pages and it finds blobs on the facing page
+(the pilot picked up a false card at x≈3816, on the board page, and mis-numbered the set).
+The fix needs no new code — `--page-quad` simply takes **one page's** quad:
+
+1. `--page-quad <clue page>` → `_page.png` → `extract_art --portraits` and `--clue-crops`.
+2. `--board-quad <board's outer grid corners>` → `board.png`, independent of `_page.png`.
+3. Legend only: re-run `--page-quad <board page>`, then `extract_art --legend`.
+
+Two consequences worth stating plainly, because both contradict how the PDF path reads:
+
+- **Never pass `--board` to `extract_art` on the photo path.** It writes the same
+  `board.png` that `--board-quad` produced, trading an exact identity-crop warp for a
+  detected bbox needing calibration. §2.4 supersedes it.
+- **`--portraits` requires `puzzles/<id>.json` to exist** (it maps cards to suspect
+  letters), so the photo path runs transcribe → puzzle JSON → portraits. Art extraction
+  cannot fully precede transcription the way step 3 of the prompt implies.
 
 ### 2.7 Repo weight
 
@@ -158,10 +220,14 @@ Cheap to state, expensive to skip:
 puzzles × 2–3 pages would add ~200MB to a repo that ships as a GitHub Pages site. Rule:
 
 - Commit the **rectified derivatives** (`board.png`, portraits, `legend.png`) — as now.
+  Not `contact-sheet.png`: it is authoring scratch (11MB on the pilot), no existing puzzle
+  tracks one, and it is now gitignored alongside the guide PNGs.
 - Commit originals **downscaled to 2400px on the long edge, JPEG q85** (~600KB each) under
   `puzzles/source/<id>-page.jpg`, preserving the "keep the source for reference" convention at a
   twentieth of the cost.
-- Add `puzzles/source/raw/` to `.gitignore` for the full-resolution originals, which stay local.
+- Drop the originals in `puzzles/source/photo-source/` — the first directory
+  `photo_prep.py` searches (then `puzzles/source/raw/`, then `puzzles/source/`). Both
+  `photo-source/` and `raw/` are gitignored; full-resolution originals stay local.
 
 ---
 

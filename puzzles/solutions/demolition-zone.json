@@ -1,0 +1,17 @@
+{
+  "puzzleId": "demolition-zone",
+  "sourceFile": "source/demolition-zone-page.jpg",
+  "derivedBy": "constraint-solve",
+  "placements": {
+    "A": [5, 4],
+    "B": [3, 7],
+    "C": [7, 5],
+    "D": [0, 2],
+    "E": [1, 6],
+    "F": [4, 0],
+    "G": [8, 8],
+    "H": [6, 1],
+    "V": [2, 3]
+  },
+  "murderer": "A"
+}

@@ -1,0 +1,604 @@
+{
+  "id": "ancestral-home",
+  "title": "Ancestral Home",
+  "sourceFile": "source/ancestral-home-page.jpg",
+  "rows": 9,
+  "cols": 9,
+  "suspects": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "V"
+  ],
+  "names": {
+    "A": "Adam",
+    "B": "Belinda",
+    "C": "Colton",
+    "D": "Dean",
+    "E": "Edwin",
+    "F": "Farah",
+    "G": "Greg",
+    "H": "Helena",
+    "V": "Vincenzo (victim)"
+  },
+  "clues": [
+    {
+      "suspect": "A",
+      "text": "Adam (A) was in the Storage room. He was not beside a shelf.",
+      "refs": {
+        "rooms": [
+          "storage"
+        ],
+        "objects": [
+          "shelf"
+        ]
+      }
+    },
+    {
+      "suspect": "B",
+      "text": "Belinda (B) was sitting in a chair in the Basement.",
+      "refs": {
+        "objects": [
+          "chair"
+        ],
+        "rooms": [
+          "basement"
+        ]
+      }
+    },
+    {
+      "suspect": "C",
+      "text": "Colton (C) was in the Bathroom.",
+      "refs": {
+        "rooms": [
+          "bathroom"
+        ]
+      }
+    },
+    {
+      "suspect": "D",
+      "text": "Dean (D) was in the Main Bedroom.",
+      "refs": {
+        "rooms": [
+          "main_bedroom"
+        ]
+      }
+    },
+    {
+      "suspect": "E",
+      "text": "Edwin (E) was on a bed.",
+      "refs": {
+        "objects": [
+          "bed"
+        ]
+      }
+    },
+    {
+      "suspect": "F",
+      "text": "Farah (F) was in the Guest Room.",
+      "refs": {
+        "rooms": [
+          "guest_room"
+        ]
+      }
+    },
+    {
+      "suspect": "G",
+      "text": "Greg (G) was beside a plant.",
+      "refs": {
+        "objects": [
+          "plant"
+        ]
+      }
+    },
+    {
+      "suspect": "H",
+      "text": "Helena (H) was in the Basement, in a corner of the room.",
+      "refs": {
+        "rooms": [
+          "basement"
+        ]
+      }
+    },
+    {
+      "suspect": "V",
+      "text": "Vincenzo (V), the victim, was alone with the murderer \u2014 the killer was in the same area (room) as him.",
+      "refs": {}
+    }
+  ],
+  "rooms": {
+    "guest_room": {
+      "name": "Guest Room"
+    },
+    "bathroom": {
+      "name": "Bathroom"
+    },
+    "dining_room": {
+      "name": "Dining Room"
+    },
+    "kitchen": {
+      "name": "Kitchen"
+    },
+    "main_bedroom": {
+      "name": "Main Bedroom"
+    },
+    "basement": {
+      "name": "Basement"
+    },
+    "storage": {
+      "name": "Storage"
+    }
+  },
+  "roomGrid": [
+    [
+      "guest_room",
+      "guest_room",
+      "guest_room",
+      "guest_room",
+      "guest_room",
+      "bathroom",
+      "bathroom",
+      "bathroom",
+      "bathroom"
+    ],
+    [
+      "guest_room",
+      "guest_room",
+      "guest_room",
+      "guest_room",
+      "guest_room",
+      "bathroom",
+      "bathroom",
+      "bathroom",
+      "bathroom"
+    ],
+    [
+      "dining_room",
+      "dining_room",
+      "dining_room",
+      "guest_room",
+      "guest_room",
+      "main_bedroom",
+      "main_bedroom",
+      "main_bedroom",
+      "main_bedroom"
+    ],
+    [
+      "dining_room",
+      "dining_room",
+      "dining_room",
+      "dining_room",
+      "dining_room",
+      "main_bedroom",
+      "main_bedroom",
+      "main_bedroom",
+      "main_bedroom"
+    ],
+    [
+      "dining_room",
+      "dining_room",
+      "dining_room",
+      "dining_room",
+      "kitchen",
+      "kitchen",
+      "main_bedroom",
+      "main_bedroom",
+      "main_bedroom"
+    ],
+    [
+      "dining_room",
+      "dining_room",
+      "dining_room",
+      "dining_room",
+      "kitchen",
+      "kitchen",
+      "main_bedroom",
+      "main_bedroom",
+      "main_bedroom"
+    ],
+    [
+      "basement",
+      "basement",
+      "basement",
+      "basement",
+      "basement",
+      "basement",
+      "basement",
+      "storage",
+      "storage"
+    ],
+    [
+      "basement",
+      "basement",
+      "basement",
+      "basement",
+      "basement",
+      "basement",
+      "basement",
+      "storage",
+      "storage"
+    ],
+    [
+      "basement",
+      "basement",
+      "basement",
+      "basement",
+      "basement",
+      "basement",
+      "basement",
+      "storage",
+      "storage"
+    ]
+  ],
+  "objects": [
+    {
+      "type": "table",
+      "cells": [
+        [
+          0,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "bed",
+      "cells": [
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          0,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          0,
+          8
+        ],
+        [
+          1,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "plant",
+      "cells": [
+        [
+          0,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          0,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          2,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "plant",
+      "cells": [
+        [
+          4,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          4,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          4,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          4,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "plant",
+      "cells": [
+        [
+          2,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "bed",
+      "cells": [
+        [
+          3,
+          7
+        ],
+        [
+          4,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "shelf",
+      "cells": [
+        [
+          3,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "shelf",
+      "cells": [
+        [
+          4,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          6,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "shelf",
+      "cells": [
+        [
+          7,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          7,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          7,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "shelf",
+      "cells": [
+        [
+          8,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "tv",
+      "cells": [
+        [
+          8,
+          2
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          8,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "plant",
+      "cells": [
+        [
+          8,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          8,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "shelf",
+      "cells": [
+        [
+          7,
+          8
+        ]
+      ]
+    },
+    {
+      "type": "shelf",
+      "cells": [
+        [
+          8,
+          7
+        ]
+      ]
+    }
+  ],
+  "art": {
+    "board": "art/ancestral-home/board.png",
+    "boardCrop": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+    },
+    "calibratedFor": {
+      "rows": 9,
+      "cols": 9
+    },
+    "portraits": {
+      "A": {
+        "src": "art/ancestral-home/A.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "C": {
+        "src": "art/ancestral-home/C.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "B": {
+        "src": "art/ancestral-home/B.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "D": {
+        "src": "art/ancestral-home/D.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "F": {
+        "src": "art/ancestral-home/F.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "E": {
+        "src": "art/ancestral-home/E.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "G": {
+        "src": "art/ancestral-home/G.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "V": {
+        "src": "art/ancestral-home/V.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "H": {
+        "src": "art/ancestral-home/H.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      }
+    }
+  }
+}
