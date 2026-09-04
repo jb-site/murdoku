@@ -1,0 +1,32 @@
+{
+ "id": "the-old-tavern",
+ "title": "The Old Tavern",
+ "victoryHeadline": "Caught! Last orders for the killer.",
+ "acts": [
+  "The Old Tavern hadn't seen anything worth talking about since 1987, and most of Thursday afternoon was doing its level best to keep that streak alive. In the Common Room, Garrett had held the dominoes title for eleven years running and was not about to let Finn's newly-invented opening move change that, while Finn insisted, loudly and often, that this was simply how the game was played now. Amir sat near them with the same crossword clue he'd been staring at since lunch, six letters, something to do with a bird, refusing on principle to look ahead at tomorrow's answers. Down the corridor in the Restroom, Damien had claimed the one chair with a folded racing page and a small private system for picking winners that had quietly kept him in beer money for years, while Eric knelt under the sink with a wrench, making the drip very slightly worse than he'd found it. In the Storage Room, Caleb was running a stocktake nobody had asked for, counting bottles nobody would miss, purely because uncounted bottles bothered him.",
+  "By mid-afternoon the dominoes argument had reached the volume where Garrett was rebuilding his case from first principles and Finn had started refilling the pub's one surviving plant just to have something to do with his hands between points. Neither of them could have said what time it was, and neither tried to find out. Eric, having got the tap working again, more or less, immediately regretted saying so out loud, because Damien wanted to know precisely how 'more or less' a tap could be considered fixed. In the Bar, the old television had refused to hold a channel since sometime in the previous decade, and Bryson had finally given up wrestling it alone. Vlad, the only person left who remembered which way the aerial needed angling, came over to help, glad of the company on an otherwise empty afternoon, and the two of them spent a few quiet minutes hunched behind the set, out of sight and out of earshot of everyone else.",
+  "It was Caleb who found him, coming through with a fresh keg and his clipboard, the dominoes row still rumbling two rooms away loud enough to have swallowed anything smaller. He set the keg down very carefully and touched nothing else. By the time the Common Room noticed the sudden quiet from the Bar, it had already been quiet for some time — long enough, it turned out, to matter. For the first time in living memory, the regulars agreed on something: nobody had seen a thing."
+ ],
+ "whereabouts": {
+  "A": "Amir had been stuck on the same six-letter crossword clue since before lunch and had made it a point of pride not to peek ahead at tomorrow's answers, however tempting.",
+  "B": "Bryson had been fighting the old television's aerial for the better part of an hour and was glad when someone finally wandered over who remembered which way it went.",
+  "C": "Caleb was working through a full stocktake nobody had asked him to do, counting bottles nobody would notice missing, because an uncounted shelf was a thing he simply couldn't leave alone.",
+  "D": "Damien had a folded racing page and a quiet system for picking winners that had kept him in beer money for years, a talent he'd never once mentioned to anyone at the bar.",
+  "E": "Eric knelt under the restroom sink with a wrench, coaxing the drip into something he was prepared to call fixed, whatever the tap itself thought about it.",
+  "F": "Finn kept topping up the pub's one surviving plant, mostly to have something to do with his hands while he waited for his turn to argue the finer points of dominoes.",
+  "G": "Garrett had defended his dominoes title for eleven straight years and, though he'd never say so out loud, it had come to matter to him rather more than a game should.",
+  "V": "Vlad was glad of the company when someone finally came to help him wrestle the television's aerial into place, it being the first real chat he'd had all afternoon."
+ },
+ "reveal": "It was Bryson, behind the television in the Bar, who finally lost patience with an aerial that had never once cooperated in thirty years of trying. When Vlad leaned in close to angle it one more time, Bryson brought the old remote down far harder than adjusting a channel ever required. The dominoes argument two rooms away covered whatever sound there was to cover; nobody came looking until Caleb wandered through with a fresh keg, by which point the Bar had been quiet for a good while.",
+ "escape": {
+  "generic": "The crossword's six-letter answer is still blank, the dominoes title is still technically Garrett's, and somewhere out there the real killer has never once been asked to fix that aerial.",
+  "byAccused": {
+   "A": "Amir was led out still turning the crossword over in his hands, insisting he'd have had it in another minute, maybe two.",
+   "C": "The Storage Room stayed exactly as tidy as Caleb had left it, every bottle accounted for, with nobody left who cared enough to keep it that way.",
+   "D": "Damien's racing tips kept circulating around the tavern for months afterward, unattributed and, everyone agreed, still uncannily good.",
+   "E": "Eric went to his grave, or at least out the door in handcuffs, insisting that tap had been completely fine when he left it.",
+   "F": "Finn was hauled off mid-argument, one hand still on the watering can, and never did get to make his case about the new dominoes rule.",
+   "G": "Garrett's dominoes title was quietly retired rather than reassigned; nobody at the tavern had the heart to claim it from an innocent man."
+  }
+ }
+}

@@ -1,0 +1,34 @@
+{
+  "id": "demolition-zone",
+  "title": "Demolition Zone",
+  "victoryHeadline": "Caught! Turns out he wasn't just there for the paperwork.",
+  "acts": [
+    "By ten that morning the house was about half a house, and the demolition zone had opinions about all of it. Benjamin stood over a fresh pile of rubble insisting — with the total confidence of a man who could apparently date a brick by running a thumb along its edge — that half the pile was good reclaimed stock worth saving and the other half was hardcore, full stop, and nobody was talking him out of it before lunch. Dina wasn't trying to. She had her tally sheet out and was keeping half an eye on the gap where a wall used to be, hoping to catch the site manager between invoices about an overtime form that had been promised, and not signed, since Tuesday. Emmett paid no attention to either argument. He'd found himself a low stack of the good stone and was quietly sorting it by size into three even piles, the way he'd been doing it since before most of the crew were born, patient and entirely unbothered by the racket around him.",
+    "Two rooms over, in what was left of the living room, Clarence had found the one working outlet and was fighting the last few minutes of a football match on a television that was, technically, already booked for the skip. Gemma stood a careful distance off with a tape measure, informing him, not for the first time, that a corner sofa would never fit that wall no matter how the match turned out, and that he was welcome to keep arguing about it while she measured the room for the version of it that actually existed.",
+    "In the dining room, the one with the shelf still standing, the tape inventory refused to add up. The delivery note said one length, the roll on the shelf said another, and the count kept coming out short by exactly the same amount no matter how many times it was run. An owner's visit or two came and went, admiring the half-finished walls the way owners do at this stage of things. By early afternoon the argument over rubble two rooms away had finally burned itself out, and in the quiet that followed, it took the crew a little while to notice that the dining room had gone quiet too, and stayed that way."
+  ],
+  "whereabouts": {
+    "A": "Antonio had the dining-room shelf to himself, running the same column of the tape inventory a third time because the roll was shorter than the delivery note said, and meaning to find out exactly where the missing length had gone before he signed off on a re-order.",
+    "B": "Benjamin stood over the fresh rubble pile running a thumb along each brick's edge, dating them one by one out of an expertise nobody at the site took remotely seriously, and insisting half the pile was good reclaimed stock worth saving.",
+    "C": "Clarence had found the one working outlet in the living room and was fighting the last few minutes of a football match on a television that was, technically, already booked for the skip.",
+    "D": "Dina kept half an eye on her tally sheet and the other on the gap where the dining-room wall used to be, hoping to catch Antonio between invoices about the overtime form he'd been promising to sign since Tuesday.",
+    "E": "Emmett had found himself a low stack of good stone and was quietly sorting it by size into three even piles, the way he'd been doing it since before most of the crew were born.",
+    "F": "Finnegan sat down in the one salvageable chair in the guest bedroom to check a single fitting off his list, hard hat and high-vis still on, and simply hadn't got back up forty minutes later.",
+    "G": "Gemma stood a careful distance from the television with a tape measure, informing Clarence, not for the first time, that a corner sofa would never fit that wall no matter how the match turned out.",
+    "H": "Holden had claimed the last bed left standing in the house for one final lie-down in the room he'd slept in as a boy, and was in no hurry at all to let the crew anywhere near it.",
+    "V": "Viggo drifted in and out of the dining room admiring what would, eventually, be his new one, squinting at the half-torn wall the way owners do at this stage, trying to picture the finished version through the mess."
+  },
+  "reveal": "It was Antonio, at the dining-room shelf, with a length of the site's own caution tape. The delivery note had never been wrong; he'd simply cut what he needed off the roll before anyone thought to count it, and used the rest of the morning to build himself an alibi out of paperwork while Benjamin and Emmett argued over rubble loud enough to cover for anyone. When Viggo wandered back in for one more look at his half-finished dining room, Antonio was still, patiently, exactly where he'd been standing all along.",
+  "escape": {
+    "generic": "The missing length of caution tape was quietly written off as a re-order, the crew moved on to the next job dead on schedule, and whoever took it off the roll was never once asked to account for it.",
+    "byAccused": {
+      "B": "Benjamin was led off mid-sentence about brick provenance, and the pile sat unsorted for a full week afterward — nobody else on site could tell reclaimed stock from hardcore at a glance, and nobody was about to admit it.",
+      "C": "Clarence never did find out who won the match; the television went to the skip that afternoon regardless, on schedule, guilty verdict or not.",
+      "D": "Dina's overtime form stayed unsigned in a drawer for a month, which was, by her own account, the single most suspicious thing about the entire investigation.",
+      "E": "Emmett's three even piles of good stone stood exactly as he'd left them, untouched, for longer than anyone thought to explain why.",
+      "F": "Finnegan had to be helped out of the chair before he could even be arrested, knees having genuinely locked after the longest sit-down of his career.",
+      "G": "\"I told him the sofa wouldn't fit,\" Gemma said afterward, to absolutely no one who was still listening, tape measure still in hand.",
+      "H": "Holden was walked out of the room he'd slept in as a boy without once being allowed to finish his nap, which he maintained, for years afterward, was the real crime."
+    }
+  }
+}

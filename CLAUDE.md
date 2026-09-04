@@ -316,8 +316,7 @@ template PDFs, via `tools/photo_prep.py` — see PLAN-photo-import.md and the ph
 PUZZLE_IMPORT_PROMPT.md. Their solution files are `derivedBy: "constraint-solve"` (each verified to
 have exactly one solution) rather than read off an answer key, because the book's answer pages were
 not photographed. Not yet built: structured suspects/clues editing in
-the editor (currently a raw-JSON textarea), stories for the four photo-imported puzzles, and
-importing the two puzzles still sitting unimported
+the editor (currently a raw-JSON textarea), and importing the two puzzles still sitting unimported
 in `puzzles/source/` (`a-walk-in-the-park`, `the-backyard-garden`).
 
 ## Conventions
