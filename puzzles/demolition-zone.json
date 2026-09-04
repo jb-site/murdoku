@@ -1,0 +1,501 @@
+{
+  "id": "demolition-zone",
+  "title": "Demolition Zone",
+  "sourceFile": "source/demolition-zone-page.jpg",
+  "rows": 9,
+  "cols": 9,
+  "suspects": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "V"
+  ],
+  "names": {
+    "A": "Antonio",
+    "B": "Benjamin",
+    "C": "Clarence",
+    "D": "Dina",
+    "E": "Emmett",
+    "F": "Finnegan",
+    "G": "Gemma",
+    "H": "Holden",
+    "V": "Viggo (victim)"
+  },
+  "clues": [
+    {
+      "suspect": "A",
+      "text": "Antonio (A) was beside the shelf.",
+      "refs": {
+        "objects": [
+          "shelf"
+        ]
+      }
+    },
+    {
+      "suspect": "B",
+      "text": "The TV was in Benjamin's (B) column, in another room.",
+      "refs": {
+        "objects": [
+          "tv"
+        ]
+      }
+    },
+    {
+      "suspect": "C",
+      "text": "Clarence (C) was southwest of the TV and in the same room.",
+      "refs": {
+        "objects": [
+          "tv"
+        ]
+      }
+    },
+    {
+      "suspect": "D",
+      "text": "Dina (D) was in the third column.",
+      "refs": {}
+    },
+    {
+      "suspect": "E",
+      "text": "Emmett (E) was beside the boulder.",
+      "refs": {
+        "objects": [
+          "boulder"
+        ]
+      }
+    },
+    {
+      "suspect": "F",
+      "text": "Finnegan (F) was the only person in a chair.",
+      "refs": {
+        "objects": [
+          "chair"
+        ]
+      }
+    },
+    {
+      "suspect": "G",
+      "text": "Gemma (G) was in a corner. She was south of Benjamin (B).",
+      "refs": {}
+    },
+    {
+      "suspect": "H",
+      "text": "Holden (H) was on a bed.",
+      "refs": {
+        "objects": [
+          "bed"
+        ]
+      }
+    },
+    {
+      "suspect": "V",
+      "text": "Viggo (V), the victim, was alone with the murderer — the killer was in the same area (room) as him.",
+      "refs": {}
+    }
+  ],
+  "rooms": {
+    "demolitionzone": {
+      "name": "Demolition Zone"
+    },
+    "diningroom": {
+      "name": "Dining Room"
+    },
+    "guestbedroom": {
+      "name": "Guest Bedroom"
+    },
+    "mainbedroom": {
+      "name": "Main Bedroom"
+    },
+    "livingroom": {
+      "name": "Living Room"
+    }
+  },
+  "roomGrid": [
+    [
+      null,
+      "demolitionzone",
+      "demolitionzone",
+      "demolitionzone",
+      "demolitionzone",
+      "demolitionzone",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      "demolitionzone",
+      "demolitionzone",
+      "demolitionzone",
+      "demolitionzone",
+      "demolitionzone",
+      "demolitionzone",
+      "demolitionzone",
+      null
+    ],
+    [
+      null,
+      "demolitionzone",
+      "demolitionzone",
+      "diningroom",
+      "diningroom",
+      "demolitionzone",
+      "demolitionzone",
+      "demolitionzone",
+      "demolitionzone"
+    ],
+    [
+      "guestbedroom",
+      "guestbedroom",
+      "guestbedroom",
+      "guestbedroom",
+      "diningroom",
+      "demolitionzone",
+      "demolitionzone",
+      "demolitionzone",
+      "demolitionzone"
+    ],
+    [
+      "guestbedroom",
+      "guestbedroom",
+      "guestbedroom",
+      "guestbedroom",
+      "diningroom",
+      "diningroom",
+      "diningroom",
+      "demolitionzone",
+      "demolitionzone"
+    ],
+    [
+      "mainbedroom",
+      "mainbedroom",
+      "mainbedroom",
+      "mainbedroom",
+      "diningroom",
+      "diningroom",
+      "diningroom",
+      "livingroom",
+      "livingroom"
+    ],
+    [
+      "mainbedroom",
+      "mainbedroom",
+      "mainbedroom",
+      "mainbedroom",
+      "mainbedroom",
+      "livingroom",
+      "livingroom",
+      "livingroom",
+      "livingroom"
+    ],
+    [
+      "mainbedroom",
+      "mainbedroom",
+      "mainbedroom",
+      "mainbedroom",
+      "mainbedroom",
+      "livingroom",
+      "livingroom",
+      "livingroom",
+      "livingroom"
+    ],
+    [
+      "mainbedroom",
+      "mainbedroom",
+      "mainbedroom",
+      "mainbedroom",
+      "mainbedroom",
+      "mainbedroom",
+      "livingroom",
+      "livingroom",
+      "livingroom"
+    ]
+  ],
+  "objects": [
+    {
+      "type": "boulder",
+      "cells": [
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          4,
+          0
+        ]
+      ]
+    },
+    {
+      "type": "chair",
+      "cells": [
+        [
+          5,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "tv",
+      "cells": [
+        [
+          5,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "shelf",
+      "cells": [
+        [
+          5,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          4,
+          5
+        ],
+        [
+          4,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          7,
+          6
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          6,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          7,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "table",
+      "cells": [
+        [
+          8,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "bed",
+      "cells": [
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "bed",
+      "cells": [
+        [
+          6,
+          0
+        ],
+        [
+          6,
+          1
+        ]
+      ]
+    }
+  ],
+  "ground": [
+    {
+      "type": "rubble",
+      "cells": [
+        [
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "rubble",
+      "cells": [
+        [
+          0,
+          3
+        ]
+      ]
+    },
+    {
+      "type": "rubble",
+      "cells": [
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    {
+      "type": "rubble",
+      "cells": [
+        [
+          2,
+          7
+        ]
+      ]
+    },
+    {
+      "type": "rubble",
+      "cells": [
+        [
+          6,
+          4
+        ]
+      ]
+    },
+    {
+      "type": "rubble",
+      "cells": [
+        [
+          8,
+          6
+        ]
+      ]
+    }
+  ],
+  "art": {
+    "board": "art/demolition-zone/board.png",
+    "boardCrop": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+    },
+    "calibratedFor": {
+      "rows": 9,
+      "cols": 9
+    },
+    "portraits": {
+      "A": {
+        "src": "art/demolition-zone/A.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "C": {
+        "src": "art/demolition-zone/C.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "B": {
+        "src": "art/demolition-zone/B.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "D": {
+        "src": "art/demolition-zone/D.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "F": {
+        "src": "art/demolition-zone/F.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "E": {
+        "src": "art/demolition-zone/E.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "G": {
+        "src": "art/demolition-zone/G.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "V": {
+        "src": "art/demolition-zone/V.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      },
+      "H": {
+        "src": "art/demolition-zone/H.png",
+        "crop": {
+          "x": 0.1154,
+          "y": 0.1154,
+          "w": 0.7692,
+          "h": 0.7692
+        }
+      }
+    }
+  }
+}

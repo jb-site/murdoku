@@ -1,0 +1,275 @@
+{
+ "id": "the-old-tavern",
+ "title": "The Old Tavern",
+ "difficulty": null,
+ "rooms": {
+  "common": "Common Room",
+  "restroom": "Restroom",
+  "bar": "Bar",
+  "storage": "Storage Room"
+ },
+ "generalClues": [],
+ "victim": "V",
+ "murderer": "B",
+ "asciiMapLegend": {
+  "format": "each cell is <room-code><object-code-or-.><ground-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "roomCodes": {
+   "common": "C",
+   "restroom": "R",
+   "bar": "B",
+   "storage": "S"
+  },
+  "note": "object-code is the object type's first letter lowercase, ground-code is the ground type's first letter uppercase (e.g. a statue on a carpet is s + C); see people[].onObjectType / onGroundType / besideObjectTypes for full type names instead of decoding the code"
+ },
+ "asciiMap": "C... Cc.. Ct.. Cc.. Rc.E R... Rc.. R...\nCp.. C... C... C... C... Rt.. R..D Rt..\nCs.. C... Cc.G Ct.. C... R... R... R...\nCt.. C... Ct.. C... C... C..F Cp.. Ct..\nC..A C... Cc.. Cc.. Cc.. Cc.. C... Ct..\nBt.. B..V Bt.. Bt.. Bt.. Bt.. S... Ss..\nBt.. B... B... B..B Bt.. B... S... S...\nBs.. Bs.. B... B... B... S... Ss.. S..C",
+ "people": [
+  {
+   "letter": "A",
+   "name": "Amir",
+   "role": "suspect",
+   "position": [
+    4,
+    0
+   ],
+   "room": {
+    "id": "common",
+    "name": "Common Room"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "F",
+     "name": "Finn"
+    },
+    {
+     "letter": "G",
+     "name": "Garrett"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Amir (A) was in the first column."
+   ]
+  },
+  {
+   "letter": "B",
+   "name": "Bryson",
+   "role": "murderer",
+   "position": [
+    6,
+    3
+   ],
+   "room": {
+    "id": "bar",
+    "name": "Bar"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "TV",
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "V",
+     "name": "Vlad (victim)"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Bryson (B) was beside a TV."
+   ],
+   "nearbyObjectTypesForMethod": [
+    "TV",
+    "table"
+   ]
+  },
+  {
+   "letter": "C",
+   "name": "Caleb",
+   "role": "suspect",
+   "position": [
+    7,
+    7
+   ],
+   "room": {
+    "id": "storage",
+    "name": "Storage Room"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "shelf"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Caleb (C) was beside a shelf."
+   ]
+  },
+  {
+   "letter": "D",
+   "name": "Damien",
+   "role": "suspect",
+   "position": [
+    1,
+    6
+   ],
+   "room": {
+    "id": "restroom",
+    "name": "Restroom"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "chair",
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "E",
+     "name": "Eric"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Damien (D) was in the Restroom."
+   ]
+  },
+  {
+   "letter": "E",
+   "name": "Eric",
+   "role": "suspect",
+   "position": [
+    0,
+    4
+   ],
+   "room": {
+    "id": "restroom",
+    "name": "Restroom"
+   },
+   "onObjectType": "chair",
+   "onGroundType": null,
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "chair"
+   ],
+   "withInRoom": [
+    {
+     "letter": "D",
+     "name": "Damien"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Eric (E) was sitting in a chair in the Restroom."
+   ]
+  },
+  {
+   "letter": "F",
+   "name": "Finn",
+   "role": "suspect",
+   "position": [
+    3,
+    5
+   ],
+   "room": {
+    "id": "common",
+    "name": "Common Room"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "chair",
+    "plant"
+   ],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Amir"
+    },
+    {
+     "letter": "G",
+     "name": "Garrett"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Finn (F) was beside a plant."
+   ]
+  },
+  {
+   "letter": "G",
+   "name": "Garrett",
+   "role": "suspect",
+   "position": [
+    2,
+    2
+   ],
+   "room": {
+    "id": "common",
+    "name": "Common Room"
+   },
+   "onObjectType": "chair",
+   "onGroundType": null,
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Amir"
+    },
+    {
+     "letter": "F",
+     "name": "Finn"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Garrett (G) was sitting in a chair."
+   ]
+  },
+  {
+   "letter": "V",
+   "name": "Vlad (victim)",
+   "role": "victim",
+   "position": [
+    5,
+    1
+   ],
+   "room": {
+    "id": "bar",
+    "name": "Bar"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "B",
+     "name": "Bryson"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Vlad (V), the victim, was alone with the murderer \u2014 the killer was in the same area (room) as him."
+   ]
+  }
+ ],
+ "hasPortraits": true,
+ "sourceFile": "source/the-old-tavern-page.jpg"
+}

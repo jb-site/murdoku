@@ -1,0 +1,9 @@
+{
+  "id": "diagonal-adjacency",
+  "title": "Diagonal adjacency",
+  "text": [
+    "No two suspects may stand on diagonally touching squares.",
+    "The victim is exempt from this rule."
+  ],
+  "constraints": []
+}

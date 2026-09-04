@@ -1,0 +1,306 @@
+{
+ "id": "birthday-party",
+ "title": "Birthday Party",
+ "difficulty": null,
+ "rooms": {
+  "bathroom": "Bathroom",
+  "guestroom": "Guest Room",
+  "livingroom": "Living Room",
+  "kitchen": "Kitchen",
+  "mainbedroom": "Main Bedroom",
+  "diningroom": "Dining Room"
+ },
+ "generalClues": [],
+ "victim": "V",
+ "murderer": "D",
+ "asciiMapLegend": {
+  "format": "each cell is <room-code><object-code-or-.><ground-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "roomCodes": {
+   "bathroom": "B",
+   "guestroom": "G",
+   "livingroom": "L",
+   "kitchen": "K",
+   "mainbedroom": "M",
+   "diningroom": "D"
+  },
+  "note": "object-code is the object type's first letter lowercase, ground-code is the ground type's first letter uppercase (e.g. a statue on a carpet is s + C); see people[].onObjectType / onGroundType / besideObjectTypes for full type names instead of decoding the code"
+ },
+ "asciiMap": "Bt.. Bt.. G... G... Gc.. Gt.. K..G Kp.. Kt..\nBc.. B... Gb.F Gb.. G... Gt.. K... K... Kt..\nB... B... Lt.. L..C L... L... K... K... Kt..\nMp.. M... L... L... Lt.. Lp.. K... K... K..A\nMp.. M..V Lc.. Lc.. Lt.. L... K... K... Kt..\nMc.D M... L... Lp.. L... L... Dt.. D... Dp..\nM... M... M... M... D... D... Dc.. D..H Dp..\nM.C. Mb.. Mb.. M... D... Dc.E Dt.. Dt.. Dt..\nM.C. M... M... Mt.. D..B D... Dp.. Dc.. D...",
+ "people": [
+  {
+   "letter": "A",
+   "name": "Abraham",
+   "role": "suspect",
+   "position": [
+    3,
+    8
+   ],
+   "room": {
+    "id": "kitchen",
+    "name": "Kitchen"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "G",
+     "name": "Gerald"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Abraham (A) was in the Kitchen, beside a table."
+   ]
+  },
+  {
+   "letter": "B",
+   "name": "Bj\u00f6rn",
+   "role": "suspect",
+   "position": [
+    8,
+    4
+   ],
+   "room": {
+    "id": "diningroom",
+    "name": "Dining Room"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "TV"
+   ],
+   "withInRoom": [
+    {
+     "letter": "E",
+     "name": "Ella"
+    },
+    {
+     "letter": "H",
+     "name": "Hopsy"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Bj\u00f6rn (B) was in the Dining Room with Ella (E) and Hopsy (H)."
+   ]
+  },
+  {
+   "letter": "C",
+   "name": "Coralie",
+   "role": "suspect",
+   "position": [
+    2,
+    3
+   ],
+   "room": {
+    "id": "livingroom",
+    "name": "Living Room"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "TV",
+    "bed"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Coralie (C) was beside a TV."
+   ]
+  },
+  {
+   "letter": "D",
+   "name": "Dina",
+   "role": "murderer",
+   "position": [
+    5,
+    0
+   ],
+   "room": {
+    "id": "mainbedroom",
+    "name": "Main Bedroom"
+   },
+   "onObjectType": "chair",
+   "onGroundType": null,
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "plant"
+   ],
+   "withInRoom": [
+    {
+     "letter": "V",
+     "name": "Vanessa (victim)"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "There was a present in Dina (D)'s column, in the same room."
+   ],
+   "nearbyObjectTypesForMethod": [
+    "chair",
+    "plant"
+   ]
+  },
+  {
+   "letter": "E",
+   "name": "Ella",
+   "role": "suspect",
+   "position": [
+    7,
+    5
+   ],
+   "room": {
+    "id": "diningroom",
+    "name": "Dining Room"
+   },
+   "onObjectType": "chair",
+   "onGroundType": null,
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "B",
+     "name": "Bj\u00f6rn"
+    },
+    {
+     "letter": "H",
+     "name": "Hopsy"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Ella (E) was sitting in a chair."
+   ]
+  },
+  {
+   "letter": "F",
+   "name": "Felix",
+   "role": "suspect",
+   "position": [
+    1,
+    2
+   ],
+   "room": {
+    "id": "guestroom",
+    "name": "Guest Room"
+   },
+   "onObjectType": "bed",
+   "onGroundType": null,
+   "on": "on the bed",
+   "besideObjectTypes": [
+    "TV",
+    "bed"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Felix (F) was on a bed."
+   ]
+  },
+  {
+   "letter": "G",
+   "name": "Gerald",
+   "role": "suspect",
+   "position": [
+    0,
+    6
+   ],
+   "room": {
+    "id": "kitchen",
+    "name": "Kitchen"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "present",
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Abraham"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Gerald (G) was beside a present."
+   ]
+  },
+  {
+   "letter": "H",
+   "name": "Hopsy",
+   "role": "suspect",
+   "position": [
+    6,
+    7
+   ],
+   "room": {
+    "id": "diningroom",
+    "name": "Dining Room"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "chair",
+    "present",
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "B",
+     "name": "Bj\u00f6rn"
+    },
+    {
+     "letter": "E",
+     "name": "Ella"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Hopsy (H) was beside a present."
+   ]
+  },
+  {
+   "letter": "V",
+   "name": "Vanessa (victim)",
+   "role": "victim",
+   "position": [
+    4,
+    1
+   ],
+   "room": {
+    "id": "mainbedroom",
+    "name": "Main Bedroom"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "chair",
+    "plant"
+   ],
+   "withInRoom": [
+    {
+     "letter": "D",
+     "name": "Dina"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Vanessa (V), the victim, was alone with the murderer \u2014 the killer was in the same area (room) as her."
+   ]
+  }
+ ],
+ "hasPortraits": true,
+ "sourceFile": "source/birthday-party-page.jpg"
+}

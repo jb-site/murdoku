@@ -18,6 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 PUZZLES_DIR = ROOT / "puzzles"
 SOLUTIONS_DIR = PUZZLES_DIR / "solutions"
+RULES_DIR = PUZZLES_DIR / "rules"
 OUT_DIR = ROOT / "story_context"
 
 # Natural-language phrasing for what it means to be placed on an occupiable object's
@@ -87,6 +88,26 @@ def build_object_at_map(puzzle):
         for (r, c) in obj["cells"]:
             obj_at[f"{r},{c}"] = obj["type"]
     return obj_at
+
+
+def extra_rules_text(puzzle):
+    """Flattened verbatim text of every puzzles/rules/<id>.json this puzzle references,
+    in "rulesets" array order — same flat-list-of-strings shape as generalClues, since a
+    story author needs to read these as part of the puzzle's premise, not decode a nested
+    per-ruleset structure. A referenced ruleset with no file is skipped with a warning
+    rather than raising: reference integrity is tools/check_rules.py's job, not this
+    tool's — a broken reference here shouldn't block drafting a story for every OTHER
+    puzzle in a --all run."""
+    lines = []
+    for ruleset_id in puzzle.get("rulesets", []) or []:
+        path = RULES_DIR / f"{ruleset_id}.json"
+        if not path.exists():
+            print(f"  ! {puzzle.get('id', '?')}: no puzzles/rules/{ruleset_id}.json "
+                  f"(run tools/check_rules.py to audit references)")
+            continue
+        ruleset = json.loads(path.read_text())
+        lines.extend(ruleset.get("text", []))
+    return lines
 
 
 def build_ground_at_map(puzzle):
@@ -230,7 +251,7 @@ def build_context(puzzle_id):
 
         people.append(entry)
 
-    return {
+    ctx = {
         "id": puzzle["id"],
         "title": puzzle["title"],
         "difficulty": puzzle.get("difficulty"),
@@ -248,6 +269,16 @@ def build_context(puzzle_id):
         "hasPortraits": bool(puzzle.get("art", {}).get("portraits")),
         "sourceFile": puzzle.get("sourceFile"),
     }
+
+    # Only added when the puzzle actually references a ruleset, so a puzzle with none
+    # (every puzzle as of this writing) gets byte-identical output to before this field
+    # existed — same "conditionally included" convention as exportPuzzleJSON()'s ground/
+    # customObjectTypes/rulesets keys in app.js.
+    extra_rules = extra_rules_text(puzzle)
+    if extra_rules:
+        ctx["extraRules"] = extra_rules
+
+    return ctx
 
 
 def main():

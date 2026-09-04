@@ -1,0 +1,48 @@
+demolition-zone — verbatim transcript
+Source: photo of printed book, pages 28-29 (puzzle "11. Demolition Zone")
+Photo: puzzles/source/photo-source/demolition-zone.jpeg
+Rectified via: tools/photo_prep.py --page-quad / --board-quad
+
+This file replaces the `pdftotext -layout` extraction the PDF path produces, and is
+the authoritative source for wording. Every clue below was transcribed twice
+independently (pass 1: rectified full page at 1/4-scale overview; pass 2: three
+full-resolution column crops covering every card) and the two passes diffed.
+Result: 9/9 identical, no mismatches, nothing needed a third read.
+
+== TITLE ==
+11. Demolition Zone
+
+== SUBTITLE / FLAVOUR ==
+Strangled with caution tape? That's a new one.
+
+== DIFFICULTY ==
+(none printed — this book gives no difficulty rating, unlike the template PDFs)
+
+== GRID ==
+9 rows x 9 cols (confirmed by lattice fit on board.png, identity boardCrop 720x720
+at 80px/cell). Board is NOT a full rectangle — see void cells in the JSON/report.
+
+== ROOM LABELS (as printed, in small caps on the board) ==
+GUEST BEDROOM
+MAIN BEDROOM
+DEMOLITION ZONE
+DINING ROOM
+LIVING ROOM
+
+== LEGEND (page 29) ==
+Boulder — cannot be occupied
+Rubble — cannot be occupied
+
+== SUSPECTS AND CLUES (verbatim; ** marks the book's bold) ==
+Antonio    He was **beside** the **shelf**.
+Benjamin   The **TV** was in his **column**, in another room.
+Clarence   He was **southwest** of the **TV** and in the same room.
+Dina       She was in the **third column**.
+Emmett     He was **beside** the **boulder**.
+Finnegan   He was the only person in a **chair**.
+Gemma      She was in a **corner**. She was **south** of **Benjamin**.
+Holden     He was on a **bed**.
+Viggo      **The Victim.** He was alone with the murderer.
+
+== ANSWER LINE ==
+The murderer is...

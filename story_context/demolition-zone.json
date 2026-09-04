@@ -1,0 +1,294 @@
+{
+ "id": "demolition-zone",
+ "title": "Demolition Zone",
+ "difficulty": null,
+ "rooms": {
+  "demolitionzone": "Demolition Zone",
+  "diningroom": "Dining Room",
+  "guestbedroom": "Guest Bedroom",
+  "mainbedroom": "Main Bedroom",
+  "livingroom": "Living Room"
+ },
+ "generalClues": [],
+ "victim": "V",
+ "murderer": "A",
+ "asciiMapLegend": {
+  "format": "each cell is <room-code><object-code-or-.><ground-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "roomCodes": {
+   "demolitionzone": "D",
+   "diningroom": "Dx1",
+   "guestbedroom": "G",
+   "mainbedroom": "M",
+   "livingroom": "L"
+  },
+  "note": "object-code is the object type's first letter lowercase, ground-code is the ground type's first letter uppercase (e.g. a statue on a carpet is s + C); see people[].onObjectType / onGroundType / besideObjectTypes for full type names instead of decoding the code"
+ },
+ "asciiMap": "#      D.R.   D..D   D.R.   D...   D...   #      #      #     \n#      D.R.   D...   D...   D...   Db..   D..E   D...   #     \n#      D...   D...   Dx1..V Dx1... D...   D...   D.R.   D...  \nG...   G...   G...   G...   Dx1c.. D...   D...   D..B   D...  \nGc.F   G...   Gb..   Gb..   Dx1... Dx1t.. Dx1t.. D...   D...  \nM...   M...   M...   M...   Dx1..A Dx1s.. Dx1c.. Lt..   L...  \nMb..   Mb.H   M...   Mt..   M.R.   L...   L...   L...   L...  \nM...   Mt..   M...   M...   M...   L..C   Lt..   L...   L...  \nM...   M...   M...   M...   M...   Mt..   L.R.   L...   L..G  ",
+ "people": [
+  {
+   "letter": "A",
+   "name": "Antonio",
+   "role": "murderer",
+   "position": [
+    5,
+    4
+   ],
+   "room": {
+    "id": "diningroom",
+    "name": "Dining Room"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "rubble",
+    "shelf"
+   ],
+   "withInRoom": [
+    {
+     "letter": "V",
+     "name": "Viggo (victim)"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Antonio (A) was beside the shelf."
+   ],
+   "nearbyObjectTypesForMethod": [
+    "rubble",
+    "shelf"
+   ]
+  },
+  {
+   "letter": "B",
+   "name": "Benjamin",
+   "role": "suspect",
+   "position": [
+    3,
+    7
+   ],
+   "room": {
+    "id": "demolitionzone",
+    "name": "Demolition Zone"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "rubble"
+   ],
+   "withInRoom": [
+    {
+     "letter": "D",
+     "name": "Dina"
+    },
+    {
+     "letter": "E",
+     "name": "Emmett"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "The TV was in Benjamin's (B) column, in another room."
+   ]
+  },
+  {
+   "letter": "C",
+   "name": "Clarence",
+   "role": "suspect",
+   "position": [
+    7,
+    5
+   ],
+   "room": {
+    "id": "livingroom",
+    "name": "Living Room"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "G",
+     "name": "Gemma"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Clarence (C) was southwest of the TV and in the same room."
+   ]
+  },
+  {
+   "letter": "D",
+   "name": "Dina",
+   "role": "suspect",
+   "position": [
+    0,
+    2
+   ],
+   "room": {
+    "id": "demolitionzone",
+    "name": "Demolition Zone"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "rubble"
+   ],
+   "withInRoom": [
+    {
+     "letter": "B",
+     "name": "Benjamin"
+    },
+    {
+     "letter": "E",
+     "name": "Emmett"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Dina (D) was in the third column."
+   ]
+  },
+  {
+   "letter": "E",
+   "name": "Emmett",
+   "role": "suspect",
+   "position": [
+    1,
+    6
+   ],
+   "room": {
+    "id": "demolitionzone",
+    "name": "Demolition Zone"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "boulder"
+   ],
+   "withInRoom": [
+    {
+     "letter": "B",
+     "name": "Benjamin"
+    },
+    {
+     "letter": "D",
+     "name": "Dina"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Emmett (E) was beside the boulder."
+   ]
+  },
+  {
+   "letter": "F",
+   "name": "Finnegan",
+   "role": "suspect",
+   "position": [
+    4,
+    0
+   ],
+   "room": {
+    "id": "guestbedroom",
+    "name": "Guest Bedroom"
+   },
+   "onObjectType": "chair",
+   "onGroundType": null,
+   "on": "sitting in a chair",
+   "besideObjectTypes": [],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Finnegan (F) was the only person in a chair."
+   ]
+  },
+  {
+   "letter": "G",
+   "name": "Gemma",
+   "role": "suspect",
+   "position": [
+    8,
+    8
+   ],
+   "room": {
+    "id": "livingroom",
+    "name": "Living Room"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "C",
+     "name": "Clarence"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Gemma (G) was in a corner. She was south of Benjamin (B)."
+   ]
+  },
+  {
+   "letter": "H",
+   "name": "Holden",
+   "role": "suspect",
+   "position": [
+    6,
+    1
+   ],
+   "room": {
+    "id": "mainbedroom",
+    "name": "Main Bedroom"
+   },
+   "onObjectType": "bed",
+   "onGroundType": null,
+   "on": "on the bed",
+   "besideObjectTypes": [
+    "bed",
+    "table"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Holden (H) was on a bed."
+   ]
+  },
+  {
+   "letter": "V",
+   "name": "Viggo (victim)",
+   "role": "victim",
+   "position": [
+    2,
+    3
+   ],
+   "room": {
+    "id": "diningroom",
+    "name": "Dining Room"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "A",
+     "name": "Antonio"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Viggo (V), the victim, was alone with the murderer \u2014 the killer was in the same area (room) as him."
+   ]
+  }
+ ],
+ "hasPortraits": true,
+ "sourceFile": "source/demolition-zone-page.jpg"
+}

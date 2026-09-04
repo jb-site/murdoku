@@ -1,3 +1,4 @@
+.DS_Store
 venv/
 __pycache__/
 *.pyc
@@ -5,3 +6,8 @@ __pycache__/
 .playwright-mcp/
 puzzles/art/*/_page.png
 puzzles/art/*/legend-guide.png
+puzzles/art/*/photo-guide.png
+puzzles/art/*/contact-sheet.png
+puzzles/art/*/clues/
+puzzles/source/raw/
+puzzles/source/photo-source/

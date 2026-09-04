@@ -1,0 +1,34 @@
+{
+ "id": "birthday-party",
+ "title": "Birthday Party",
+ "victoryHeadline": "Caught! And somehow, the clown was the least horrifying part of the afternoon.",
+ "acts": [
+  "Vanessa's birthday had a guest list of eight, a cake with a number of candles still under negotiation, and no plan whatsoever for keeping Hopsy the clown's squeaky rented shoes off the good parquet. In the Kitchen, Abraham stood beside the table testing exactly how loud a party blower could get at close range, over and over, while Gerald, beside a leaning stack of presents at the counter's end, found this considerably less charming with each repetition. Through in the Dining Room, Björn had appointed himself the party's sound engineer, working his way through the cables behind the TV in the unshakeable belief that the next one would finally be the right one; Ella sat with a scorecard for a party game nobody quite remembered agreeing to; and Hopsy worked patiently through a balloon dog that kept coming out the size and shape of a slightly deflated potato. Down the hall, past all of it, the Main Bedroom was the one quiet room in the house, which was exactly why Vanessa had gone to sit in it.",
+  "By the time Björn found the right cable, the speaker was loud enough to reach three rooms at once, which suited Ella fine — her scorecard game had turned into a genuine dispute she was refereeing with real conviction — and suited Hopsy rather less, since a joke that lands in silence has at least landed, and one shouted over \"Happy Birthday\" sung twice through simply hasn't. In the Kitchen, Gerald's presents survived Abraham's blower by a matter of inches; sensing defeat, Abraham switched to humming instead, which Gerald somehow minded more. In the Main Bedroom, Dina had claimed the room's one chair, beside a plant she'd spent the whole party telling people was about to outgrow its pot, working through a roll of tape that had lost its end again. Vanessa, worn out early the way birthday girls are allowed to be, had settled in across from her, glad of somewhere the speaker didn't reach.",
+  "Nobody noticed the quiet from the Main Bedroom, because nobody in the rest of the house had any quiet left over to notice it by comparison. It was Gerald, presents finally safe and patience finally gone, who went to find Vanessa and ask whether the cake could please happen now. He found the bedroom door open, a roll of tape abandoned on the floor, and Dina alone by the plant, saying Vanessa had just stepped out for a moment. She hadn't."
+ ],
+ "whereabouts": {
+  "A": "Abraham stood in the Kitchen beside the table, testing exactly how loud a party blower could get at close range, entirely satisfied with the results and prepared to demonstrate them again.",
+  "B": "Björn had appointed himself the party's sound engineer, working his way through every cable behind the Dining Room TV in the unshakeable belief that the next one would finally be the right one.",
+  "C": "Coralie had the Living Room and its muted TV entirely to herself, running the same eight seconds of a dance move over and over on her phone's camera until she very nearly, almost, had it.",
+  "D": "Dina had claimed the Main Bedroom's one chair, beside a plant she'd spent the whole party telling people was about to outgrow its pot, working through a roll of tape that had lost its end again.",
+  "E": "Ella sat in the Dining Room with a scorecard for a party game nobody quite remembered agreeing to, refereeing the resulting dispute with the calm, total authority of someone making up the rules as she went.",
+  "F": "Felix had claimed the Guest Room bed for what he was calling, to nobody in particular, a five-minute lie-down, and was already well past the fifteen-minute mark.",
+  "G": "Gerald stood beside a leaning stack of presents at the kitchen counter, quietly turning the least sturdy-looking one so its taped corner faced the wall, muttering that some people had never wrapped a gift in their lives.",
+  "H": "Hopsy sat in the Dining Room working through a balloon dog that kept coming out the size and shape of a slightly deflated potato, laughing gamely at his own jokes since, so far that afternoon, nobody else had.",
+  "V": "Vanessa had slipped off to the one quiet room in the house, glad of somewhere all that noise from the Dining Room couldn't quite reach, and gladder still of the company that had followed her in."
+ },
+ "reveal": "It was Dina, in the Main Bedroom, in the chair she'd claimed beside the plant she wouldn't stop talking about. When Vanessa turned to look for the tape's lost end, Dina set the roll down and picked up the pot instead — heavy, ordinary, entirely believable as an accident right up until it very much wasn't. The Dining Room's speaker, Ella's scorecard dispute, and Hopsy's unlaughed-at jokes did the rest of the covering for her; by the time anyone thought to check on the birthday girl, Dina had already rehearsed the sentence about her stepping out.",
+ "escape": {
+  "generic": "The tape roll is still on that floor where it landed, nobody ever did settle the rules of Ella's game, and somewhere out there the real killer already knows exactly how loud a Bluetooth speaker needs to be.",
+  "byAccused": {
+   "A": "Abraham was led out mid-demonstration, party blower still in hand, protesting that volume has never once been a crime, while the real killer got to keep both the cake and the quiet.",
+   "B": "Björn was still holding the cable he swore was the right one when they walked him out, and the Dining Room speaker never did make another sound all evening.",
+   "C": "Coralie's phone still had the same eight seconds of video on it when they took her away; the friends who eventually saw it agreed it was a very good dance move, under the circumstances.",
+   "E": "Ella's scorecard game ended without a winner ever declared, which everyone agreed afterward was, all things considered, probably for the best.",
+   "F": "Felix's five-minute lie-down technically never ended — he was still half-asleep on that bed when they came for him, and only woke up properly once he was already outside.",
+   "G": "Gerald never did find out whether that present would have survived the party intact — it went back in its bag, still taped at the corner, and nobody opened it that year at all.",
+   "H": "Hopsy, still in full makeup, told the arresting officer this was, and he did not say it lightly, the worst gig of his career — and nobody in that house was inclined to argue."
+  }
+ }
+}

@@ -15,7 +15,13 @@ Usage:
         # overlay; read the legend's bbox off it, then:
     python3 tools/extract_art.py <puzzle-id> --legend --legend-bbox x0,y0,x1,y1
 
-The rendered page is at 200dpi by default (--dpi). Detected/extra boxes are
+For a photo-sourced puzzle, run tools/photo_prep.py --page-quad first, then
+pass --from-image to every call above (uses puzzles/art/<id>/_page.png
+instead of shelling out to pdftoppm); --white-threshold/--dark-threshold
+override the portrait/board detectors' thresholds for print stock that
+doesn't photograph as bright/dark as a flat PDF scan.
+
+The rendered page is at 200dpi by default (--dpi, PDF path only). Detected/extra boxes are
 sorted into reading order (row-clusters top-to-bottom, then left-to-right
 within a row) and matched positionally against --letters. Inspect
 puzzles/art/<id>/contact-sheet.png before trusting the mapping.
@@ -37,6 +43,7 @@ ART_DIR = ROOT / "puzzles" / "art"
 PUZZLES_DIR = ROOT / "puzzles"
 
 PORTRAIT_MIN_AREA = 20000
+PORTRAIT_WHITE_THRESHOLD = 230  # grayscale value above which a pixel counts as "white card"
 PORTRAIT_ASPECT_RANGE = (0.55, 1.05)  # width / height
 ROW_CLUSTER_TOLERANCE_PX = 60  # boxes within this many px of y0 are "the same row"
 PORTRAIT_TARGET_W = 400
@@ -52,7 +59,13 @@ LEGEND_TARGET_W = 1200   # downscaled legend.png width in px
 GUIDE_W = 1100           # width of the coordinate-guide render
 
 
-def render_page(puzzle_id, dpi):
+def render_page(puzzle_id, dpi, from_image=False):
+    if from_image:
+        dest = ART_DIR / puzzle_id / "_page.png"
+        if not dest.exists():
+            sys.exit("Run tools/photo_prep.py --page-quad first")
+        return dest
+
     pdf = SOURCE_DIR / f"{puzzle_id}-color.pdf"
     if not pdf.exists():
         sys.exit(f"No source PDF at {pdf}")
@@ -76,10 +89,12 @@ def render_page(puzzle_id, dpi):
     return dest
 
 
-def detect_portrait_boxes(arr):
+def detect_portrait_boxes(arr, white_threshold=PORTRAIT_WHITE_THRESHOLD):
     """Near-white polaroid cards, by area/aspect. Misses non-white (e.g. a
-    highlighted victim card) — use --extra-box for those."""
-    mask = np.all(arr > 230, axis=2)
+    highlighted victim card) — use --extra-box for those. `white_threshold`
+    is overridable (--white-threshold) since photographed print stock varies
+    book to book; the PDF path's default of 230 is untouched."""
+    mask = np.all(arr > white_threshold, axis=2)
     labels, n = ndimage.label(mask)
     boxes = []
     for sl in ndimage.find_objects(labels):
@@ -113,14 +128,17 @@ def _max_run_length_1d(mask):
     return int((ends - starts).max())
 
 
-def detect_board_bbox(arr):
+def detect_board_bbox(arr, dark_threshold=BOARD_DARK_THRESHOLD):
     """Auto-detect the board's grid bbox: threshold dark pixels (grid lines), then
     find the outermost rows/cols in the right ~55% of the page whose longest
     contiguous dark run is long enough to be a border line. Exact on bordered
-    grids (see PLAN-artwork.md); use --bbox to override when it isn't."""
+    grids (see PLAN-artwork.md); use --bbox to override when it isn't.
+    `dark_threshold` is overridable (--dark-threshold) since photographed
+    print stock varies book to book; the PDF path's default of 128 is
+    untouched."""
     img_h, img_w = arr.shape[:2]
     gray = arr.mean(axis=2)
-    dark = gray < BOARD_DARK_THRESHOLD
+    dark = gray < dark_threshold
 
     x_start = int(img_w * BOARD_SEARCH_X_FRACTION)
     region = dark[:, x_start:]
@@ -264,7 +282,7 @@ def do_portraits(args, page_path):
     arr = np.array(img)
     img_h, img_w = arr.shape[:2]
 
-    boxes = detect_portrait_boxes(arr)
+    boxes = detect_portrait_boxes(arr, white_threshold=args.white_threshold)
     for spec in args.extra_box:
         letter, coords = spec.split("=", 1)
         boxes.append(parse_box(coords))
@@ -317,7 +335,7 @@ def do_board(args, page_path):
     arr = np.array(img)
     img_h, img_w = arr.shape[:2]
 
-    box = parse_box(args.bbox) if args.bbox else detect_board_bbox(arr)
+    box = parse_box(args.bbox) if args.bbox else detect_board_bbox(arr, dark_threshold=args.dark_threshold)
     print(f"  board bbox: {box}")
 
     bx0, by0, bx1, by1 = box
@@ -395,12 +413,21 @@ def main():
     p.add_argument("--letters", help="comma-separated letters in reading order, e.g. A,B,C,D,...,V")
     p.add_argument("--extra-box", action="append", default=[],
                     help="LETTER=x0,y0,x1,y1 for a card the auto-detector missed (repeatable)")
+    p.add_argument("--from-image", action="store_true",
+                    help="use puzzles/art/<id>/_page.png (from tools/photo_prep.py --page-quad) "
+                         "instead of rendering the source PDF with pdftoppm")
+    p.add_argument("--white-threshold", type=int, default=PORTRAIT_WHITE_THRESHOLD,
+                    help=f"portrait-card white threshold, 0-255 (default {PORTRAIT_WHITE_THRESHOLD}; "
+                         f"photographed print stock may need a lower value)")
+    p.add_argument("--dark-threshold", type=int, default=BOARD_DARK_THRESHOLD,
+                    help=f"board grid-line dark threshold, 0-255 (default {BOARD_DARK_THRESHOLD}; "
+                         f"photographed print stock may need a higher value)")
     args = p.parse_args()
 
     if not args.board and not args.portraits and not args.legend:
         sys.exit("Nothing to do: pass --portraits and/or --board and/or --legend")
 
-    page_path = render_page(args.puzzle_id, args.dpi)
+    page_path = render_page(args.puzzle_id, args.dpi, from_image=args.from_image)
     if args.board:
         do_board(args, page_path)
     if args.portraits:

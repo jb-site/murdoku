@@ -1,0 +1,34 @@
+{
+ "id": "ancestral-home",
+ "title": "Ancestral Home",
+ "victoryHeadline": "Caught! The reading of the will just got a very different verdict.",
+ "acts": [
+  "The whole family had been called back to the old house for the reading of the will, and whoever had drawn up the afternoon's chore list had clearly done it on purpose, because not one job put two people who might actually argue about the will in the same room together. Everyone had somewhere to be and something to be doing — a shelf to avoid, a fern to mist, a nap to finally have — and none of it, on its own, amounted to anything worth a second look.\n\nIn the Basement, Belinda and Helena were meant to be cataloguing three generations of boxes for the solicitor upstairs, and had gotten no further than the second shelf before rediscovering an old argument about who was actually supposed to inherit their grandmother's chipped porcelain dog. Neither of them so much as glanced at a clock all afternoon.",
+  "In the Guest Room, Edwin had found an old transistor radio under the bed and gone quietly, happily silent, taking it apart at the side table, while Farah sat on the floor unpacking her case and found, on the inside of the doorframe, a row of pencil marks with her own childhood height dated next to them. Neither of them heard a single thing from the rest of the house; they'd have said, if asked, that they hadn't been listening for anything.",
+  "That left the Dining Room, where Vincenzo hadn't wanted company so much as he'd wanted somebody to keep his glass topped up while he waited for the solicitor, and Greg had volunteered before anyone else could. For a while it was just the two of them at the table, Greg keeping half an eye on the potted fern by the window and half an ear on Vincenzo's opinions about people who'd already spent their inheritance in their heads. It was someone coming up from the basement, still holding an unsettled argument about a porcelain dog, who found him afterwards — and it took the rest of the house a long, stunned minute to understand that the afternoon had stopped being about the will at all."
+ ],
+ "whereabouts": {
+  "A": "Adam had been sent down to Storage to dig out Vincenzo's old fishing rod, and twenty minutes in had brought an entire shelf of Christmas ornaments down on his own head, after which he kept a careful two-foot berth from every shelf in the house.",
+  "B": "Belinda was in the Basement with a clipboard, cataloguing three generations of boxes for the solicitor, and had gotten no further than the second one before reopening an old argument about who was supposed to inherit their grandmother's chipped porcelain dog.",
+  "C": "Colton sat wrapped in the one hooded dressing gown the house owned, an avocado face mask drying on his cheeks, carefully misting the ancient windowsill fern the family had been insisting was still alive since before he was born.",
+  "D": "Dean hadn't made it further than the bedroom floor before the drive caught up with him, and was flat out beside the shelf, coat still on, gently snoring.",
+  "E": "Edwin had found an old transistor radio under the bed and was taking it apart at the side table, quietly and completely happy, for the first time all weekend.",
+  "F": "Farah sat unpacking her case and found, on the inside of the doorframe, a row of pencil marks with her own childhood height dated next to them.",
+  "G": "Greg had volunteered to keep Vincenzo company and keep his glass topped up while the solicitor worked through the paperwork upstairs, half an eye on the potted fern by the window.",
+  "H": "Helena stood beside the basement shelf with Belinda, insisting, not for the first time, that the porcelain dog had been promised to her specifically and everyone else was misremembering.",
+  "V": "Vincenzo sat at the head of the dining table, waiting on the solicitor and doing what he did best, which was telling whoever happened to be nearby exactly what he thought of people who'd already spent an inheritance in their heads."
+ },
+ "reveal": "It was Greg, in the Dining Room, and the fern he'd been half-watching all afternoon. Left alone at the table with Vincenzo's opinions running long, Greg lifted the heavy potted fern from its stand by the window and brought it down once, hard, then set it back exactly where it had stood, roots and soil undisturbed enough that nobody thought to look twice. He topped up a glass that no longer had anyone to drink from it, and by the time Belinda came looking for a second opinion on the porcelain dog, he was simply the man who'd been sitting with Vincenzo, same as he'd offered to be from the start.",
+ "escape": {
+  "generic": "The solicitor never did finish reading the will that day, the fern stayed exactly where it was put back, and somewhere in that big old house the real killer is still topping up a glass nobody's using.",
+  "byAccused": {
+   "A": "Adam was led out of Storage still two feet clear of every shelf in the room, the fishing rod never found, and nobody ever did explain to him that it hadn't been down there in the first place.",
+   "B": "Belinda was taken away still holding the porcelain dog, the argument over who it belonged to left permanently, infuriatingly unsettled.",
+   "C": "Colton's avocado mask had fully dried by the time they came for him, which meant he was arrested wearing it, hood up, protesting that the fern was the only thing in that house he'd ever been gentle with.",
+   "D": "Dean slept through the entire arrest three rooms away and woke up an hour later to a house gone strangely quiet, with nobody left who felt like explaining why.",
+   "E": "Edwin's radio was found afterwards in pieces on the side table, one wire still unconnected, and it never did get to play anything for anyone.",
+   "F": "Farah kept coming back, in her head, to those pencil marks on the doorframe, and to how strange it was that the last thing she did in that house was measure how much she'd grown before it all went wrong.",
+   "H": "Helena's own verdict on the arrest, delivered loudly on the basement stairs, was that at least now nobody could argue she'd been anywhere near it — before remembering, a beat too late, that nobody had accused her of that at all."
+  }
+ }
+}

@@ -1,0 +1,287 @@
+{
+ "id": "ancestral-home",
+ "title": "Ancestral Home",
+ "difficulty": null,
+ "rooms": {
+  "guest_room": "Guest Room",
+  "bathroom": "Bathroom",
+  "dining_room": "Dining Room",
+  "kitchen": "Kitchen",
+  "main_bedroom": "Main Bedroom",
+  "basement": "Basement",
+  "storage": "Storage"
+ },
+ "generalClues": [],
+ "victim": "V",
+ "murderer": "G",
+ "asciiMapLegend": {
+  "format": "each cell is <room-code><object-code-or-.><ground-code-or-.><occupant-letter-or-.>, space-padded to align columns; # = void (not part of the board)",
+  "roomCodes": {
+   "guest_room": "G",
+   "bathroom": "B",
+   "dining_room": "D",
+   "kitchen": "K",
+   "main_bedroom": "M",
+   "basement": "Bx1",
+   "storage": "S"
+  },
+  "note": "object-code is the object type's first letter lowercase, ground-code is the ground type's first letter uppercase (e.g. a statue on a carpet is s + C); see people[].onObjectType / onGroundType / besideObjectTypes for full type names instead of decoding the code"
+ },
+ "asciiMap": "G...   G...   Gt..   Gb.E   Gt..   Bp..   B...   Bc..   Bt..  \nG...   G...   G...   Gb..   G...   B..C   B...   B...   Bt..  \nDc..   D...   Dc..   G...   G..F   M...   M...   M...   Mp..  \nD..G   Dt..   Dt..   D...   D...   M...   M...   Mb..   Ms..  \nDp..   Dc..   D..V   Dc..   Kt..   K...   M...   Mb..   Ms..  \nD...   D...   D...   D...   K...   K...   M...   M...   M..D  \nBx1... Bx1... Bx1... Bx1... Bx1c.. Bx1... Bx1... S..A   S...  \nBx1s.. Bx1c.B Bx1... Bx1c.. Bx1... Bx1... Bx1... S...   Ss..  \nBx1s.. Bx1... Bx1t.. Bx1... Bx1t.. Bx1p.. Bx1c.H Ss..   S...  ",
+ "people": [
+  {
+   "letter": "A",
+   "name": "Adam",
+   "role": "suspect",
+   "position": [
+    6,
+    7
+   ],
+   "room": {
+    "id": "storage",
+    "name": "Storage"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Adam (A) was in the Storage room. He was not beside a shelf."
+   ]
+  },
+  {
+   "letter": "B",
+   "name": "Belinda",
+   "role": "suspect",
+   "position": [
+    7,
+    1
+   ],
+   "room": {
+    "id": "basement",
+    "name": "Basement"
+   },
+   "onObjectType": "chair",
+   "onGroundType": null,
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "shelf"
+   ],
+   "withInRoom": [
+    {
+     "letter": "H",
+     "name": "Helena"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Belinda (B) was sitting in a chair in the Basement."
+   ]
+  },
+  {
+   "letter": "C",
+   "name": "Colton",
+   "role": "suspect",
+   "position": [
+    1,
+    5
+   ],
+   "room": {
+    "id": "bathroom",
+    "name": "Bathroom"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "plant"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Colton (C) was in the Bathroom."
+   ]
+  },
+  {
+   "letter": "D",
+   "name": "Dean",
+   "role": "suspect",
+   "position": [
+    5,
+    8
+   ],
+   "room": {
+    "id": "main_bedroom",
+    "name": "Main Bedroom"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "shelf"
+   ],
+   "withInRoom": [],
+   "adjacentPeople": [],
+   "clues": [
+    "Dean (D) was in the Main Bedroom."
+   ]
+  },
+  {
+   "letter": "E",
+   "name": "Edwin",
+   "role": "suspect",
+   "position": [
+    0,
+    3
+   ],
+   "room": {
+    "id": "guest_room",
+    "name": "Guest Room"
+   },
+   "onObjectType": "bed",
+   "onGroundType": null,
+   "on": "on the bed",
+   "besideObjectTypes": [
+    "bed",
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "F",
+     "name": "Farah"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Edwin (E) was on a bed."
+   ]
+  },
+  {
+   "letter": "F",
+   "name": "Farah",
+   "role": "suspect",
+   "position": [
+    2,
+    4
+   ],
+   "room": {
+    "id": "guest_room",
+    "name": "Guest Room"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [],
+   "withInRoom": [
+    {
+     "letter": "E",
+     "name": "Edwin"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Farah (F) was in the Guest Room."
+   ]
+  },
+  {
+   "letter": "G",
+   "name": "Greg",
+   "role": "murderer",
+   "position": [
+    3,
+    0
+   ],
+   "room": {
+    "id": "dining_room",
+    "name": "Dining Room"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "chair",
+    "plant",
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "V",
+     "name": "Vincenzo (victim)"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Greg (G) was beside a plant."
+   ],
+   "nearbyObjectTypesForMethod": [
+    "chair",
+    "plant",
+    "table"
+   ]
+  },
+  {
+   "letter": "H",
+   "name": "Helena",
+   "role": "suspect",
+   "position": [
+    8,
+    6
+   ],
+   "room": {
+    "id": "basement",
+    "name": "Basement"
+   },
+   "onObjectType": "chair",
+   "onGroundType": null,
+   "on": "sitting in a chair",
+   "besideObjectTypes": [
+    "plant",
+    "shelf"
+   ],
+   "withInRoom": [
+    {
+     "letter": "B",
+     "name": "Belinda"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Helena (H) was in the Basement, in a corner of the room."
+   ]
+  },
+  {
+   "letter": "V",
+   "name": "Vincenzo (victim)",
+   "role": "victim",
+   "position": [
+    4,
+    2
+   ],
+   "room": {
+    "id": "dining_room",
+    "name": "Dining Room"
+   },
+   "onObjectType": null,
+   "onGroundType": null,
+   "on": "on open floor",
+   "besideObjectTypes": [
+    "chair",
+    "table"
+   ],
+   "withInRoom": [
+    {
+     "letter": "G",
+     "name": "Greg"
+    }
+   ],
+   "adjacentPeople": [],
+   "clues": [
+    "Vincenzo (V), the victim, was alone with the murderer \u2014 the killer was in the same area (room) as him."
+   ]
+  }
+ ],
+ "hasPortraits": true,
+ "sourceFile": "source/ancestral-home-page.jpg"
+}

@@ -1,0 +1,40 @@
+{
+  "puzzleId": "the-old-tavern",
+  "sourceFile": "source/the-old-tavern-page.jpg",
+  "derivedBy": "constraint-solve",
+  "placements": {
+    "A": [
+      4,
+      0
+    ],
+    "B": [
+      6,
+      3
+    ],
+    "C": [
+      7,
+      7
+    ],
+    "D": [
+      1,
+      6
+    ],
+    "E": [
+      0,
+      4
+    ],
+    "F": [
+      3,
+      5
+    ],
+    "G": [
+      2,
+      2
+    ],
+    "V": [
+      5,
+      1
+    ]
+  },
+  "murderer": "B"
+}
